@@ -74,7 +74,17 @@ mkdir -p "$STAGE"
 cp -R "$APP" "$STAGE/"
 ln -s /Applications "$STAGE/Applications"
 rm -f "$DMG"
-hdiutil create -volname "Merpati $VERSION" -srcfolder "$STAGE" -ov -format UDZO "$DMG" >/dev/null
+# An explicit size: hdiutil's own estimate is sometimes too small ("No space
+# left on device" on CI runners). It also fails now and then with "Resource
+# busy", so it gets a few tries.
+STAGE_MB=$(du -sm "$STAGE" | cut -f1)
+for try in 1 2 3; do
+  hdiutil create -volname "Merpati $VERSION" -srcfolder "$STAGE" -size "$((STAGE_MB + 64))m" \
+    -ov -format UDZO "$DMG" >/dev/null && break
+  [[ $try == 3 ]] && exit 1
+  echo "hdiutil failed, retrying ($try)"
+  sleep 5
+done
 rm -rf "$OUT/dmg-stage"
 [[ -n "${MERPATI_SIGN_IDENTITY:-}" ]] && codesign --force --sign "$MERPATI_SIGN_IDENTITY" --timestamp "$DMG"
 
