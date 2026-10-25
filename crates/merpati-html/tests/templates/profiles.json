@@ -1,0 +1,9 @@
+{
+  "users": [
+    {"name": "Ada Lovelace", "email": "ada@example.com", "initials": "AL", "admin": true, "avatar": ""},
+    {"name": "Alan Turing", "email": "alan@example.com", "initials": "AT", "avatar": ""},
+    {"name": "Grace Hopper", "email": "grace@example.com", "initials": "GH", "avatar": ""},
+    {"name": "Edsger Dijkstra", "email": "ewd@example.com", "initials": "ED", "avatar": ""},
+    {"name": "Barbara Liskov", "email": "liskov@example.com", "initials": "BL", "admin": true, "avatar": ""}
+  ]
+}

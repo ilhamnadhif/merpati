@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package helloworld;
+
+import "google/protobuf/timestamp.proto";
+import "common/geo.proto";
+
+// Test service covering the four call patterns.
+service Greeter {
+  rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc LotsOfReplies (HelloRequest) returns (stream HelloReply);
+  rpc LotsOfGreetings (stream HelloRequest) returns (HelloReply);
+  rpc BidiHello (stream HelloRequest) returns (stream HelloReply);
+}
+
+enum Mood {
+  MOOD_UNSPECIFIED = 0;
+  HAPPY = 1;
+  GRUMPY = 2;
+}
+
+message Address {
+  string city = 1;
+  common.Geo geo = 2;
+}
+
+message HelloRequest {
+  string name = 1;
+  int32 times = 2;
+  Mood mood = 3;
+  repeated string tags = 4;
+  Address address = 5;
+  map<string, int64> scores = 6;
+  oneof contact {
+    string email = 7;
+    string phone = 8;
+  }
+  google.protobuf.Timestamp sent_at = 9;
+  bytes avatar = 10;
+  optional bool vip = 11;
+}
+
+message HelloReply {
+  string message = 1;
+  int32 index = 2;
+  Mood mood = 3;
+}

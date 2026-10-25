@@ -1,0 +1,57 @@
+[package]
+name = "merpati-script"
+description = "Sandboxed JavaScript engine (boa) with a Postman-compatible `pm` API"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+merpati-core.workspace = true
+boa_engine = { workspace = true, features = ["annex-b"] }
+boa_gc.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+indexmap.workspace = true
+base64.workspace = true
+sha1.workspace = true
+sha2.workspace = true
+md-5.workspace = true
+hmac.workspace = true
+hex.workspace = true
+rand.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+# Local time zone name for `Intl` (already pulled in by chrono).
+iana-time-zone = "0.1"
+# IANA tz database (TZif data) for systems without one: Windows, slim containers.
+jiff-tzdb = "0.1"
+url.workspace = true
+percent-encoding.workspace = true
+parking_lot.workspace = true
+bytes.workspace = true
+tracing.workspace = true
+# Fetching npm/JSR package modules (host side only).
+reqwest.workspace = true
+rustls.workspace = true
+tokio.workspace = true
+# Response bodies handed to worker processes (`IsolatedEngine`).
+tempfile.workspace = true
+
+[target.'cfg(unix)'.dependencies]
+# Memory use of worker processes.
+libc = "0.2"
+
+[target.'cfg(windows)'.dependencies]
+# Memory use of worker processes.
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_System_ProcessStatus", "Win32_System_Threading"] }
+
+[dev-dependencies]
+axum.workspace = true
+
+# Worker process for the `IsolatedEngine` integration tests.
+[[bin]]
+name = "merpati-script-worker"
+path = "src/bin/merpati-script-worker.rs"
+test = false
+doc = false

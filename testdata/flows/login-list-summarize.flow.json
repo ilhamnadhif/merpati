@@ -1,0 +1,307 @@
+{
+  "version": 1,
+  "id": "example-login-list-summarize",
+  "name": "Login, list and summarize",
+  "description": "Logs in, lists items, fetches the details of every active item and asks an AI model for a one-sentence summary. Needs baseUrl, aiBaseUrl and aiModel variables (e.g. an environment).",
+  "inputs": [
+    {
+      "name": "username",
+      "default": "ada",
+      "description": "Account to log in with"
+    },
+    {
+      "name": "password",
+      "default": "secret"
+    }
+  ],
+  "blocks": [
+    {
+      "id": "start",
+      "kind": "start",
+      "label": "Start",
+      "position": [
+        0.0,
+        0.0
+      ],
+      "config": {}
+    },
+    {
+      "id": "login",
+      "kind": "request",
+      "label": "Log in",
+      "position": [
+        260.0,
+        0.0
+      ],
+      "config": {
+        "source": {
+          "inline": {
+            "request": {
+              "method": "POST",
+              "url": "{{baseUrl}}/login",
+              "headers": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\"username\": \"{{inputs.username}}\", \"password\": \"{{inputs.password}}\"}"
+              }
+            },
+            "scripts": {
+              "post_response": "pm.test(\"login returns a token\", () => pm.expect(pm.response.json().token).to.be.a(\"string\"));"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "save-token",
+      "kind": "set_variable",
+      "label": "Save token",
+      "position": [
+        520.0,
+        0.0
+      ],
+      "config": {
+        "name": "token",
+        "value": "{{blocks.login.output.json.token}}"
+      }
+    },
+    {
+      "id": "list",
+      "kind": "request",
+      "label": "List items",
+      "position": [
+        780.0,
+        0.0
+      ],
+      "config": {
+        "source": {
+          "inline": {
+            "request": {
+              "method": "GET",
+              "url": "{{baseUrl}}/items",
+              "headers": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "each",
+      "kind": "loop",
+      "label": "Each item",
+      "position": [
+        1040.0,
+        0.0
+      ],
+      "config": {
+        "mode": "for_each",
+        "items": "{{blocks.list.output.json.items}}"
+      }
+    },
+    {
+      "id": "active",
+      "kind": "condition",
+      "label": "Active?",
+      "position": [
+        1300.0,
+        0.0
+      ],
+      "config": {
+        "mode": "compare",
+        "left": "{{loop.item.active}}",
+        "operator": "eq",
+        "right": "true"
+      }
+    },
+    {
+      "id": "detail",
+      "kind": "request",
+      "label": "Get item",
+      "position": [
+        1560.0,
+        0.0
+      ],
+      "config": {
+        "source": {
+          "inline": {
+            "request": {
+              "method": "GET",
+              "url": "{{baseUrl}}/items/{{loop.item.id}}",
+              "headers": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "collect",
+      "kind": "script",
+      "label": "Collect",
+      "position": [
+        1820.0,
+        0.0
+      ],
+      "config": {
+        "code": "vars.details = (vars.details || []).concat([input.json]);\nreturn vars.details.length;"
+      }
+    },
+    {
+      "id": "summarize",
+      "kind": "ai",
+      "label": "Summarize",
+      "position": [
+        1040.0,
+        160.0
+      ],
+      "config": {
+        "provider": "open_ai_compatible",
+        "base_url": "{{aiBaseUrl}}",
+        "model": "{{aiModel}}",
+        "system": "You summarize API data in one sentence.",
+        "prompt": "Summarize these items: {{vars.details}}"
+      }
+    },
+    {
+      "id": "summary",
+      "kind": "output",
+      "label": "Summary",
+      "position": [
+        1300.0,
+        160.0
+      ],
+      "config": {
+        "name": "summary",
+        "value": "{{blocks.summarize.output.text}}"
+      }
+    },
+    {
+      "id": "count",
+      "kind": "output",
+      "label": "Active items",
+      "position": [
+        1560.0,
+        160.0
+      ],
+      "config": {
+        "name": "active_items",
+        "value": "{{vars.details.length}}"
+      }
+    },
+    {
+      "id": "login-failed",
+      "kind": "log",
+      "label": "Login failed",
+      "position": [
+        260.0,
+        160.0
+      ],
+      "config": {
+        "message": "Login failed: {{blocks.login.output.error}}",
+        "level": "error"
+      }
+    },
+    {
+      "id": "error",
+      "kind": "output",
+      "label": "Error",
+      "position": [
+        520.0,
+        160.0
+      ],
+      "config": {
+        "name": "error",
+        "value": "{{blocks.login.output.error}}",
+        "fail": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from_block": "start",
+      "from_port": "next",
+      "to_block": "login",
+      "to_port": "in"
+    },
+    {
+      "from_block": "login",
+      "from_port": "success",
+      "to_block": "save-token",
+      "to_port": "in"
+    },
+    {
+      "from_block": "login",
+      "from_port": "failure",
+      "to_block": "login-failed",
+      "to_port": "in"
+    },
+    {
+      "from_block": "login-failed",
+      "from_port": "next",
+      "to_block": "error",
+      "to_port": "in"
+    },
+    {
+      "from_block": "save-token",
+      "from_port": "next",
+      "to_block": "list",
+      "to_port": "in"
+    },
+    {
+      "from_block": "list",
+      "from_port": "success",
+      "to_block": "each",
+      "to_port": "in"
+    },
+    {
+      "from_block": "each",
+      "from_port": "item",
+      "to_block": "active",
+      "to_port": "in"
+    },
+    {
+      "from_block": "active",
+      "from_port": "true",
+      "to_block": "detail",
+      "to_port": "in"
+    },
+    {
+      "from_block": "detail",
+      "from_port": "success",
+      "to_block": "collect",
+      "to_port": "in"
+    },
+    {
+      "from_block": "each",
+      "from_port": "done",
+      "to_block": "summarize",
+      "to_port": "in"
+    },
+    {
+      "from_block": "summarize",
+      "from_port": "success",
+      "to_block": "summary",
+      "to_port": "in"
+    },
+    {
+      "from_block": "summary",
+      "from_port": "next",
+      "to_block": "count",
+      "to_port": "in"
+    }
+  ]
+}

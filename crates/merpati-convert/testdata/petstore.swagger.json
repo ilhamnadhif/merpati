@@ -1,0 +1,145 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a sample server Petstore server.",
+    "version": "1.0.6",
+    "title": "Swagger Petstore"
+  },
+  "host": "petstore.swagger.io",
+  "basePath": "/v2",
+  "tags": [
+    { "name": "pet", "description": "Everything about your Pets" },
+    { "name": "store", "description": "Access to Petstore orders" }
+  ],
+  "schemes": ["https", "http"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "paths": {
+    "/pet": {
+      "post": {
+        "tags": ["pet"],
+        "summary": "Add a new pet to the store",
+        "operationId": "addPet",
+        "consumes": ["application/json", "application/xml"],
+        "produces": ["application/json", "application/xml"],
+        "parameters": [
+          { "in": "body", "name": "body", "description": "Pet object", "required": true, "schema": { "$ref": "#/definitions/Pet" } }
+        ],
+        "responses": { "405": { "description": "Invalid input" } },
+        "security": [{ "petstore_auth": ["write:pets", "read:pets"] }]
+      }
+    },
+    "/pet/{petId}/uploadImage": {
+      "post": {
+        "tags": ["pet"],
+        "summary": "uploads an image",
+        "operationId": "uploadFile",
+        "consumes": ["multipart/form-data"],
+        "parameters": [
+          { "name": "petId", "in": "path", "description": "ID of pet to update", "required": true, "type": "integer", "format": "int64" },
+          { "name": "additionalMetadata", "in": "formData", "required": false, "type": "string" },
+          { "name": "file", "in": "formData", "description": "file to upload", "required": false, "type": "file" }
+        ],
+        "responses": {
+          "200": { "description": "successful operation", "schema": { "$ref": "#/definitions/ApiResponse" } }
+        },
+        "security": [{ "petstore_auth": ["write:pets", "read:pets"] }]
+      }
+    },
+    "/pet/findByStatus": {
+      "get": {
+        "tags": ["pet"],
+        "summary": "Finds Pets by status",
+        "operationId": "findPetsByStatus",
+        "parameters": [
+          {
+            "name": "status", "in": "query", "required": true, "type": "array",
+            "items": { "type": "string", "enum": ["available", "pending", "sold"], "default": "available" },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": { "description": "successful operation", "schema": { "type": "array", "items": { "$ref": "#/definitions/Pet" } } },
+          "400": { "description": "Invalid status value" }
+        },
+        "security": [{ "petstore_auth": ["write:pets", "read:pets"] }]
+      }
+    },
+    "/pet/{petId}": {
+      "get": {
+        "tags": ["pet"],
+        "summary": "Find pet by ID",
+        "operationId": "getPetById",
+        "parameters": [
+          { "name": "petId", "in": "path", "required": true, "type": "integer", "format": "int64" }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": { "$ref": "#/definitions/Pet" },
+            "examples": { "application/json": { "id": 1, "name": "Rex", "photoUrls": [] } }
+          },
+          "400": { "description": "Invalid ID supplied" },
+          "404": { "description": "Pet not found" }
+        },
+        "security": [{ "api_key": [] }]
+      }
+    },
+    "/store/order": {
+      "post": {
+        "tags": ["store"],
+        "summary": "Place an order for a pet",
+        "consumes": ["application/x-www-form-urlencoded"],
+        "parameters": [
+          { "name": "petId", "in": "formData", "type": "integer", "x-example": 3 },
+          { "name": "quantity", "in": "formData", "type": "integer" }
+        ],
+        "responses": { "200": { "description": "ok", "schema": { "$ref": "#/definitions/Order" } } }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "petstore_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://petstore.swagger.io/oauth/authorize",
+      "flow": "implicit",
+      "scopes": { "write:pets": "modify pets in your account", "read:pets": "read your pets" }
+    },
+    "api_key": { "type": "apiKey", "name": "api_key", "in": "header" }
+  },
+  "definitions": {
+    "Order": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer", "format": "int64" },
+        "petId": { "type": "integer", "format": "int64" },
+        "shipDate": { "type": "string", "format": "date-time" },
+        "complete": { "type": "boolean", "default": false }
+      }
+    },
+    "Category": {
+      "type": "object",
+      "properties": { "id": { "type": "integer", "format": "int64" }, "name": { "type": "string" } }
+    },
+    "Tag": {
+      "type": "object",
+      "properties": { "id": { "type": "integer", "format": "int64" }, "name": { "type": "string" } }
+    },
+    "Pet": {
+      "type": "object",
+      "required": ["name", "photoUrls"],
+      "properties": {
+        "id": { "type": "integer", "format": "int64" },
+        "category": { "$ref": "#/definitions/Category" },
+        "name": { "type": "string", "example": "doggie" },
+        "photoUrls": { "type": "array", "xml": { "wrapped": true }, "items": { "type": "string", "xml": { "name": "photoUrl" } } },
+        "tags": { "type": "array", "items": { "$ref": "#/definitions/Tag" } },
+        "status": { "type": "string", "description": "pet status in the store", "enum": ["available", "pending", "sold"] }
+      }
+    },
+    "ApiResponse": {
+      "type": "object",
+      "properties": { "code": { "type": "integer", "format": "int32" }, "type": { "type": "string" }, "message": { "type": "string" } }
+    }
+  }
+}

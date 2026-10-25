@@ -1,0 +1,153 @@
+{
+  "info": {
+    "_postman_id": "5f6c1e2a-0000-4000-8000-000000000001",
+    "name": "Sample API",
+    "description": "A sample collection used by tests.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "id": "f0000000-0000-4000-8000-000000000001",
+      "name": "Users",
+      "item": [
+        {
+          "id": "r0000000-0000-4000-8000-000000000001",
+          "name": "List users",
+          "protocolProfileBehavior": { "followRedirects": false },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users?page=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10", "disabled": true, "description": "page size" }
+              ]
+            },
+            "description": "Lists users, paginated."
+          },
+          "response": [
+            {
+              "id": "e0000000-0000-4000-8000-000000000001",
+              "name": "OK",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": { "raw": "{{baseUrl}}/users?page=1", "host": ["{{baseUrl}}"], "path": ["users"], "query": [{ "key": "page", "value": "1" }] }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [ { "key": "Content-Type", "value": "application/json" } ],
+              "cookie": [],
+              "body": "[{\"id\": 1, \"name\": \"Ada\"}]"
+            }
+          ]
+        },
+        {
+          "id": "r0000000-0000-4000-8000-000000000002",
+          "name": "Get user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", ":id"],
+              "variable": [ { "key": "id", "value": "42" } ]
+            }
+          },
+          "response": []
+        },
+        {
+          "id": "r0000000-0000-4000-8000-000000000003",
+          "name": "Create user",
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                { "key": "username", "value": "admin", "type": "string" },
+                { "key": "password", "value": "{{adminPassword}}", "type": "string" }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{$randomFirstName}}\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+          },
+          "response": []
+        }
+      ],
+      "event": [
+        { "listen": "prerequest", "script": { "type": "text/javascript", "exec": ["console.log('folder pre');"] } }
+      ]
+    },
+    {
+      "id": "r0000000-0000-4000-8000-000000000004",
+      "name": "Upload",
+      "request": {
+        "auth": { "type": "noauth" },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "title", "value": "hello", "type": "text" },
+            { "key": "file", "type": "file", "src": "/tmp/a.png" }
+          ]
+        },
+        "url": { "raw": "{{baseUrl}}/upload", "host": ["{{baseUrl}}"], "path": ["upload"] }
+      },
+      "response": []
+    },
+    {
+      "id": "r0000000-0000-4000-8000-000000000005",
+      "name": "GraphQL",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "graphql",
+          "graphql": { "query": "query { viewer { login } }", "variables": "{}" }
+        },
+        "url": { "raw": "https://api.example.com/graphql", "protocol": "https", "host": ["api", "example", "com"], "path": ["graphql"] }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [ { "key": "token", "value": "{{token}}", "type": "string" } ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": { "type": "text/javascript", "exec": ["pm.variables.set('requestedAt', Date.now());"] }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
+    { "key": "token", "value": "", "type": "string" }
+  ]
+}

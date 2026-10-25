@@ -1,0 +1,164 @@
+{
+ "_source": "See README.md: edgegrid-node test/test.js, edgegrid-php tests/testdata.json (Apache-2.0), and edgegrid-python 2.0.8 run on the inputs below.",
+ "cases": [
+  {
+   "testName": "node: simple header signing with GET (no headers to sign)",
+   "request": {
+    "method": "GET",
+    "path": "/testapi/v1/t4",
+    "headers": [
+     {
+      "X-Test1": "test-simple-header"
+     }
+    ]
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=YgMcMzBrimnBmp7wxzjirUsAcC0UK6MVPydEpjKVcHc="
+  },
+  {
+   "testName": "node: POST request when max_body is provided in .edgerc file",
+   "request": {
+    "method": "POST",
+    "path": "/testapi/v1/t3",
+    "data": "{\"name\":\"text24.devexp-cli-dns-test.net\",\"type\":\"SRV\",\"ttl\":300,\"zone\":\"devexp-cli-dns-test.net\",\"rdata\":[\"10 40 5061 small.example.com\",\"20 10 5060 tiny.example.com\"]}"
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=lUcTuRl/Iy5vmBp7uNvya9BoRaA9/oyHKC+pCDOlg1s="
+  },
+  {
+   "testName": "php: POST nil body",
+   "auth": {
+    "headersToSign": [
+     "X-Test1",
+     "X-Test2",
+     "X-Test3"
+    ],
+    "maxBodySize": 2048
+   },
+   "request": {
+    "method": "POST",
+    "path": "/testapi/v1/t6",
+    "headers": [
+     {
+      "Host": "akaa-baseurl-xxxxxxxxxxx-xxxxxxxxxxxxx.luna.akamaiapis.net"
+     }
+    ]
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=1gEDxeQGD5GovIkJJGcBaKnZ+VaPtrc4qBUHixjsPCQ="
+  },
+  {
+   "testName": "php: GET with query args as option",
+   "auth": {
+    "headersToSign": [
+     "X-Test1",
+     "X-Test2",
+     "X-Test3"
+    ],
+    "maxBodySize": 2048
+   },
+   "request": {
+    "method": "GET",
+    "path": "/testapi/v1/t6",
+    "query": {
+     "test": "arg"
+    }
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=MlHog3cBr9VL+L+KUpVsdyAHmXaOunCdKplWy4UlohI="
+  },
+  {
+   "testName": "python 2.0.8: non-default port is part of the host",
+   "request": {
+    "method": "GET",
+    "path": "/x?y=1"
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=sFWTpmXJ7SNFdkcTG1KbWgU7MuaGxkRBu9HCAuTGMbE=",
+   "base_url": "https://h.luna.akamaiapis.net:8443/"
+  },
+  {
+   "testName": "python 2.0.8: explicit Host header is signed instead of the URL host",
+   "request": {
+    "method": "GET",
+    "path": "/x",
+    "headers": [
+     {
+      "Host": "api.example.com"
+     }
+    ]
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=kUOX88v3DTql83M7Sh32e9cJZ+VX01kZJ4CYRQz28aE=",
+   "base_url": "https://203.0.113.7/"
+  },
+  {
+   "testName": "python 2.0.8: binary POST body",
+   "request": {
+    "method": "POST",
+    "path": "/bin",
+    "headers": [
+     {
+      "Content-Type": "application/octet-stream"
+     }
+    ],
+    "data_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff"
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=uo9+X8C275h6GeJm9iRVZscKMLD/VRv1MLbAERTV7/4="
+  },
+  {
+   "testName": "python 2.0.8: 200000-byte body (node's test_body_data.txt) hashed up to the default 131072",
+   "request": {
+    "method": "POST",
+    "path": "/testapi/v1/t3",
+    "zero_body_len": 200000
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=doyTK5K27fYWW6EQLA+beZrE4opirExc90qGNQRRNq0="
+  },
+  {
+   "testName": "python 2.0.8: POST body cut to max_body=16",
+   "request": {
+    "method": "POST",
+    "path": "/cut",
+    "data": "0123456789abcdefTRUNCATED"
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=tMPuQdFzqOz43mViattJK6z4Q5/nJH7i0vhHRwEA3bE=",
+   "auth": {
+    "maxBodySize": "16"
+   }
+  },
+  {
+   "testName": "python 2.0.8: header values: tabs and runs of spaces collapse, names case-insensitive, configured order",
+   "request": {
+    "method": "GET",
+    "path": "/h",
+    "headers": [
+     {
+      "x-b": "two\t\twords"
+     },
+     {
+      "X-A": "a  b   c"
+     },
+     {
+      "X-Unsigned": "nope"
+     }
+    ]
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=Ecl01Ue8nhEVgBjGS0+t4l9odar8EGfb47Bqupvw/ss=",
+   "auth": {
+    "headersToSign": "X-A, x-B, X-Missing"
+   }
+  },
+  {
+   "testName": "python 2.0.8: percent-encoded path and query",
+   "request": {
+    "method": "GET",
+    "path": "/caf%C3%A9/a%20b?q=%C3%A9t%C3%A9&x=a+b&empty="
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=GFwkPaOfsnYsTuTaQ+PB9XEsm/CmB8mUlOQcl4ouMtE="
+  },
+  {
+   "testName": "python 2.0.8: DELETE with body is not hashed",
+   "request": {
+    "method": "DELETE",
+    "path": "/d",
+    "data": "body"
+   },
+   "expectedAuthorization": "EG1-HMAC-SHA256 client_token=akab-client-token-xxx-xxxxxxxxxxxxxxxx;access_token=akab-access-token-xxx-xxxxxxxxxxxxxxxx;timestamp=20140321T19:34:21+0000;nonce=nonce-xx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;signature=D3SEj65/03hJ01DkZZAVCdclYLNsX7U8clRldIAc8CY="
+  }
+ ]
+}

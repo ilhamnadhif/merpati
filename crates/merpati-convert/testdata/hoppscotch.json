@@ -1,0 +1,82 @@
+[
+  {
+    "v": 2,
+    "name": "Hopp API",
+    "folders": [
+      {
+        "v": 2,
+        "name": "Users",
+        "folders": [],
+        "requests": [
+          {
+            "v": "6",
+            "name": "List users",
+            "method": "GET",
+            "endpoint": "<<baseUrl>>/users",
+            "params": [
+              { "key": "page", "value": "1", "active": true },
+              { "key": "debug", "value": "1", "active": false }
+            ],
+            "headers": [ { "key": "Accept", "value": "application/json", "active": true } ],
+            "preRequestScript": "",
+            "testScript": "pw.test(\"Status OK\", () => { pw.expect(pw.response.status).toBe(200); });",
+            "auth": { "authType": "inherit", "authActive": true },
+            "body": { "contentType": null, "body": null },
+            "requestVariables": [ { "key": "limit", "value": "10", "active": true } ]
+          }
+        ],
+        "auth": { "authType": "inherit", "authActive": true },
+        "headers": []
+      }
+    ],
+    "requests": [
+      {
+        "v": "6",
+        "name": "Create user",
+        "method": "POST",
+        "endpoint": "<<baseUrl>>/users",
+        "params": [],
+        "headers": [],
+        "preRequestScript": "pw.env.set(\"ts\", Date.now().toString());",
+        "testScript": "",
+        "auth": { "authType": "basic", "authActive": true, "username": "admin", "password": "<<pw>>" },
+        "body": { "contentType": "application/json", "body": "{\"name\": \"Ada\"}" },
+        "requestVariables": []
+      },
+      {
+        "v": "6",
+        "name": "Login",
+        "method": "POST",
+        "endpoint": "<<baseUrl>>/login",
+        "params": [],
+        "headers": [],
+        "preRequestScript": "",
+        "testScript": "",
+        "auth": { "authType": "none", "authActive": true },
+        "body": { "contentType": "application/x-www-form-urlencoded", "body": "user: ada\n# remember: 1" },
+        "requestVariables": []
+      },
+      {
+        "v": "6",
+        "name": "Upload",
+        "method": "POST",
+        "endpoint": "<<baseUrl>>/upload",
+        "params": [],
+        "headers": [],
+        "preRequestScript": "",
+        "testScript": "",
+        "auth": { "authType": "inherit", "authActive": true },
+        "body": {
+          "contentType": "multipart/form-data",
+          "body": [
+            { "key": "title", "value": "hi", "active": true, "isFile": false },
+            { "key": "file", "value": [], "active": true, "isFile": true }
+          ]
+        },
+        "requestVariables": []
+      }
+    ],
+    "auth": { "authType": "bearer", "authActive": true, "token": "<<token>>" },
+    "headers": [ { "key": "X-Team", "value": "core", "active": true } ]
+  }
+]

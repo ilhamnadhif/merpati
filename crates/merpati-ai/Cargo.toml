@@ -1,0 +1,23 @@
+[package]
+name = "merpati-ai"
+description = "AI model requests (OpenAI-compatible, Anthropic, Google Gemini) with MCP tools for Merpati"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+merpati-core.workspace = true
+merpati-http.workspace = true
+merpati-mcp = { path = "../merpati-mcp", default-features = false }
+reqwest.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+futures-util.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+axum.workspace = true
+parking_lot.workspace = true

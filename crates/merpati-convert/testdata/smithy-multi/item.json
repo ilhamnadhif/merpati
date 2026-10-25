@@ -1,0 +1,31 @@
+{
+    "smithy": "2.0",
+    "metadata": {
+        "authors": ["JSON AST export"]
+    },
+    "shapes": {
+        "example.shop#ItemId": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "^[a-z0-9-]+$"
+            }
+        },
+        "example.shop#Item": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "example.shop#ItemId",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                },
+                "name": {
+                    "target": "smithy.api#String"
+                },
+                "price": {
+                    "target": "example.common#Money"
+                }
+            }
+        }
+    }
+}

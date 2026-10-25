@@ -1,0 +1,169 @@
+{
+ "_source": "atlassian-jwt-auth 22.0.1 (MIT); see README.md",
+ "cases": [
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/key1",
+   "aud": "svc-b",
+   "lifetime": 600,
+   "claims": {},
+   "name": "RS256 single audience",
+   "alg": "RS256",
+   "now": 1761200000,
+   "private_key": "rsa_pkcs8.pem",
+   "public_key": "rsa_pub.pem",
+   "token": "eyJhbGciOiJSUzI1NiIsImtpZCI6Im1lcnBhdGktdGVzdC9rZXkxIiwidHlwIjoiSldUIn0.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCJ9.Wg-lAjKwmG-pdcaS7trOQprGFYimV-A5wK5xfzoS_hd2hp_HHKR5dwWOP3_5Zp6B7oqaOenbBc4NUZ3_H3pzVj9BQjU2pov-TZ4oPnKjZ9VcxzHqqmZipRmYHWdTCFFathJqFMmz5ElNUwu0E9YKW7M6_pXeT7uF0aJo8xEigfbZwNmqN1gtHP-dmwJFyOQVAk1yECLy_13m2oe6qe4YGILId5TaHWE5GFI8XU80E_M1e_67IITK8_HU2oEtaVdbldRhKpmUA0r6ZP-GJu0J07Psvldi6Tma4PzclbO_2q8osQ_suG9-HnKUx7KOhFfP1mmfpG73YEbkXmDkj997jg"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/key1",
+   "aud": "svc-b",
+   "lifetime": 600,
+   "claims": {},
+   "name": "RS384 single audience",
+   "alg": "RS384",
+   "now": 1761200000,
+   "private_key": "rsa_pkcs8.pem",
+   "public_key": "rsa_pub.pem",
+   "token": "eyJhbGciOiJSUzM4NCIsImtpZCI6Im1lcnBhdGktdGVzdC9rZXkxIiwidHlwIjoiSldUIn0.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCJ9.Ujlk9Pc4qvHxvDI1cuh6SBM-BhKy_5X7qdP1xkQg_F46vNbiuq0d_shw2YMMjC8WJwcH17J_tdbhgn1wBbJXRrjFMEqYphFNfaPeD5HbF5-PEtoL4ru6T9bhXAddy43egzaneKf_UEpWCBbw87CQftJUrU1nY85pR6fvgA9gKOgz_Xt1MkAU9kE7t3a_z_4cYuIXPNag8QYi59sZR2jdnDYVUm_u-CHwYiCXxHSkKstEvHtBTt0cgRFURZ5nj2m9cHUkM1wEmfDHjM_TGD8nRvgIBD9z-VTpyNUC3JJO9mmLRC2AZyM_dM7kWNAKtDHiZp1XGePKTcRABwyuvljbKw"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/key1",
+   "aud": "svc-b",
+   "lifetime": 600,
+   "claims": {},
+   "name": "RS512 single audience",
+   "alg": "RS512",
+   "now": 1761200000,
+   "private_key": "rsa_pkcs8.pem",
+   "public_key": "rsa_pub.pem",
+   "token": "eyJhbGciOiJSUzUxMiIsImtpZCI6Im1lcnBhdGktdGVzdC9rZXkxIiwidHlwIjoiSldUIn0.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCJ9.1jUgyrI6CtYtpti9vpkDk-2ZLPLLij01fERltBYFLbVrm3tJn8fNKRKalrZu-tw15iSAu81BiQ-nucFPQZ-Q4eUBjLpiAZFQnBmocMFZCRkqX0XiA8d5dGpGfwAhSWcV8lTQrvQNpjxHxz0ULLE4Og8KSTDuNGWYumWDvx9jf4sM1ojStcyE9Cg90FSKiMIE57xoEG-WootOTu4RZaWajZqzHVaaIeGtT8r25-aWgDEl2IumH3ZPaQ5WS_mfKdYcyXQ62c6vkK8Goa373IGnTufJ0Eq5itWz_PVaRYH44FRDjv848rMkHVpT3nywOmKj1BRAha7Hu8dZhzQNeHs-jA"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/key1",
+   "aud": "svc-b",
+   "lifetime": 600,
+   "claims": {},
+   "name": "PS256 single audience",
+   "alg": "PS256",
+   "now": 1761200000,
+   "private_key": "rsa_pkcs8.pem",
+   "public_key": "rsa_pub.pem",
+   "token": "eyJhbGciOiJQUzI1NiIsImtpZCI6Im1lcnBhdGktdGVzdC9rZXkxIiwidHlwIjoiSldUIn0.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCJ9.H7WZEaj673yJ-wjs9oj5AKz4V7jskrAlI4Eme67OVaFQXn0lDjhgVdJ-Ir1OGlFqUWWeuAcFmrIPGO-QgfSHhmyfhNW7tDxR_DRdvrqhkDU9okRs3YcBL__5WydFcH3RT3hlr3EPiET9agvhVYZ963SkZcNNm7FoYPb0BGmvLKjsfEY7D-R8rKwtXuqwehmD5vPOx3bwczjJUUU4qR1Dxle_EL-zfCSK9Rul2ScNzOu5tRzRGggcnWWYTBtbGFFXsjP5L63HJgDTDr4jmGNbk_43377xbi-h3hqtFxewQSO6Xizey3NHZ2dJi9MPoGon00JLKdfKXlYiiMM9X5KaLA"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/key1",
+   "aud": "svc-b",
+   "lifetime": 600,
+   "claims": {},
+   "name": "PS384 single audience",
+   "alg": "PS384",
+   "now": 1761200000,
+   "private_key": "rsa_pkcs8.pem",
+   "public_key": "rsa_pub.pem",
+   "token": "eyJhbGciOiJQUzM4NCIsImtpZCI6Im1lcnBhdGktdGVzdC9rZXkxIiwidHlwIjoiSldUIn0.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCJ9.MhoKQTY5gNGFimXp3Ft5EBOzGOo9g-A46jsajJRf6K5HHmx2B4nYt6MZY-bR-ybm4SWx5OFD31ZVm_FF9gpd3xpvl76sWWOP4TGgbwykfxnGvoOsmRibhLO5uCNbnP97ZNC2CJtIoDCqsmhfeBNUNQIfp-rY1M73G_UbCXdNyMfPqRdc82T0gab_rZqciTT8Z7A8frt9J2oJvv77zYMpQOFjXeTNXmuAZObRBSQGAV0eWNhklvWrA6POJFwvYx1RDcymm42PIfrA7qm-1R-0-hVeIq_VT-lR7___sj_HUnYPIHxAEJ_ulN7Re1ZNJOdmev7nWTcq_B3T-GwNvDoGhQ"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/key1",
+   "aud": "svc-b",
+   "lifetime": 600,
+   "claims": {},
+   "name": "PS512 single audience",
+   "alg": "PS512",
+   "now": 1761200000,
+   "private_key": "rsa_pkcs8.pem",
+   "public_key": "rsa_pub.pem",
+   "token": "eyJhbGciOiJQUzUxMiIsImtpZCI6Im1lcnBhdGktdGVzdC9rZXkxIiwidHlwIjoiSldUIn0.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCJ9.bTaJqQsuoF5OZyiQ8NIJnvrboPkUrWqOXM3_6dPlxTTQRVMns42-f720d5ABitcSWrBDfs10XYtZhsZfsOdU9PYkwIKZpNlkvU_wb7B0CC8BYu88eCW-VEDx-EFglN9fHn-z8rgc7hDoxaoyF-7axSQ8lMUfE83oeKtNLwWip3n-JssKf-6CQBK8PQjlem2ezrQlzIhg9isQG1MkSbE3ZMAoT1WrP50RBAwo1sxi-jOfLrUr0rgm_5lRmLyzX22MSL32Teuq0EToT71nw44tAzh0DkqvI1F6CQO-N2BIGLqDXGfPagvCcmhbfY0rkhD_oBnVXST3vgDijcb9KQdPbQ"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/key1",
+   "aud": "svc-b",
+   "lifetime": 600,
+   "claims": {},
+   "name": "ES256 single audience",
+   "alg": "ES256",
+   "now": 1761200000,
+   "private_key": "ec_p256.pem",
+   "public_key": "ec_p256_pub.pem",
+   "token": "eyJhbGciOiJFUzI1NiIsImtpZCI6Im1lcnBhdGktdGVzdC9rZXkxIiwidHlwIjoiSldUIn0.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCJ9.bdv_T7F6ncVZdqwn9OM4diQC9zsyGJa73A-7jFUxb9fkF0AaAWJtiBzJNey0kETeM8If8QCVYj3uAKND2W_g7w"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/key1",
+   "aud": "svc-b",
+   "lifetime": 600,
+   "claims": {},
+   "name": "ES384 single audience",
+   "alg": "ES384",
+   "now": 1761200000,
+   "private_key": "ec_p384.pem",
+   "public_key": "ec_p384_pub.pem",
+   "token": "eyJhbGciOiJFUzM4NCIsImtpZCI6Im1lcnBhdGktdGVzdC9rZXkxIiwidHlwIjoiSldUIn0.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCJ9.PwnEaFch8DdRdM0zthwZO0y4WWUz3FZmmW552JS2miaKLQDVAcNKQcSO0zR8UQGp349EiL4U8jVsYg76BjCP_I_CTL2pskiLlji8T5U7J3yV9GmtC1cgpPa_Fk8MmuUp"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/key1",
+   "aud": [
+    "svc-b",
+    "svc-c"
+   ],
+   "lifetime": 600,
+   "claims": {},
+   "name": "RS256 several audiences",
+   "alg": "RS256",
+   "now": 1761200000,
+   "private_key": "rsa_pkcs8.pem",
+   "public_key": "rsa_pub.pem",
+   "token": "eyJhbGciOiJSUzI1NiIsImtpZCI6Im1lcnBhdGktdGVzdC9rZXkxIiwidHlwIjoiSldUIn0.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjpbInN2Yy1iIiwic3ZjLWMiXSwianRpIjoiMTc2MTE3NDgwMDozMTQxNTkyNjUzIiwibmJmIjoxNzYxMjAwMDAwLCJzdWIiOiJtZXJwYXRpLXRlc3QifQ.uSVBrOWRjT5hIKANg3DXSKA57M9I1AaIaR4XrBwjN1YVzRuIWIZvw7MS9usgl-XKj190oRtm-uo8ybXstFJHo_1v6iTrhn6lOA2xE3pStPIe49FQZEsueNUQF6pcUq6gMCBdr2EhwGyd_IejUfGeXA8Ubk-kzl_Xl_emshMLpwcQT6AG244QEsS_nNIluS_UyHfmPJT4Ey_gf66eGHBmZN9Kw00yqrSuPeh-bNUsDkcH06mLO1zheTG07nI63Gs1vmiweCDZKGo_4m354qGs0IEEKc6pXQWiDRKYPyu-yre-0ohNF77Vitgzf_fSgVBVCnW-QQzuwfJUJCzNqkGTtQ"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/key1",
+   "aud": "svc-b",
+   "lifetime": 600,
+   "claims": {
+    "scope": "read",
+    "ctx": {
+     "a": 1
+    }
+   },
+   "name": "RS256 additional claims",
+   "alg": "RS256",
+   "now": 1761200000,
+   "private_key": "rsa_pkcs8.pem",
+   "public_key": "rsa_pub.pem",
+   "token": "eyJhbGciOiJSUzI1NiIsImtpZCI6Im1lcnBhdGktdGVzdC9rZXkxIiwidHlwIjoiSldUIn0.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCIsInNjb3BlIjoicmVhZCIsImN0eCI6eyJhIjoxfX0.o3RvU9D_TXAhGkwTbToeXyGTDQjMaQp2d4PhgEkWFGTx1LPjr8T1cM8gmvyidXliCdgZysWsTuBJcBk9sCOkuYjO2zB92yeRSVvPOHrsmSHxBfIgifiSrMuD67N3KlyG6tmDwh1kuz0U4wIPctyRB-HppTbVvblj-OQgXc7pbqicNxVwLSUc4IZT9Ym4MFKarfYlu6lmviScM0Zb-ekqAmPm8v2bHyoAu_zabdvBoaMeFOHLWZBzEvhRUfj_ls3HE6QhILMr3MFp-x6Aflt0v_h_Mku23GWiTR0LKw_UUmtTFC9jluYyGm6W5izsDk0jhGnFxHP75wZfI3FXBY_riQ"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test",
+   "aud": "svc-b",
+   "lifetime": 600,
+   "claims": {},
+   "name": "RS256 kid equal to issuer",
+   "alg": "RS256",
+   "now": 1761200000,
+   "private_key": "rsa_pkcs8.pem",
+   "public_key": "rsa_pub.pem",
+   "token": "eyJhbGciOiJSUzI1NiIsImtpZCI6Im1lcnBhdGktdGVzdCIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDA2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCJ9.a5hfK8azPMCB8elAqq2k2M7aYC7_MNpM_xU1104aylOaUouQ7LKLPrF7YLN-d78BzA-1Nc3JUUiVsGlgyu8V1xeGWOsKJqiNebacYiN_RRoqyEO820h1v5DvwxTUo2zcwJZt_Qy_e7LXiLSSZBu1QZH2Zgpi5-ylLfgwBCgz2WzskiNajq_inM18JgEl0eZbJ5CeigPqK0jjEdijdy9eKtQdhQaxpW1vWcTQ7VnaySa393yDWTvzbtTJatHXLqP58v63hf1SsgCLtm6Y281LsOPyCbOfK0ukmvi_DLXM-y0ml-nHlXzdRMYfg_wm4CHgnjuLd3aUMNhTaC4imqmaRA"
+  },
+  {
+   "iss": "merpati-test",
+   "kid": "merpati-test/2025/k-1.pem",
+   "aud": "svc-b",
+   "lifetime": 3600,
+   "claims": {},
+   "name": "ES256 nested key path, max lifetime",
+   "alg": "ES256",
+   "now": 1761200000,
+   "private_key": "ec_p256.pem",
+   "public_key": "ec_p256_pub.pem",
+   "token": "eyJhbGciOiJFUzI1NiIsImtpZCI6Im1lcnBhdGktdGVzdC8yMDI1L2stMS5wZW0iLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJtZXJwYXRpLXRlc3QiLCJleHAiOjE3NjEyMDM2MDAsImlhdCI6MTc2MTIwMDAwMCwiYXVkIjoic3ZjLWIiLCJqdGkiOiIxNzYxMTc0ODAwOjMxNDE1OTI2NTMiLCJuYmYiOjE3NjEyMDAwMDAsInN1YiI6Im1lcnBhdGktdGVzdCJ9.Nj79app8TnbQW39YWrM9Jj_J-xzHVyB6HKQF_gPe5AAY6niWzdLYXPlPDygaWsMB1XiNI0rHeozJP4H9ktF0cA"
+  }
+ ]
+}

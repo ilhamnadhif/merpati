@@ -1,0 +1,28 @@
+[package]
+name = "merpati-flows"
+description = "Local Flows: block-based request/condition/loop/script/AI flows, storage and executor"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+merpati-core.workspace = true
+merpati-http.workspace = true
+merpati-runner.workspace = true
+merpati-ai = { path = "../merpati-ai" }
+tokio.workspace = true
+tokio-util.workspace = true
+futures-util.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+indexmap.workspace = true
+thiserror.workspace = true
+chrono.workspace = true
+regex.workspace = true
+
+[dev-dependencies]
+merpati-script.workspace = true
+axum.workspace = true
+tempfile.workspace = true
+tokio.workspace = true

@@ -1,0 +1,49 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-10-01T10:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    { "_id": "wrk_1", "parentId": null, "modified": 1, "created": 1, "name": "Demo API", "description": "Demo workspace", "scope": "collection", "_type": "workspace" },
+    { "_id": "env_base", "parentId": "wrk_1", "name": "Base Environment", "data": { "base_url": "http://localhost:3000", "auth": { "user": "admin" }, "token": "abc" }, "dataPropertyOrder": null, "color": null, "isPrivate": false, "metaSortKey": 1, "_type": "environment" },
+    { "_id": "env_stg", "parentId": "env_base", "name": "Staging", "data": { "base_url": "https://staging.example.com" }, "isPrivate": false, "metaSortKey": 2, "_type": "environment" },
+    { "_id": "fld_users", "parentId": "wrk_1", "name": "Users", "description": "", "environment": { "page_size": 20 }, "environmentPropertyOrder": null, "metaSortKey": -100, "_type": "request_group" },
+    {
+      "_id": "req_list", "parentId": "fld_users", "name": "List users", "description": "", "method": "GET",
+      "url": "{{ _.base_url }}/users",
+      "body": {},
+      "parameters": [ { "id": "p1", "name": "page", "value": "1" }, { "id": "p2", "name": "debug", "value": "true", "disabled": true } ],
+      "headers": [ { "name": "Accept", "value": "application/json" } ],
+      "authentication": { "type": "bearer", "token": "{{ _.token }}" },
+      "afterResponseScript": "insomnia.test('ok', () => { insomnia.expect(insomnia.response.code).to.eql(200); });",
+      "metaSortKey": -10, "isPrivate": false, "settingFollowRedirects": "global", "_type": "request"
+    },
+    {
+      "_id": "req_create", "parentId": "fld_users", "name": "Create user", "description": "Creates one", "method": "POST",
+      "url": "{{ _.base_url }}/users",
+      "body": { "mimeType": "application/json", "text": "{\"id\": \"{% uuid 'v4' %}\", \"name\": \"Ada\"}" },
+      "parameters": [],
+      "headers": [ { "name": "Content-Type", "value": "application/json" } ],
+      "authentication": { "type": "basic", "username": "{{ _.auth.user }}", "password": "pw" },
+      "metaSortKey": -5, "settingFollowRedirects": "off", "settingEncodeUrl": true, "_type": "request"
+    },
+    {
+      "_id": "req_gql", "parentId": "wrk_1", "name": "Who am I", "method": "POST",
+      "url": "{{ _.base_url }}/graphql",
+      "body": { "mimeType": "application/graphql", "text": "{\"query\":\"{ me { id } }\",\"variables\":{\"x\":1}}" },
+      "headers": [ { "name": "Content-Type", "value": "application/json" } ],
+      "authentication": {}, "metaSortKey": -50, "_type": "request"
+    },
+    {
+      "_id": "req_upload", "parentId": "wrk_1", "name": "Upload", "method": "POST",
+      "url": "{{ _.base_url }}/upload",
+      "body": { "mimeType": "multipart/form-data", "params": [ { "name": "title", "value": "hi" }, { "name": "file", "type": "file", "fileName": "/tmp/a.png" } ] },
+      "headers": [ { "name": "Content-Type", "value": "multipart/form-data" } ],
+      "authentication": { "type": "oauth2", "grantType": "client_credentials", "accessTokenUrl": "https://auth.example.com/token", "clientId": "cid", "clientSecret": "{{ _.secret }}", "credentialsInBody": true, "scope": "read" },
+      "metaSortKey": -40, "_type": "request"
+    },
+    { "_id": "ws_1", "parentId": "wrk_1", "name": "Echo socket", "url": "wss://echo.example.com", "headers": [], "authentication": {}, "metaSortKey": -30, "_type": "websocket_request" },
+    { "_id": "uts_1", "parentId": "wrk_1", "name": "Suite", "metaSortKey": -1, "_type": "unit_test_suite" },
+    { "_id": "jar_1", "parentId": "wrk_1", "name": "Default Jar", "cookies": [], "_type": "cookie_jar" }
+  ]
+}

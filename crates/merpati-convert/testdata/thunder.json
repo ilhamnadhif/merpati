@@ -1,0 +1,45 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "Thunder API",
+  "dateExported": "2026-10-01T10:00:00.000Z",
+  "version": "1.1",
+  "folders": [
+    { "_id": "f1", "name": "Users", "containerId": "", "created": "2026-01-01T00:00:00.000Z", "sortNum": 10000 }
+  ],
+  "requests": [
+    {
+      "_id": "r1", "colId": "c1", "containerId": "f1", "name": "Get user",
+      "url": "/users/{id}?expand=true", "method": "GET", "sortNum": 10000,
+      "created": "2026-01-01T00:00:00.000Z", "modified": "2026-01-01T00:00:00.000Z",
+      "headers": [ { "name": "Accept", "value": "application/json" }, { "name": "X-Off", "value": "1", "isDisabled": true } ],
+      "params": [ { "name": "expand", "value": "true", "isPath": false }, { "name": "id", "value": "7", "isPath": true } ],
+      "tests": [
+        { "type": "res-code", "custom": "", "action": "equal", "value": "200" },
+        { "type": "json-query", "custom": "json.data.id", "action": "equal", "value": "7" },
+        { "type": "res-time", "custom": "", "action": "<", "value": "500" },
+        { "type": "Content-Type", "custom": "", "action": "contains", "value": "json" },
+        { "type": "set-env-var", "custom": "json.data.name", "action": "setto", "value": "{{userName}}" }
+      ]
+    },
+    {
+      "_id": "r2", "colId": "c1", "containerId": "", "name": "Create",
+      "url": "https://api.example.com/users", "method": "POST", "sortNum": 20000,
+      "headers": [], "params": [],
+      "body": { "type": "json", "raw": "{\"name\": \"Ada\"}", "form": [] },
+      "auth": { "type": "basic", "basic": { "username": "u", "password": "p" } },
+      "tests": []
+    },
+    {
+      "_id": "r3", "colId": "c1", "containerId": "", "name": "Upload",
+      "url": "https://api.example.com/upload", "method": "POST", "sortNum": 30000,
+      "headers": [], "params": [],
+      "body": { "type": "formdata", "raw": "", "form": [ { "name": "title", "value": "hi" } ], "files": [ { "name": "file", "value": "/tmp/a.png" } ] },
+      "tests": []
+    }
+  ],
+  "settings": {
+    "auth": { "type": "bearer", "bearer": "{{token}}" },
+    "headers": [ { "name": "X-Client", "value": "thunder" } ],
+    "options": { "baseUrl": "https://api.example.com" }
+  }
+}

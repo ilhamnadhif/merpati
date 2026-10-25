@@ -1,0 +1,61 @@
+[package]
+name = "merpati-http"
+description = "HTTP and WebSocket clients for Merpati"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+merpati-core.workspace = true
+reqwest.workspace = true
+rustls.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+futures-util.workspace = true
+bytes.workspace = true
+cookie_store.workspace = true
+cookie.workspace = true
+# Parser for the bundled public suffix list (`data/`), which cookie_store uses
+# to reject cookies set for `com`, `co.uk`, `github.io`, ...
+publicsuffix = "2"
+url.workspace = true
+percent-encoding.workspace = true
+# Proxy auto-config (PAC) scripts; the script engine links it anyway.
+boa_engine.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+parking_lot.workspace = true
+tokio-tungstenite.workspace = true
+http.workspace = true
+# The proxy matcher reqwest uses (env vars and the macOS/Windows system
+# settings), for the WebSocket, MQTT and gRPC tunnels (`proxy` module).
+hyper-util = { version = "0.1.21", default-features = false, features = ["client-proxy", "client-proxy-system"] }
+tokio-rustls = { version = "0.26", default-features = false, features = ["ring", "logging", "tls12"] }
+time = "0.3"
+rustls-native-certs = "0.8"
+base64.workspace = true
+# Digest authentication (`digest`), for proxies and the Digest auth scheme.
+md-5.workspace = true
+sha2.workspace = true
+hex.workspace = true
+# Pure-Rust PKCS#12 (PBES2/AES, 3DES, RC2-40) and encrypted PKCS#8 keys.
+p12-keystore = "0.4"
+pkcs8 = { version = "0.11", features = ["std", "encryption", "3des", "sha1-insecure"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# The exceptions list, PAC and SOCKS settings of the system proxy (hyper-util reads only host and port).
+system-configuration = "0.7"
+
+[target.'cfg(windows)'.dependencies]
+# The PAC URL (`AutoConfigURL`) of the system proxy settings.
+windows-registry = "0.6"
+
+[dev-dependencies]
+tempfile.workspace = true
+# http2: the TLS tests serve HTTP/2 too.
+axum = { workspace = true, features = ["http2"] }
+rcgen = { version = "0.14", default-features = false, features = ["ring", "pem", "crypto"] }

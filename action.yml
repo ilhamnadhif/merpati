@@ -1,0 +1,76 @@
+name: Merpati collection run
+description: Run a Postman or Merpati collection with the Merpati CLI and publish JUnit results.
+branding:
+  icon: send
+  color: blue
+inputs:
+  collection:
+    description: Postman collection file, Merpati workspace directory, or collection folder.
+    required: true
+  collection-name:
+    description: Collection name or id when the workspace has several.
+    required: false
+    default: ""
+  environment:
+    description: Environment file (Postman format) or workspace environment name.
+    required: false
+    default: ""
+  iteration-data:
+    description: CSV or JSON data file.
+    required: false
+    default: ""
+  reporters:
+    description: Comma separated reporters (cli, json, junit, html).
+    required: false
+    default: cli,junit
+  junit-export:
+    description: Path of the JUnit report.
+    required: false
+    default: merpati-reports/junit.xml
+  args:
+    description: Extra arguments for `merpati run` (e.g. "--bail --env-var key=value").
+    required: false
+    default: ""
+  version:
+    description: Git ref of Merpati to build (defaults to the ref of this action).
+    required: false
+    default: ""
+outputs:
+  junit-report:
+    description: Path of the JUnit report.
+    value: ${{ inputs.junit-export }}
+runs:
+  using: composite
+  steps:
+    - name: Install Rust toolchain
+      shell: bash
+      run: |
+        if ! command -v cargo >/dev/null; then
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+        fi
+    - name: Cache Merpati build
+      uses: actions/cache@v4
+      with:
+        path: ${{ github.action_path }}/target
+        key: merpati-cli-${{ runner.os }}-${{ hashFiles(format('{0}/Cargo.lock', github.action_path)) }}
+    - name: Build Merpati CLI
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        export PATH="$HOME/.cargo/bin:$PATH"
+        if [ -n "${{ inputs.version }}" ]; then git fetch --depth 1 origin "${{ inputs.version }}" && git checkout FETCH_HEAD; fi
+        cargo build --release --locked -p merpati-cli --bin merpati
+        echo "${{ github.action_path }}/target/release" >> "$GITHUB_PATH"
+    - name: Run collection
+      shell: bash
+      env:
+        MERPATI_NO_KEYCHAIN: "1"
+      run: |
+        args=(run "${{ inputs.collection }}" -r "${{ inputs.reporters }}" --reporter-junit-export "${{ inputs.junit-export }}")
+        [ -n "${{ inputs.collection-name }}" ] && args+=(-c "${{ inputs.collection-name }}")
+        [ -n "${{ inputs.environment }}" ] && args+=(-e "${{ inputs.environment }}")
+        [ -n "${{ inputs.iteration-data }}" ] && args+=(-d "${{ inputs.iteration-data }}")
+        # shellcheck disable=SC2206
+        extra=(${{ inputs.args }})
+        merpati "${args[@]}" "${extra[@]}"

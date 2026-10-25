@@ -1,0 +1,20 @@
+{
+  "title": "API health",
+  "kpis": [
+    {"label": "Requests", "value": "12.4k", "delta": "+8%", "up": true},
+    {"label": "Errors", "value": "37", "delta": "+3", "up": false},
+    {"label": "p95 latency", "value": "184 ms", "delta": "-12%", "up": true},
+    {"label": "Uptime", "value": "99.98%", "delta": "0%", "up": true}
+  ],
+  "requests": [
+    {"path": "GET /users", "code": 200, "ok": true, "ms": 42},
+    {"path": "POST /orders", "code": 201, "ok": true, "ms": 118},
+    {"path": "GET /orders/17", "code": 404, "ok": false, "ms": 12},
+    {"path": "DELETE /sessions", "code": 500, "ok": false, "ms": 903}
+  ],
+  "budgets": [
+    {"name": "Auth", "pct": 35},
+    {"name": "Database", "pct": 72},
+    {"name": "Rendering", "pct": 18}
+  ]
+}

@@ -1,0 +1,48 @@
+[package]
+name = "merpati-proxy"
+description = "Local capture proxy for Merpati: HTTP forwarding, HTTPS interception with a local CA, CONNECT tunnels"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+merpati-core.workspace = true
+merpati-http.workspace = true
+tokio.workspace = true
+tokio-util = { workspace = true, features = ["rt"] }
+bytes.workspace = true
+http.workspace = true
+futures-util.workspace = true
+parking_lot.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+chrono.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+base64.workspace = true
+sha2.workspace = true
+rand.workspace = true
+url.workspace = true
+percent-encoding.workspace = true
+rustls.workspace = true
+hyper = { version = "1", features = ["server", "client", "http1", "http2"] }
+hyper-util = { version = "0.1", features = ["tokio"] }
+http-body = "1"
+http-body-util = "0.1"
+tokio-rustls = { version = "0.26", default-features = false, features = ["ring", "logging", "tls12"] }
+rcgen = { version = "0.14", default-features = false, features = ["ring", "pem", "crypto", "x509-parser"] }
+x509-parser = "0.18"
+rustls-native-certs = "0.8"
+time = "0.3"
+flate2 = "1"
+brotli-decompressor = "6"
+
+[dev-dependencies]
+axum = { workspace = true, features = ["http2"] }
+reqwest.workspace = true
+tokio-tungstenite.workspace = true
+futures-util.workspace = true
+brotli = "9"
+libc = "0.2"
+tempfile.workspace = true

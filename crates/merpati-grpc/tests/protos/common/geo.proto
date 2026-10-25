@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package common;
+
+message Geo {
+  double lat = 1;
+  double lng = 2;
+  Note note = 3;
+}
+
+message Note {
+  string text = 1;
+}

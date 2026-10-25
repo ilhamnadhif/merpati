@@ -1,0 +1,53 @@
+[package]
+name = "merpati-mcp"
+description = "Model Context Protocol client (stdio, Streamable HTTP, HTTP+SSE, OAuth) for Merpati"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[features]
+# Only gates the `fake_mcp_server` test helper binary; library consumers are
+# unaffected (binaries of dependencies are never built).
+default = ["fake-server"]
+fake-server = []
+
+[dependencies]
+merpati-core.workspace = true
+merpati-http.workspace = true
+reqwest.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+futures-util.workspace = true
+bytes.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+parking_lot.workspace = true
+base64.workspace = true
+sha2.workspace = true
+rand.workspace = true
+url.workspace = true
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[dev-dependencies]
+axum.workspace = true
+
+[[bin]]
+name = "fake_mcp_server"
+path = "src/bin/fake_mcp_server.rs"
+required-features = ["fake-server"]
+test = false
+doc = false
+
+[[test]]
+name = "stdio"
+path = "tests/stdio.rs"
+required-features = ["fake-server"]
+
+[[test]]
+name = "features"
+path = "tests/features.rs"
+required-features = ["fake-server"]

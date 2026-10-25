@@ -1,0 +1,42 @@
+[package]
+name = "merpati-auth"
+description = "Auth schemes for Merpati: API key, Basic, Bearer, Digest, JWT, OAuth 1.0/2.0, Hawk, AWS SigV4, NTLM, EdgeGrid, ASAP"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+merpati-core.workspace = true
+# The challenge parser and Digest computation (shared with the proxy
+# tunnels), and the engine's per-host clients for OAuth 2.0 token requests.
+merpati-http.workspace = true
+reqwest.workspace = true
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+base64.workspace = true
+sha1 = { workspace = true, features = ["oid"] }
+sha2 = { workspace = true, features = ["oid"] }
+rsa = "0.9"
+# ES512 (ECDSA P-521), which jsonwebtoken lacks; same RustCrypto generation as its p256/p384.
+p521 = { version = "0.13.3", default-features = false, features = ["ecdsa", "getrandom", "pkcs8", "std"] }
+md-5.workspace = true
+hmac.workspace = true
+hex.workspace = true
+rand.workspace = true
+url.workspace = true
+percent-encoding.workspace = true
+jsonwebtoken.workspace = true
+chrono.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+axum.workspace = true
+rustls.workspace = true
+serde_urlencoded = "0.7"
+tempfile.workspace = true
+tokio-rustls = { version = "0.26", default-features = false, features = ["ring", "logging", "tls12"] }
+rcgen = { version = "0.14", default-features = false, features = ["ring", "pem", "crypto"] }

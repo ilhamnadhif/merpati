@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore
+  description: A sample API that uses a petstore as an example.
+  version: 1.0.0
+servers:
+  - url: https://{env}.example.com/v1
+    variables:
+      env:
+        default: petstore
+  - url: http://localhost:8080/v1
+tags:
+  - name: pets
+    description: Everything about your pets
+  - name: store
+    description: Orders
+security:
+  - api_key: []
+paths:
+  /pets:
+    get:
+      summary: List all pets
+      operationId: listPets
+      tags: [pets]
+      parameters:
+        - name: limit
+          in: query
+          description: How many items to return at one time (max 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 20
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A paged array of pets
+          headers:
+            x-next:
+              description: A link to the next page of responses
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pets'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: createPets
+      tags: [pets]
+      security:
+        - petstore_auth: [write:pets]
+      requestBody:
+        $ref: '#/components/requestBodies/NewPet'
+      responses:
+        '201':
+          description: Null response
+  /pets/{petId}:
+    parameters:
+      - name: X-Request-Id
+        in: header
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      summary: Info for a specific pet
+      operationId: showPetById
+      tags: [pets]
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          description: The id of the pet to retrieve
+          schema:
+            type: string
+          example: "42"
+      responses:
+        '200':
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              examples:
+                dog:
+                  summary: A dog
+                  value: {id: 1, name: Rex}
+                cat:
+                  $ref: '#/components/examples/Cat'
+  /pets/{petId}/uploadImage:
+    post:
+      summary: Upload an image
+      tags: [pets]
+      parameters:
+        - name: petId
+          in: path
+          required: true
+          schema: {type: integer}
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                caption:
+                  type: string
+                  example: My pet
+      responses:
+        '200':
+          description: OK
+  /store/order:
+    post:
+      summary: Place an order
+      tags: [store]
+      security: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                petId: {type: integer, example: 7}
+                quantity: {type: integer}
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /categories/tree:
+    get:
+      summary: Get category tree
+      tags: [store]
+      responses:
+        '200':
+          description: The tree
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-API-Key
+      in: header
+    petstore_auth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://petstore.example.com/oauth/authorize
+          tokenUrl: https://petstore.example.com/oauth/token
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+  requestBodies:
+    NewPet:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NewPet'
+  examples:
+    Cat:
+      summary: A cat
+      value: {id: 2, name: Tom}
+  schemas:
+    Pet:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        name:
+          type: string
+          example: doggie
+        tag:
+          type: string
+    NewPet:
+      type: object
+      required: [name]
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        tag:
+          $ref: '#/components/schemas/Tag'
+    Tag:
+      type: object
+      properties:
+        name:
+          type: string
+    Pets:
+      type: array
+      maxItems: 100
+      items:
+        $ref: '#/components/schemas/Pet'
+    Order:
+      type: object
+      xml:
+        name: order
+      properties:
+        id: {type: integer, example: 10}
+        status: {type: string, enum: [placed, approved]}
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

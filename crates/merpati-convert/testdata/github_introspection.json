@@ -1,0 +1,756 @@
+{
+ "data": {
+  "__schema": {
+   "queryType": {
+    "name": "Query"
+   },
+   "mutationType": {
+    "name": "Mutation"
+   },
+   "subscriptionType": null,
+   "types": [
+    {
+     "kind": "OBJECT",
+     "name": "Query",
+     "description": null,
+     "fields": [
+      {
+       "name": "viewer",
+       "description": "The currently authenticated user.",
+       "args": [],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "OBJECT",
+         "name": "User",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "repository",
+       "description": null,
+       "args": [
+        {
+         "name": "owner",
+         "description": null,
+         "type": {
+          "kind": "NON_NULL",
+          "name": null,
+          "ofType": {
+           "kind": "SCALAR",
+           "name": "String",
+           "ofType": null
+          }
+         },
+         "defaultValue": null
+        },
+        {
+         "name": "name",
+         "description": null,
+         "type": {
+          "kind": "NON_NULL",
+          "name": null,
+          "ofType": {
+           "kind": "SCALAR",
+           "name": "String",
+           "ofType": null
+          }
+         },
+         "defaultValue": null
+        }
+       ],
+       "type": {
+        "kind": "OBJECT",
+        "name": "Repository",
+        "ofType": null
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "search",
+       "description": null,
+       "args": [
+        {
+         "name": "query",
+         "description": null,
+         "type": {
+          "kind": "NON_NULL",
+          "name": null,
+          "ofType": {
+           "kind": "SCALAR",
+           "name": "String",
+           "ofType": null
+          }
+         },
+         "defaultValue": null
+        },
+        {
+         "name": "type",
+         "description": null,
+         "type": {
+          "kind": "NON_NULL",
+          "name": null,
+          "ofType": {
+           "kind": "ENUM",
+           "name": "SearchType",
+           "ofType": null
+          }
+         },
+         "defaultValue": null
+        },
+        {
+         "name": "first",
+         "description": null,
+         "type": {
+          "kind": "SCALAR",
+          "name": "Int",
+          "ofType": null
+         },
+         "defaultValue": null
+        }
+       ],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "OBJECT",
+         "name": "SearchResultItemConnection",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      }
+     ],
+     "inputFields": null,
+     "interfaces": [],
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "OBJECT",
+     "name": "Mutation",
+     "description": null,
+     "fields": [
+      {
+       "name": "addStar",
+       "description": null,
+       "args": [
+        {
+         "name": "input",
+         "description": null,
+         "type": {
+          "kind": "NON_NULL",
+          "name": null,
+          "ofType": {
+           "kind": "INPUT_OBJECT",
+           "name": "AddStarInput",
+           "ofType": null
+          }
+         },
+         "defaultValue": null
+        }
+       ],
+       "type": {
+        "kind": "OBJECT",
+        "name": "AddStarPayload",
+        "ofType": null
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      }
+     ],
+     "inputFields": null,
+     "interfaces": [],
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "OBJECT",
+     "name": "User",
+     "description": null,
+     "fields": [
+      {
+       "name": "login",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "SCALAR",
+         "name": "String",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "name",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "SCALAR",
+        "name": "String",
+        "ofType": null
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "repositories",
+       "description": null,
+       "args": [
+        {
+         "name": "first",
+         "description": null,
+         "type": {
+          "kind": "SCALAR",
+          "name": "Int",
+          "ofType": null
+         },
+         "defaultValue": null
+        },
+        {
+         "name": "after",
+         "description": null,
+         "type": {
+          "kind": "SCALAR",
+          "name": "String",
+          "ofType": null
+         },
+         "defaultValue": null
+        }
+       ],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "OBJECT",
+         "name": "RepositoryConnection",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "avatarUrl",
+       "description": null,
+       "args": [
+        {
+         "name": "size",
+         "description": null,
+         "type": {
+          "kind": "SCALAR",
+          "name": "Int",
+          "ofType": null
+         },
+         "defaultValue": null
+        }
+       ],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "SCALAR",
+         "name": "URI",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      }
+     ],
+     "inputFields": null,
+     "interfaces": [
+      {
+       "kind": "INTERFACE",
+       "name": "RepositoryOwner",
+       "ofType": null
+      }
+     ],
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "OBJECT",
+     "name": "Repository",
+     "description": null,
+     "fields": [
+      {
+       "name": "name",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "SCALAR",
+         "name": "String",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "stargazerCount",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "SCALAR",
+         "name": "Int",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "owner",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "INTERFACE",
+         "name": "RepositoryOwner",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "issues",
+       "description": null,
+       "args": [
+        {
+         "name": "first",
+         "description": null,
+         "type": {
+          "kind": "NON_NULL",
+          "name": null,
+          "ofType": {
+           "kind": "SCALAR",
+           "name": "Int",
+           "ofType": null
+          }
+         },
+         "defaultValue": null
+        }
+       ],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "OBJECT",
+         "name": "IssueConnection",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "oldField",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "SCALAR",
+        "name": "String",
+        "ofType": null
+       },
+       "isDeprecated": true,
+       "deprecationReason": "Use name"
+      }
+     ],
+     "inputFields": null,
+     "interfaces": [],
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "INTERFACE",
+     "name": "RepositoryOwner",
+     "description": null,
+     "fields": [
+      {
+       "name": "login",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "SCALAR",
+         "name": "String",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      }
+     ],
+     "inputFields": null,
+     "interfaces": [],
+     "enumValues": null,
+     "possibleTypes": [
+      {
+       "kind": "OBJECT",
+       "name": "User",
+       "ofType": null
+      }
+     ]
+    },
+    {
+     "kind": "OBJECT",
+     "name": "RepositoryConnection",
+     "description": null,
+     "fields": [
+      {
+       "name": "nodes",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "LIST",
+        "name": null,
+        "ofType": {
+         "kind": "OBJECT",
+         "name": "Repository",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "totalCount",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "SCALAR",
+         "name": "Int",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      }
+     ],
+     "inputFields": null,
+     "interfaces": [],
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "OBJECT",
+     "name": "IssueConnection",
+     "description": null,
+     "fields": [
+      {
+       "name": "totalCount",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "SCALAR",
+         "name": "Int",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      }
+     ],
+     "inputFields": null,
+     "interfaces": [],
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "OBJECT",
+     "name": "SearchResultItemConnection",
+     "description": null,
+     "fields": [
+      {
+       "name": "nodes",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "LIST",
+        "name": null,
+        "ofType": {
+         "kind": "UNION",
+         "name": "SearchResultItem",
+         "ofType": null
+        }
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      }
+     ],
+     "inputFields": null,
+     "interfaces": [],
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "UNION",
+     "name": "SearchResultItem",
+     "description": null,
+     "fields": null,
+     "inputFields": null,
+     "interfaces": null,
+     "enumValues": null,
+     "possibleTypes": [
+      {
+       "kind": "OBJECT",
+       "name": "Repository",
+       "ofType": null
+      },
+      {
+       "kind": "OBJECT",
+       "name": "User",
+       "ofType": null
+      }
+     ]
+    },
+    {
+     "kind": "ENUM",
+     "name": "SearchType",
+     "description": null,
+     "fields": null,
+     "inputFields": null,
+     "interfaces": null,
+     "enumValues": [
+      {
+       "name": "REPOSITORY",
+       "description": null,
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "USER",
+       "description": null,
+       "isDeprecated": false,
+       "deprecationReason": null
+      }
+     ],
+     "possibleTypes": null
+    },
+    {
+     "kind": "INPUT_OBJECT",
+     "name": "AddStarInput",
+     "description": null,
+     "fields": null,
+     "inputFields": [
+      {
+       "name": "starrableId",
+       "description": null,
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "SCALAR",
+         "name": "ID",
+         "ofType": null
+        }
+       },
+       "defaultValue": null
+      },
+      {
+       "name": "clientMutationId",
+       "description": null,
+       "type": {
+        "kind": "SCALAR",
+        "name": "String",
+        "ofType": null
+       },
+       "defaultValue": null
+      }
+     ],
+     "interfaces": null,
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "OBJECT",
+     "name": "AddStarPayload",
+     "description": null,
+     "fields": [
+      {
+       "name": "clientMutationId",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "SCALAR",
+        "name": "String",
+        "ofType": null
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      },
+      {
+       "name": "starrable",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "OBJECT",
+        "name": "Repository",
+        "ofType": null
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      }
+     ],
+     "inputFields": null,
+     "interfaces": [],
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "SCALAR",
+     "name": "String",
+     "description": null,
+     "fields": null,
+     "inputFields": null,
+     "interfaces": null,
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "SCALAR",
+     "name": "Int",
+     "description": null,
+     "fields": null,
+     "inputFields": null,
+     "interfaces": null,
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "SCALAR",
+     "name": "ID",
+     "description": null,
+     "fields": null,
+     "inputFields": null,
+     "interfaces": null,
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "SCALAR",
+     "name": "Boolean",
+     "description": null,
+     "fields": null,
+     "inputFields": null,
+     "interfaces": null,
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "SCALAR",
+     "name": "URI",
+     "description": null,
+     "fields": null,
+     "inputFields": null,
+     "interfaces": null,
+     "enumValues": null,
+     "possibleTypes": null
+    },
+    {
+     "kind": "OBJECT",
+     "name": "__Schema",
+     "description": null,
+     "fields": [
+      {
+       "name": "description",
+       "description": null,
+       "args": [],
+       "type": {
+        "kind": "SCALAR",
+        "name": "String",
+        "ofType": null
+       },
+       "isDeprecated": false,
+       "deprecationReason": null
+      }
+     ],
+     "inputFields": null,
+     "interfaces": [],
+     "enumValues": null,
+     "possibleTypes": null
+    }
+   ],
+   "directives": [
+    {
+     "name": "include",
+     "description": "Include when true",
+     "locations": [
+      "FIELD",
+      "FRAGMENT_SPREAD",
+      "INLINE_FRAGMENT"
+     ],
+     "args": [
+      {
+       "name": "if",
+       "description": null,
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "SCALAR",
+         "name": "Boolean",
+         "ofType": null
+        }
+       },
+       "defaultValue": null
+      }
+     ]
+    },
+    {
+     "name": "skip",
+     "description": "Skip when true",
+     "locations": [
+      "FIELD",
+      "FRAGMENT_SPREAD",
+      "INLINE_FRAGMENT"
+     ],
+     "args": [
+      {
+       "name": "if",
+       "description": null,
+       "type": {
+        "kind": "NON_NULL",
+        "name": null,
+        "ofType": {
+         "kind": "SCALAR",
+         "name": "Boolean",
+         "ofType": null
+        }
+       },
+       "defaultValue": null
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

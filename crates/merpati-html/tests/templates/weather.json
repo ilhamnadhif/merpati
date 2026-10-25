@@ -1,0 +1,8 @@
+{
+  "city": "Bandung", "temp": 24, "condition": "Light rain", "wind": 9, "alert": "Thunderstorm watch",
+  "forecast": [
+    {"day": "Mon", "hi": 26, "lo": 19}, {"day": "Tue", "hi": 27, "lo": 19}, {"day": "Wed", "hi": 25, "lo": 18},
+    {"day": "Thu", "hi": 24, "lo": 18}, {"day": "Fri", "hi": 26, "lo": 19}
+  ],
+  "json": "{\n  \"city\": \"Bandung\",\n  \"temp\": 24,\n  \"condition\": \"Light rain\",\n  \"wind\": 9,\n  \"humidity\": 88,\n  \"pressure\": 1009,\n  \"sunrise\": \"05:41\",\n  \"sunset\": \"17:52\"\n}"
+}

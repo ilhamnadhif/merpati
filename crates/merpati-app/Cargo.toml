@@ -1,0 +1,57 @@
+[package]
+name = "merpati-app"
+description = "Merpati: a lightweight, native API client"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "merpati-app"
+path = "src/main.rs"
+
+[dependencies]
+merpati-core = { workspace = true, features = ["keychain"] }
+merpati-http.workspace = true
+merpati-auth.workspace = true
+merpati-script.workspace = true
+merpati-convert.workspace = true
+merpati-runner.workspace = true
+merpati-mock.workspace = true
+merpati-mqtt = { path = "../merpati-mqtt" }
+merpati-grpc = { path = "../merpati-grpc" }
+merpati-socketio = { path = "../merpati-socketio" }
+merpati-mcp = { path = "../merpati-mcp" }
+merpati-ai = { path = "../merpati-ai" }
+merpati-secrets = { path = "../merpati-secrets" }
+merpati-flows = { path = "../merpati-flows" }
+merpati-proxy = { path = "../merpati-proxy" }
+merpati-html = { path = "../merpati-html" }
+eframe.workspace = true
+egui.workspace = true
+egui_extras.workspace = true
+rfd.workspace = true
+open.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+indexmap.workspace = true
+parking_lot.workspace = true
+chrono.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+base64.workspace = true
+url.workspace = true
+uuid.workspace = true
+tempfile.workspace = true
+serde_yaml_ng.workspace = true
+sha2.workspace = true
+reqwest.workspace = true
+image ={ version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "webp", "bmp", "ico"] }
+
+[features]
+default = ["wgpu"]
+# Rendering backend: wgpu (Metal/Vulkan/DX12) or OpenGL via glow.
+wgpu = ["eframe/wgpu"]
+glow = ["eframe/glow"]

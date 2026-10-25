@@ -1,0 +1,25 @@
+[package]
+name = "merpati-convert"
+description = "Importers (cURL, OpenAPI, Insomnia, HAR, ...) and code generators for Merpati"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+merpati-core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml_ng.workspace = true
+indexmap.workspace = true
+url.workspace = true
+percent-encoding.workspace = true
+base64.workspace = true
+thiserror.workspace = true
+quick-xml.workspace = true
+tracing.workspace = true
+# Inflating Smithy model jars from the local Maven repository.
+flate2 = "1"
+
+[dev-dependencies]
+bytes.workspace = true

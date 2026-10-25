@@ -1,0 +1,92 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+default-members = ["crates/merpati-app", "crates/merpati-cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/ilhamnadhif/merpati"
+rust-version = "1.88"
+
+[workspace.dependencies]
+merpati-core = { path = "crates/merpati-core" }
+merpati-http = { path = "crates/merpati-http" }
+merpati-auth = { path = "crates/merpati-auth" }
+merpati-script = { path = "crates/merpati-script" }
+merpati-convert = { path = "crates/merpati-convert" }
+merpati-runner = { path = "crates/merpati-runner" }
+merpati-mock = { path = "crates/merpati-mock" }
+
+anyhow = "1"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_yaml_ng = "0.10"
+indexmap = { version = "2", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", default-features = false, features = ["clock", "std", "serde"] }
+rand = "0.9"
+base64 = "0.22"
+sha1 = "0.10"
+sha2 = "0.10"
+md-5 = "0.10"
+hmac = "0.12"
+hex = "0.4"
+url = "2"
+percent-encoding = "2"
+regex = "1"
+tokio = { version = "1", features = ["full"] }
+tokio-util = "0.7"
+futures-util = "0.3"
+bytes = "1"
+reqwest = { version = "0.13", default-features = false, features = ["rustls-no-provider", "http2", "charset", "cookies", "multipart", "stream", "socks", "system-proxy", "gzip", "brotli", "deflate", "form", "query", "json"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std", "logging", "tls12"] }
+cookie_store = "0.22"
+cookie = "0.18"
+http = "1"
+tokio-tungstenite = { version = "0.30", features = ["rustls-tls-native-roots"] }
+axum = "0.8"
+tempfile = "3"
+csv = "1"
+clap = { version = "4", features = ["derive", "env"] }
+quick-junit = "0.8"
+quick-xml = "0.38"
+jsonwebtoken = { version = "10", default-features = false, features = ["rust_crypto", "use_pem"] }
+keyring = { version = "3", features = ["apple-native", "windows-native", "linux-native"] }
+dirs = "6"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+mime_guess = "2"
+boa_engine = { version = "0.22", default-features = false }
+boa_gc = "0.22"
+eframe = { version = "0.37", default-features = false, features = ["accesskit", "clipboard", "default_fonts", "wayland", "x11", "persistence"] }
+egui = { version = "0.37", features = ["monochrome_emoji_fonts"] }
+egui_extras = { version = "0.37", features = ["image"] }
+rfd = "0.17"
+open = "5"
+parking_lot = "0.12"
+crossbeam-channel = "0.5"
+
+[profile.release]
+lto = "thin"
+codegen-units = 4
+opt-level = 3
+strip = "symbols"
+panic = "unwind"
+
+# Shipped binaries: slower to build, app 31 MB instead of ~40 MB with opt-level 3.
+# Cold start is the same and the runner ~10% slower.
+# `cargo build --profile dist -p merpati-app`
+[profile.dist]
+inherits = "release"
+lto = "fat"
+codegen-units = 1
+opt-level = "s"
+
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+opt-level = 2

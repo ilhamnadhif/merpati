@@ -1,0 +1,61 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Demo v5
+meta:
+  id: wrk_abc
+  created: 1730000000000
+  modified: 1730000000000
+  description: A v5 collection
+collection:
+  - name: Things
+    meta:
+      id: fld_1
+      sortKey: -2
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/things"
+        name: Create thing
+        meta:
+          id: req_1
+          sortKey: -1
+          description: ""
+        method: POST
+        body:
+          mimeType: application/json
+          text: '{"n": 1}'
+        headers:
+          - name: Content-Type
+            value: application/json
+        scripts:
+          preRequest: insomnia.environment.set('a', 1);
+          afterResponse: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - url: "{{ _.base_url }}/ping"
+    name: Ping
+    meta:
+      id: req_2
+      sortKey: -1
+    method: GET
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_1
+environments:
+  name: Base Environment
+  meta:
+    id: env_1
+  data:
+    base_url: http://localhost:4000
+  subEnvironments:
+    - name: Production
+      meta:
+        id: env_2
+      data:
+        base_url: https://api.example.com

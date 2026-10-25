@@ -1,0 +1,1716 @@
+# English (key)	Indonesian. One entry per line; `{}` placeholders keep their order.
+Send	Kirim
+Cancel	Batal
+Save	Simpan
+Params	Params
+Authorization	Otorisasi
+Headers	Header
+Body	Body
+Scripts	Skrip
+Settings	Pengaturan
+Docs	Dokumentasi
+Cookies	Cookie
+Test Results	Hasil Tes
+Collections	Koleksi
+Environments	Environment
+History	Riwayat
+Mocks	Mock
+Search	Cari
+New	Baru
+New Request	Request Baru
+New Collection	Koleksi Baru
+New Folder	Folder Baru
+New Environment	Environment Baru
+New WebSocket	WebSocket Baru
+Import	Impor
+Export	Ekspor
+Rename	Ganti nama
+Duplicate	Duplikat
+Delete	Hapus
+Run	Jalankan
+Run collection	Jalankan koleksi
+Run folder	Jalankan folder
+Add request	Tambah request
+Add folder	Tambah folder
+No environment	Tanpa environment
+Globals	Global
+Console	Konsol
+Clear	Bersihkan
+Close	Tutup
+Copy	Salin
+Copied	Disalin
+Pretty	Rapi
+Raw	Mentah
+Preview	Pratinjau
+Tree	Pohon
+Key	Kunci
+Value	Nilai
+Description	Deskripsi
+Bulk Edit	Edit Massal
+Key-Value Edit	Edit Kunci-Nilai
+Pre-request	Pra-request
+Post-response	Pasca-respons
+Snippets	Cuplikan
+Variable	Variabel
+Initial value	Nilai awal
+Current value	Nilai saat ini
+Type	Tipe
+default	biasa
+secret	rahasia
+Status	Status
+Time	Waktu
+Size	Ukuran
+Response	Respons
+Enter a URL and press Send	Masukkan URL lalu tekan Kirim
+Sending request…	Mengirim request…
+Could not send request	Request tidak dapat dikirim
+This request does not have a body	Request ini tidak memiliki body
+Untitled Request	Request Tanpa Judul
+Open workspace…	Buka workspace…
+New workspace…	Workspace baru…
+Recent workspaces	Workspace terakhir
+Workspace	Workspace
+Theme	Tema
+Language	Bahasa
+System	Sistem
+Light	Terang
+Dark	Gelap
+General	Umum
+Proxy	Proxy
+Certificates	Sertifikat
+Shortcuts	Pintasan
+Vault	Vault
+About	Tentang
+Follow redirects	Ikuti redirect
+Verify SSL certificates	Verifikasi sertifikat SSL
+Encode URL automatically	Encode URL otomatis
+Disable cookie jar	Nonaktifkan cookie jar
+Request timeout (ms, 0 = none)	Timeout request (ms, 0 = tanpa batas)
+Maximum redirects	Redirect maksimum
+HTTP version	Versi HTTP
+Use system proxy	Gunakan proxy sistem
+Use custom proxy	Gunakan proxy kustom
+Iterations	Iterasi
+Delay (ms)	Jeda (ms)
+Data file	Berkas data
+Choose file…	Pilih berkas…
+Stop	Hentikan
+Passed	Lulus
+Failed	Gagal
+Skipped	Dilewati
+All	Semua
+Results	Hasil
+Collection Runner	Collection Runner
+Start	Mulai
+Port	Port
+Running	Berjalan
+Stopped	Berhenti
+Logs	Log
+Routes	Rute
+Connect	Hubungkan
+Disconnect	Putuskan
+Messages	Pesan
+Message	Pesan
+Saved messages	Pesan tersimpan
+Code snippet	Potongan kode
+Command palette	Palet perintah
+Type a command…	Ketik perintah…
+Search requests…	Cari request…
+Save as example	Simpan sebagai contoh
+Save response to file	Simpan respons ke berkas
+Examples	Contoh
+Inherit auth from parent	Warisi auth dari induk
+Get New Access Token	Ambil Access Token Baru
+Refresh token	Segarkan token
+Clear token	Hapus token
+Variables	Variabel
+Overview	Ringkasan
+Fetch schema	Ambil skema
+Schema	Skema
+Query	Query
+Unsaved	Belum disimpan
+Saved	Tersimpan
+Are you sure?	Anda yakin?
+Name	Nama
+Create	Buat
+OK	OK
+Paste	Tempel
+File	Berkas
+Domain	Domain
+Add	Tambah
+Edit	Ubah
+Remove	Hapus
+Enabled	Aktif
+Filter	Saring
+Everything	Semua
+Errors	Galat
+Warnings	Peringatan
+Network	Jaringan
+Info	Info
+Re-run tests	Jalankan ulang tes
+Performance	Performa
+Virtual users	Pengguna virtual
+Duration (s)	Durasi (dtk)
+(binary)	(biner)
+(missing request)	(request tidak ditemukan)
+.proto files	Berkas .proto
+0 fetches on every use	0 = ambil setiap kali dipakai
+0 picks a free port	0 memilih port yang kosong
+A PKCS#12 bundle replaces the PEM files. The passphrase is stored in the Keychain, not in the settings file.	Bundel PKCS#12 menggantikan berkas PEM. Frasa sandi disimpan di Keychain, bukan di berkas pengaturan.
+A lightweight API client written in Rust. No account, no telemetry: data stays in your workspace folder.	Klien API ringan yang ditulis dengan Rust. Tanpa akun, tanpa telemetri: data tetap di folder workspace Anda.
+API key	Kunci API
+API version	Versi API
+APIs	API
+Access keys	Kunci akses
+Account	Akun
+Ack	Ack
+Add WebSocket request	Tambah request WebSocket
+Add a domain:	Tambah domain:
+Add a provider under External providers first.	Tambahkan penyedia di Penyedia eksternal terlebih dahulu.
+Add block	Tambah blok
+Add blocks with “Add block”, then drag from an output port (right) to an input port (left).	Tambahkan blok dengan “Tambah blok”, lalu tarik dari port keluaran (kanan) ke port masukan (kiri).
+Add input	Tambah masukan
+Add provider	Tambah penyedia
+Add to conversation	Tambahkan ke percakapan
+Address	Alamat
+Advanced	Lanjutan
+Allow other devices on the network	Izinkan perangkat lain di jaringan
+Already up to date.	Sudah mutakhir.
+Alt+⌘C	Alt+⌘C
+AppRole mount	Mount AppRole
+Append the answer as an assistant message	Tambahkan jawaban sebagai pesan asisten
+Apply	Terapkan
+Apply filters	Terapkan filter
+Arguments	Argumen
+Arguments as a JSON array, a single JSON value, or plain text.	Argumen berupa array JSON, satu nilai JSON, atau teks biasa.
+Argument {}: {}	Argumen {}: {}
+Argument {}: cannot read {}: {}	Argumen {}: tidak dapat membaca {}: {}
+➕ Add argument	➕ Tambah argumen
+No arguments	Tanpa argumen
+Arguments are JSON, text or binary (an attachment, a Buffer on the server).	Argumen berupa JSON, teks, atau biner (lampiran, berupa Buffer di server).
+hex or base64, e.g. 01 02 ff or AQL/	hex atau base64, mis. 01 02 ff atau AQL/
+File path (absolute or relative to the workspace folder)	Path berkas (absolut atau relatif terhadap folder workspace)
+Sent as one argument	Dikirim sebagai satu argumen
+Authentication	Autentikasi
+Authority host	Host otoritas
+Auto	Otomatis
+Auto-generated headers	Header otomatis
+Avg response	Rata-rata respons
+Bahasa Indonesia	Bahasa Indonesia
+Bandwidth (KB/s)	Bandwidth (KB/dtk)
+Base URL	URL dasar
+Based on a saved AI request	Berdasarkan request AI yang tersimpan
+Bearer, Basic and API key (header) are sent as metadata.	Bearer, Basic, dan kunci API (header) dikirim sebagai metadata.
+Beautify	Rapikan
+Binary (hex or base64)	Biner (hex atau base64)
+Binary messages must be hex or base64	Pesan biner harus berupa hex atau base64
+Blocks connected to “item” run once per element ({{loop.item}}, {{loop.index}}); “done” runs after the last one.	Blok yang terhubung ke “item” berjalan sekali per elemen ({{loop.item}}, {{loop.index}}); “done” berjalan setelah elemen terakhir.
+Body (JSON)	Body (JSON)
+Body truncated	Body dipotong
+Body: {}	Body: {}
+Browse	Jelajahi
+By scheme	Per skema
+Bypass	Lewati
+Cache (s)	Cache (dtk)
+Capture	Tangkap
+Capture traffic	Tangkap lalu lintas
+Capture traffic (proxy)	Tangkap lalu lintas (proxy)
+Certificate	Sertifikat
+Certificate rejected by	Sertifikat ditolak oleh
+Certificate saved; trust instructions copied to the clipboard	Sertifikat disimpan; petunjuk mempercayainya disalin ke papan klip
+Change	Ubah
+Changes applied	Perubahan diterapkan
+Check again	Periksa lagi
+Checking trust…	Memeriksa kepercayaan…
+Choose a model	Pilih model
+Choose a request	Pilih request
+Clean session	Sesi bersih
+Click to edit, ● marks the active one	Klik untuk mengubah, ● menandai yang aktif
+Client ID	ID klien
+Client certificates	Sertifikat klien
+Close other tabs	Tutup tab lain
+Closed: {}	Ditutup: {}
+Collapse	Ciutkan
+Collection	Koleksi
+Collection created from the spec	Koleksi dibuat dari spesifikasi
+Collection → spec	Koleksi → spesifikasi
+Compare	Bandingkan
+Configure virtual users and duration, then press Run.	Atur pengguna virtual dan durasi, lalu tekan Jalankan.
+Connect URL	URL Connect
+Connect from	Hubungkan dari
+Connect server	Server Connect
+Connect to list the server's capabilities.	Hubungkan untuk melihat kemampuan server.
+Connected to {} (sid {})	Terhubung ke {} (sid {})
+Connected{}	Terhubung{}
+Connecting to {}…	Menghubungkan ke {}…
+Connecting…	Menghubungkan…
+Connection	Koneksi
+Content-Type	Content-Type
+Continue after a failed block without a failure connection	Lanjutkan setelah blok gagal yang tidak punya sambungan kegagalan
+Copy as cURL	Salin sebagai cURL
+Copy the reference	Salin referensi
+Could not open workspace: {}	Tidak dapat membuka workspace: {}
+Count	Jumlah
+Credentials	Kredensial
+Current token	Token saat ini
+Custom	Kustom
+Deadline (ms, 0 = none)	Tenggat (md, 0 = tanpa)
+Decrypt HTTPS	Dekripsi HTTPS
+Default (auto)	Bawaan (otomatis)
+Default chain (env, ~/.aws)	Rantai bawaan (env, ~/.aws)
+Delete "{}"? This removes its files from the workspace.	Hapus "{}"? Berkasnya akan dihapus dari workspace.
+Deselect all	Batalkan semua pilihan
+Details	Detail
+Detected: {}	Terdeteksi: {}
+Devices on the network can also download it from http://merpati.proxy/ through the proxy.	Perangkat di jaringan juga dapat mengunduhnya dari http://merpati.proxy/ melalui proxy.
+Disconnected	Terputus
+Disconnected: {}	Terputus: {}
+Docs: {}	Dokumentasi: {}
+Documentation preview next to the editor	Pratinjau dokumentasi di samping editor
+Documentation written to {}	Dokumentasi ditulis ke {}
+Double-click to rename	Klik dua kali untuk mengganti nama
+Drop connection	Putuskan koneksi
+Duration	Durasi
+Empty collection	Koleksi kosong
+End stream	Akhiri stream
+Endpoint	Endpoint
+English	English
+Environment	Environment
+Environment quick look	Lihat cepat environment
+Environment: {}	Environment: {}
+Error status	Status galat
+Event	Event
+Events{}	Event{}
+Expand	Bentangkan
+Export HAR	Ekspor HAR
+Export config	Ekspor konfigurasi
+Export documentation (HTML)	Ekspor dokumentasi (HTML)
+Export documentation (Markdown)	Ekspor dokumentasi (Markdown)
+Export failed: {}	Ekspor gagal: {}
+Exported to {}. {}	Diekspor ke {}. {}
+External providers	Penyedia eksternal
+External secrets are unavailable for this workspace.	Rahasia eksternal tidak tersedia untuk workspace ini.
+External secrets: {}	Rahasia eksternal: {}
+Extra body (JSON merged into the provider request)	Body tambahan (JSON yang digabung ke request penyedia)
+FR-M4: point requests at the mock with one click	FR-M4: arahkan request ke mock dengan satu klik
+Fail unless the answer is JSON	Gagal jika jawaban bukan JSON
+Failures	Kegagalan
+Fetch models from provider	Ambil model dari penyedia
+Fetch once without showing the value	Ambil sekali tanpa menampilkan nilainya
+Fill with a template of the input message	Isi dengan templat pesan masukan
+Fit	Paskan
+Fix the problems listed in the inspector before running	Perbaiki masalah yang tercantum di inspektor sebelum menjalankan
+Flow	Flow
+Flow canvas	Kanvas flow
+Flows	Flows
+Flows live in flows/ inside the workspace and run from the app or `merpati flow run`.	Flow disimpan di flows/ dalam workspace dan dijalankan dari aplikasi atau `merpati flow run`.
+Folder	Folder
+Font size	Ukuran huruf
+For each	Untuk setiap
+Fork	Fork
+Fork collection	Fork koleksi
+Fork created	Fork dibuat
+Forked from	Di-fork dari
+Functional	Fungsional
+Generate HTML documentation and open it in the browser	Buat dokumentasi HTML dan buka di browser
+Generate collection	Buat koleksi
+Global	Global
+GraphQL Variables	Variabel GraphQL
+HAR exported	HAR diekspor
+HTML preview opens in your browser.	Pratinjau HTML dibuka di browser Anda.
+HTTP+SSE (legacy)	HTTP+SSE (lama)
+Handshake auth (JSON object)	Auth handshake (objek JSON)
+Handshake path	Path handshake
+Headers you set explicitly override these. Cookies from the jar are added automatically.	Header yang Anda atur sendiri menimpa ini. Cookie dari jar ditambahkan otomatis.
+Headers: {}	Header: {}
+History entries	Entri riwayat
+Honours HTTP_PROXY / HTTPS_PROXY / NO_PROXY and the OS proxy settings, including a proxy auto-config (PAC) script.	Mengikuti HTTP_PROXY / HTTPS_PROXY / NO_PROXY dan pengaturan proxy sistem, termasuk skrip proxy auto-config (PAC).
+Host	Host
+Imported {} collection(s)	{} koleksi diimpor
+Indexing large response…	Mengindeks respons besar…
+Inline request	Request langsung
+Input schema	Skema masukan
+Inputs	Masukan
+Insert an operation for this field	Sisipkan operasi untuk field ini
+Invalid JSON	JSON tidak valid
+JavaScript	JavaScript
+JavaScript modules in packages/ (CommonJS or ESM), loaded with pm.require('@team/name') or pm.require('name'). They are part of the workspace and can be committed.	Modul JavaScript di packages/ (CommonJS atau ESM), dimuat dengan pm.require('@team/name') atau pm.require('name'). Modul ini bagian dari workspace dan dapat di-commit.
+JavaScript with pm.request, pm.response and pm.message	JavaScript dengan pm.request, pm.response, dan pm.message
+JavaScript with the Postman-compatible pm API	JavaScript dengan API pm yang kompatibel dengan Postman
+Jitter (ms)	Jitter (md)
+KV mount	Mount KV
+KV version	Versi KV
+Keep	Pertahankan
+Keep alive (s)	Keep alive (dtk)
+Keep response bodies in memory up to (MB)	Simpan body respons di memori hingga (MB)
+Keep variable values after the run	Pertahankan nilai variabel setelah run
+Keys ending in -bin take base64 values.	Kunci yang berakhiran -bin memakai nilai base64.
+Label	Label
+Last run	Run terakhir
+Last will	Last will
+Latency (ms)	Latensi (md)
+Link	Tautkan
+Link a vault name to an external secret	Tautkan nama vault ke rahasia eksternal
+Link to an external secret	Tautkan ke rahasia eksternal
+Listens on all interfaces; anyone on the network can use the proxy	Mendengarkan di semua antarmuka; siapa pun di jaringan dapat memakai proxy
+Live docs	Dokumentasi live
+Load the schema first	Muat skema terlebih dahulu
+Local servers such as Ollama or LM Studio usually need no key.	Server lokal seperti Ollama atau LM Studio biasanya tidak memerlukan kunci.
+Local: used when sending, never committed	Lokal: dipakai saat mengirim, tidak pernah di-commit
+Long-polling first, then upgrade to WebSocket, like the official client	Long-polling dulu, lalu naik ke WebSocket, seperti klien resmi
+MCP tools{}	Tool MCP{}
+Mark the run as failed when reached	Tandai run gagal jika blok ini tercapai
+Max iterations	Iterasi maksimum
+Max steps	Langkah maksimum
+Max tokens	Token maksimum
+Merge into	Gabungkan ke
+Merpati capture certificate	Sertifikat penangkap Merpati
+Merpati {}	Merpati {}
+Messages{}	Pesan{}
+Metadata{}	Metadata{}
+Method	Metode
+Milliseconds	Milidetik
+Mock server	Server mock
+Mock server · {}	Server mock · {}
+Mock server: {}	Server mock: {}
+Mode	Mode
+Model	Model
+More actions	Aksi lainnya
+Namespace	Namespace
+Never decrypt	Jangan pernah dekripsi
+New OpenAPI 3 spec in specs/	Spesifikasi OpenAPI 3 baru di specs/
+New Smithy model in specs/	Model Smithy baru di specs/
+New access token stored	Token akses baru disimpan
+New flow	Flow baru
+New package	Paket baru
+New webhook listener	Listener webhook baru
+Next match	Kecocokan berikutnya
+No MCP requests saved in this workspace yet.	Belum ada request MCP yang disimpan di workspace ini.
+No auth is set on any parent; the request is sent without auth.	Tidak ada auth di induk mana pun; request dikirim tanpa auth.
+No collections yet	Belum ada koleksi
+No cookies were set by this response.	Respons ini tidak mengatur cookie.
+No examples yet. Send a request and use “Save as example” on the response.	Belum ada contoh. Kirim request lalu pakai “Simpan sebagai contoh” pada responsnya.
+No flows yet	Belum ada flow
+No packages yet.	Belum ada paket.
+No problems found	Tidak ada masalah
+No requests received yet.	Belum ada request yang diterima.
+No specs yet	Belum ada spesifikasi
+No tests. Add pm.test(...) calls in the Post-response script.	Tidak ada tes. Tambahkan pemanggilan pm.test(...) di skrip Post-response.
+No throttling	Tanpa pembatasan
+No tool calls.	Tidak ada pemanggilan tool.
+No traffic captured yet.	Belum ada lalu lintas yang tertangkap.
+No variables	Tidak ada variabel
+Not trusted yet: HTTPS clients will reject the proxy	Belum dipercaya: klien HTTPS akan menolak proxy
+OAuth 2.0: {}	OAuth 2.0: {}
+One entry per line as key:value. Prefix with // to disable.	Satu entri per baris sebagai key:value. Awali dengan // untuk menonaktifkan.
+Only hosts	Hanya host
+Only show incoming events listed here	Hanya tampilkan event masuk yang tercantum di sini
+Open	Buka
+Open docs in browser	Buka dokumentasi di browser
+Open folder	Buka folder
+Open in browser	Buka di browser
+Open visualization in browser	Buka visualisasi di browser
+Package Library	Pustaka Paket
+Package registry	Registry paket
+Packages	Paket
+Parse the result as JSON	Uraikan hasil sebagai JSON
+Passphrase	Frasa sandi
+Password	Kata sandi
+Path Variables	Variabel Path
+Persist current value as initial	Simpan nilai saat ini sebagai nilai awal
+Polling	Polling
+Prettify	Rapikan
+Pretty-print bodies up to (MB)	Rapikan body hingga (MB)
+Preview data	Pratinjau data
+Preview documentation	Pratinjau dokumentasi
+Problems	Masalah
+Profile	Profil
+Prompt	Prompt
+Prompts{}	Prompt{}
+Provider	Penyedia
+Providers keep their settings in .merpati/external-secrets.json; tokens and keys go to the secret store.	Penyedia menyimpan pengaturannya di .merpati/external-secrets.json; token dan kunci masuk ke penyimpanan rahasia.
+Proxy URL	URL proxy
+Publish	Terbitkan
+Pull changes from	Tarik perubahan dari
+QoS	QoS
+Query Params	Parameter Query
+Query parameters	Parameter query
+Ramp-up (s)	Ramp-up (dtk)
+Recording	Merekam
+Records every request sent to the local URL. For a public URL, point a tunnel (ngrok, cloudflared, ...) at it.	Mencatat setiap request yang dikirim ke URL lokal. Untuk URL publik, arahkan tunnel (ngrok, cloudflared, ...) ke sini.
+Redirects	Pengalihan
+Reference	Referensi
+Reference them as {{vault:name}}; they are never written to workspace files.	Rujuk dengan {{vault:name}}; nilainya tidak pernah ditulis ke berkas workspace.
+Region	Region
+Remove credentials	Hapus kredensial
+Remove message	Hapus pesan
+Replace this spec with one generated from the collection	Ganti spesifikasi ini dengan yang dibuat dari koleksi
+Replay	Putar ulang
+Replay to	Putar ulang ke
+Request body	Body request
+Request headers	Header request
+Request sent	Request terkirim
+Requests that use “Inherit auth from parent” get this auth.	Request yang memakai “Warisi auth dari induk” mendapat auth ini.
+Requests you send appear here.	Request yang Anda kirim muncul di sini.
+Reset current value	Atur ulang nilai saat ini
+Resolve variables with the active environment	Selesaikan variabel dengan environment aktif
+Resolved	Berhasil diambil
+Resources{}	Resource{}
+Respond with status	Balas dengan status
+Response body	Body respons
+Response headers	Header respons
+Retain	Retain
+Reveal in file manager	Tampilkan di pengelola berkas
+Run an introspection query against the URL	Jalankan kueri introspeksi ke URL
+Run cancelled	Run dibatalkan
+Run collection: {}	Jalankan koleksi: {}
+Run log	Log run
+Run order	Urutan run
+Run post-response scripts again on this response	Jalankan ulang skrip post-response pada respons ini
+Run the flow to see its log here.	Jalankan flow untuk melihat log-nya di sini.
+Running the pre-invoke script…	Menjalankan skrip sebelum invoke…
+Running the pre-request script…	Menjalankan skrip pre-request…
+Running…	Berjalan…
+{} branches at once	{} cabang sekaligus
+waits for {} incoming	menunggu {} sambungan masuk
+Answer so far	Jawaban sejauh ini
+Stream the answer (shown live while the flow runs)	Alirkan jawaban (tampil langsung selama flow berjalan)
+Every block connected to “branches” starts a branch, and the branches run at the same time. Each branch starts from a copy of the variables; their changes are applied in branch order (top to bottom) once all are done.	Setiap blok yang terhubung ke “branches” memulai satu cabang, dan semua cabang berjalan bersamaan. Setiap cabang mulai dari salinan variabel; perubahannya diterapkan menurut urutan cabang (atas ke bawah) setelah semuanya selesai.
+Connect the ends of the branches to a Join to continue once all of them have finished.	Sambungkan ujung cabang ke Join untuk melanjutkan setelah semuanya selesai.
+Waits until every branch of the Parallel block has finished, then continues once with the results of all branches.	Menunggu sampai setiap cabang blok Parallel selesai, lalu melanjutkan sekali dengan hasil semua cabang.
+output of a block by its name	output sebuah blok menurut namanya
+all outputs as a list	semua output sebagai daftar
+number of branches that arrived	jumlah cabang yang tiba
+Runs for every request inside, before the request's own script.	Berjalan untuk setiap request di dalamnya, sebelum skrip milik request itu.
+Runs with the collection's auth, scripts and variables (HTTP, gRPC, MCP).	Berjalan dengan auth, skrip, dan variabel koleksi (HTTP, gRPC, MCP).
+Sampling answered	Sampling dijawab
+Sampling failed: {}	Sampling gagal: {}
+Save call	Simpan panggilan
+Save certificate	Simpan sertifikat
+Save cookies after the run	Simpan cookie setelah run
+Save failed: {}	Gagal menyimpan: {}
+Save link	Simpan tautan
+Save message	Simpan pesan
+Save messages from the Publish section to reuse them.	Simpan pesan dari bagian Terbitkan untuk dipakai ulang.
+Save to collection	Simpan ke koleksi
+Saved as example	Disimpan sebagai contoh
+Saved calls{}	Panggilan tersimpan{}
+Saved request	Request tersimpan
+Saving…	Menyimpan…
+Schema loaded: {} services, {} methods	Skema dimuat: {} layanan, {} metode
+Schema: {}	Skema: {}
+Script engine: {}	Mesin skrip: {}
+Script timeout (ms)	Batas waktu skrip (md)
+Search captured requests	Cari request yang tertangkap
+Search requests	Cari request
+Secrets	Rahasia
+Secrets are stored in	Rahasia disimpan di
+Secrets: {}	Rahasia: {}
+Select a request to see it.	Pilih request untuk melihatnya.
+Select a request to see its details.	Pilih request untuk melihat detailnya.
+Select all	Pilih semua
+Select at least one request to run	Pilih setidaknya satu request untuk dijalankan
+Send User-Agent header	Kirim header User-Agent
+Send ack	Kirim ack
+Send no-cache header	Kirim header no-cache
+Send the message as the next stream item	Kirim pesan sebagai item stream berikutnya
+Send the request to see the model's answer.	Kirim request untuk melihat jawaban model.
+Server reflection	Server reflection
+Server reflection or the .proto files in Schema	Server reflection atau berkas .proto di Skema
+Server version	Versi server
+Servers that require OAuth open your browser to sign in; tokens are kept in the Keychain. Set the auth type to OAuth 2.0 to use a pre-registered client.	Server yang memerlukan OAuth membuka browser untuk masuk; token disimpan di Keychain. Atur tipe auth ke OAuth 2.0 untuk memakai klien yang sudah terdaftar.
+Service principal	Service principal
+Set active	Jadikan aktif
+Set this proxy in a browser, app or device to record its requests. HTTPS needs the Merpati certificate to be trusted.	Atur proxy ini di browser, aplikasi, atau perangkat untuk merekam request-nya. HTTPS memerlukan sertifikat Merpati yang dipercaya.
+Settings file: {}	Berkas pengaturan: {}
+Share of requests that fail	Porsi request yang gagal
+Shared: saved to the workspace files (secrets excepted)	Bersama: disimpan di berkas workspace (kecuali rahasia)
+Show all blocks	Tampilkan semua blok
+Show/hide	Tampilkan/sembunyikan
+Simulate network failures	Simulasikan kegagalan jaringan
+Skip hosts	Lewati host
+Skipped by pm.execution.skipRequest()	Dilewati oleh pm.execution.skipRequest()
+Spec → collection	Spesifikasi → koleksi
+Specs live in specs/ inside the workspace and can be committed to Git.	Spesifikasi disimpan di specs/ dalam workspace dan dapat di-commit ke Git.
+Start proxy	Mulai proxy
+Stop at the first failure	Berhenti pada kegagalan pertama
+Stopped at the first failure	Berhenti pada kegagalan pertama
+Stops a pending sign-in	Menghentikan proses masuk yang tertunda
+Stream	Stream
+Stream the response as it is generated	Alirkan respons saat dihasilkan
+Streamable HTTP, falling back to HTTP+SSE	Streamable HTTP, beralih ke HTTP+SSE bila perlu
+Subprotocols	Subprotokol
+Subscribe	Langgan
+Subscription	Langganan
+Subscriptions{}	Langganan{}
+Succeeded	Berhasil
+Success status	Status sukses
+Sync with collection	Sinkronkan dengan koleksi
+System prompt	Prompt sistem
+Tab ↹ to accept	Tab ↹ untuk menerima
+Temperature	Temperatur
+Template	Templat
+Tenant ID	ID tenant
+Test connection	Uji koneksi
+Tests passed	Tes lulus
+Text	Teks
+The cookie jar is empty. Cookies set by responses appear here.	Cookie jar kosong. Cookie yang diatur oleh respons muncul di sini.
+The flow starts here. Declare inputs in the flow settings (click the canvas).	Flow dimulai di sini. Deklarasikan masukan di pengaturan flow (klik kanvas).
+The request was skipped by pm.execution.skipRequest().	Request dilewati oleh pm.execution.skipRequest().
+The server is waiting for acknowledgements	Server menunggu acknowledgement
+This collection was deleted.	Koleksi ini sudah dihapus.
+This environment was deleted.	Environment ini sudah dihapus.
+This folder was deleted.	Folder ini sudah dihapus.
+This request does not use any authorization.	Request ini tidak memakai otorisasi.
+This request is using {} from "{}".	Request ini memakai {} dari "{}".
+This request no longer exists.	Request ini sudah tidak ada.
+This visualization uses scripts or external resources; open it in the browser for the full page.	Visualisasi ini memakai skrip atau sumber eksternal; buka di browser untuk halaman lengkap.
+Time to first byte: {}	Waktu hingga byte pertama: {}
+Timeout	Batas waktu
+Toggle response position	Ubah posisi respons
+Toggle sidebar (⌘B)	Tampilkan/sembunyikan sidebar (⌘B)
+Token key: {}	Kunci token: {}
+Tool calls{}	Pemanggilan tool{}
+Tools{}	Tool{}
+Topic	Topik
+Total: {}	Total: {}
+Traffic{}	Lalu lintas{}
+Trailers{}	Trailer{}
+Transport	Transport
+Trust an extra CA certificate (PEM)	Percayai sertifikat CA tambahan (PEM)
+Trusted by this Mac	Dipercaya oleh Mac ini
+URL contains	URL mengandung
+Undefined variables: {}	Variabel tidak terdefinisi: {}
+Unlink	Lepas tautan
+Unlinked	Tautan dilepas
+Unsubscribe	Berhenti langganan
+Unsubscribed from {}	Berhenti langganan dari {}
+Up	Naik
+Update the collection from this spec	Perbarui koleksi dari spesifikasi ini
+Use	Pakai
+Use example	Pakai contoh
+Use this reference in later blocks	Pakai referensi ini di blok berikutnya
+Use username and password	Pakai nama pengguna dan kata sandi
+Use “Save call” to keep a tool call with its arguments.	Pakai “Simpan panggilan” untuk menyimpan pemanggilan tool beserta argumennya.
+Username	Nama pengguna
+Valid until	Berlaku hingga
+Validate	Validasi
+Vault URL	URL vault
+Verify server certificates	Verifikasi sertifikat server
+Version	Versi
+Visualize	Visualisasi
+Visualizer template	Templat visualizer
+Waiting for the authorization server…	Menunggu server otorisasi…
+Webhook listener	Listener webhook
+Working directory	Direktori kerja
+Wrap	Bungkus baris
+ack #{}	ack #{}
+added	ditambahkan
+api.example.com:443, *.example.com or *	api.example.com:443, *.example.com atau *
+az path	Path az
+baseUrl now points at the mock server	baseUrl sekarang mengarah ke server mock
+blocks, inputs, input, vars, loop, flow and pm are available; return sets the output.	blocks, inputs, input, vars, loop, flow, dan pm tersedia; return menentukan keluaran.
+cached	tersimpan di cache
+changed	diubah
+changes	perubahan
+characters	karakter
+choose collection	pilih koleksi
+conflict	konflik
+conflicts (choose a side to include them)	konflik (pilih salah satu sisi untuk menyertakannya)
+connecting…	menghubungkan…
+decrypted	didekripsi
+default (JSON)	bawaan (JSON)
+each of	setiap
+esm.sh-compatible; serves pm.require('npm:…') and pm.require('jsr:…')	kompatibel esm.sh; melayani pm.require('npm:…') dan pm.require('jsr:…')
+failed	gagal
+fetching…	mengambil…
+first token {}	token pertama {}
+fork	fork
+from {}	dari {}
+generated when empty	dibuat otomatis bila kosong
+graphql-transport-ws, mqtt	graphql-transport-ws, mqtt
+import path: {}	path impor: {}
+input.status === 200 && input.json.items.length > 0	input.status === 200 && input.json.items.length > 0
+is linked	ditautkan
+local	lokal
+localhost, *.internal	localhost, *.internal
+log/{}	log/{}
+name	nama
+name=value; Path=/; Expires=…	name=value; Path=/; Expires=…
+not connected	tidak terhubung
+not fetched yet	belum diambil
+not set	belum diatur
+op CLI	CLI op
+op path	Path op
+optional	opsional
+optional (Vault Enterprise)	opsional (Vault Enterprise)
+optional (e.g. LocalStack)	opsional (mis. LocalStack)
+optional: first path segment	opsional: segmen path pertama
+optional: sign-in address or email	opsional: alamat masuk atau email
+packages	paket
+packages.lock.json: {} {} · {} {}	packages.lock.json: {} {} · {} {}
+payload	payload
+pinned modules	modul terkunci
+pm API	API pm
+pm.require('{}')	pm.require('{}')
+protocol {}	protokol {}
+provider default	bawaan penyedia
+refresh token available: renewed automatically when it expires	refresh token tersedia: diperbarui otomatis saat kedaluwarsa
+removed	dihapus
+requests	request
+requests saved	request disimpan
+required	wajib
+run with	jalankan dengan
+scope: {}	scope: {}
+set — type to replace	sudah diatur — ketik untuk mengganti
+skipped	dilewati
+steps	langkah
+times	kali
+topic	topik
+tunnel	tunnel
+undefined	tidak terdefinisi
+unsaved	belum disimpan
+value for the next run	nilai untuk run berikutnya
+warning: {}	peringatan: {}
+{} (OpenAPI 3)	{} (OpenAPI 3)
+{} (Postman v2.1)	{} (Postman v2.1)
+{} (Postman)	{} (Postman)
+{} (template)	{} (templat)
+{} asks to use your model	{} meminta memakai model Anda
+{} call	panggilan {}
+{} in · {} out tokens	{} masuk · {} keluar token
+{} is not a Merpati workspace (no merpati.json)	{} bukan workspace Merpati (tidak ada merpati.json)
+{} problems in other files	{} masalah di berkas lain
+Validated together with {} other files of this folder	Divalidasi bersama {} berkas lain di folder ini
+Smithy files of this folder that use this file or are used by it form one model.	Berkas Smithy di folder ini yang memakai berkas ini atau dipakai olehnya membentuk satu model.
+{} requests	{} request
+{} requests are not supported in this build yet	Request {} belum didukung di build ini
+{} rows · {}	{} baris · {}
+{}[…] {} items	{}[…] {} item
+{}\n(click to copy path)	{}\n(klik untuk menyalin path)
+… {} more	… {} lagi
+… {} more warnings	… {} peringatan lagi
+⌘ is Ctrl on Windows and Linux.	⌘ adalah Ctrl di Windows dan Linux.
+● active	● aktif
+➕ Add .proto files	➕ Tambah berkas .proto
+➕ Add certificate	➕ Tambah sertifikat
+➕ Add event	➕ Tambah event
+➕ Add subscription	➕ Tambah langganan
+➕ Assistant message	➕ Pesan asisten
+➕ Import path	➕ Path impor
+➕ OpenAPI	➕ OpenAPI
+➕ Smithy	➕ Smithy
+➕ User message	➕ Pesan pengguna
+⟳ Load schema	⟳ Muat skema
+Runner	Runner
+Collection Runner and merpati run: connect, send the saved messages in order, then stop at the first of:	Collection Runner dan merpati run: connect, kirim pesan tersimpan berurutan, lalu berhenti pada yang pertama dari:
+Incoming messages	Pesan masuk
+no limit	tanpa batas
+Message that ends the session	Pesan yang mengakhiri sesi
+Silence after the last message (ms, 0 = off)	Hening setelah pesan terakhir (ms, 0 = mati)
+Session timeout (ms, 0 = none)	Batas waktu sesi (ms, 0 = tanpa batas)
+Reset to defaults	Kembalikan ke bawaan
+message text, or its JSON type/event	teks pesan, atau type/event JSON-nya
+topic filter, e.g. status/+	filter topik, mis. status/+
+event name	nama event
+Answer with	Jawab dengan
+Approve	Setujui
+Decline	Tolak
+Model hints	Petunjuk model
+Save an AI request first	Simpan request AI terlebih dahulu
+Submit	Kirim
+asks for input	meminta masukan
+asks to use your AI model	meminta memakai model AI Anda
+choose an AI request	pilih request AI
+non-text content	konten non-teks
+Answer server acknowledgements with	Balas acknowledgement dari server dengan
+JSON array of arguments; empty = no answer	Array JSON berisi argumen; kosong = tidak dibalas
+On	Aktif
+Off	Nonaktif
+Default (on)	Bawaan (aktif)
+Default (off)	Bawaan (nonaktif)
+HTTP (remote)	HTTP (jarak jauh)
+STDIO (local command)	STDIO (perintah lokal)
+The selected collection or folder no longer exists.	Koleksi atau folder yang dipilih sudah tidak ada.
+Could not start: {}	Tidak bisa dimulai: {}
+Today	Hari ini
+Yesterday	Kemarin
+Toggle sidebar	Tampilkan/sembunyikan sidebar
+Toggle console	Tampilkan/sembunyikan Console
+Manage cookies	Kelola cookie
+Manage vault	Kelola Vault
+Stored in the Keychain	Tersimpan di Keychain
+Auto-config (PAC) URL	URL auto-config (PAC)
+With a PAC script, it chooses the proxy for each request instead of the proxy URL. The password is stored in the Keychain, not in the settings file.	Dengan skrip PAC, skrip itulah yang memilih proxy untuk setiap request, bukan URL proxy. Kata sandi disimpan di Keychain, bukan di berkas pengaturan.
+Send request	Kirim request
+New request	Request baru
+New tab / close tab	Tab baru / tutup tab
+Next / previous tab	Tab berikutnya / sebelumnya
+Switch environment	Ganti environment
+Accept variable suggestion	Terima saran variabel
+Unsaved changes	Perubahan belum disimpan
+"{}" has changes that are not saved. Save them before closing?	"{}" punya perubahan yang belum disimpan. Simpan dulu sebelum ditutup?
+Don't save	Jangan simpan
+{} tabs with unsaved changes were kept open.	{} tab dengan perubahan yang belum disimpan tetap dibuka.
+Save…	Simpan…
+Script memory limit (MB)	Batas memori skrip (MB)
+Scripts run in a separate process that is stopped when it uses more memory than this; 0 means no limit.	Skrip berjalan di proses terpisah yang dihentikan bila memakai memori melebihi batas ini; 0 berarti tanpa batas.
+Save "{}"…	Simpan "{}"…
+Don't save "{}"	Jangan simpan "{}"
+Cancel closing "{}"	Batal menutup "{}"
+Enter	Enter
+Esc	Esc
+{} more requests waiting	{} permintaan lain menunggu
+Connected ({}) in {}{}	Terhubung ({}) dalam {}{}
+, protocol {}	, protokol {}
+Error: {}	Galat: {}
+Disconnected by the server	Diputus oleh server
+ (code {})	 (kode {})
+● connected ({}){}	● terhubung ({}){}
+ (session present)	 (sesi masih ada)
+A Bearer token in Authorization is sent as the Authorization header.	Token Bearer di Authorization dikirim sebagai header Authorization.
+A workspace is a folder of plain JSON files; put it in a Git repository to share it.	Workspace adalah folder berisi berkas JSON biasa; simpan di repositori Git untuk membagikannya.
+API key, sent as the provider expects. Keep it in the vault, e.g. {{vault:openai}}.	Kunci API, dikirim sesuai cara penyedia. Simpan di vault, mis. {{vault:openai}}.
+Body: {} (stored on disk)	Body: {} (disimpan di disk)
+Call tool	Panggil tool
+Connected to {} {} (protocol {})	Terhubung ke {} {} (protokol {})
+Could not list models: {}	Gagal mengambil daftar model: {}
+Download: {}	Unduh: {}
+Each virtual user loops over the selected requests with its own copy of the variables.	Setiap pengguna virtual mengulang request yang dipilih dengan salinan variabelnya sendiri.
+Enabled subscriptions are made automatically after connecting. Wildcards + and # are allowed.	Subscription yang aktif dibuat otomatis setelah terhubung. Wildcard + dan # boleh dipakai.
+Exported	Diekspor
+Exported; {} secret values left out	Diekspor; {} nilai rahasia tidak disertakan
+Get prompt	Ambil prompt
+Initial values are saved in the workspace and can be committed to Git; current values and secrets stay on this machine.	Nilai awal disimpan di workspace dan bisa di-commit ke Git; nilai saat ini dan rahasia tetap di mesin ini.
+Invalid arguments	Argumen tidak valid
+Invoke	Panggil
+No token stored. Tokens are kept in the Keychain, never in collection files.	Belum ada token tersimpan. Token disimpan di Keychain, tidak pernah di berkas koleksi.
+Postman collections/environments (v2.0, v2.1), OpenAPI 3 / Swagger 2 (JSON or YAML), Insomnia, HAR, Hoppscotch, Thunder Client, WSDL, or a cURL command.	Koleksi/environment Postman (v2.0, v2.1), OpenAPI 3 / Swagger 2 (JSON atau YAML), Insomnia, HAR, Hoppscotch, Thunder Client, WSDL, atau perintah cURL.
+Read	Baca
+Save messages from the composer to reuse them; they are stored with the request.	Simpan pesan dari composer untuk dipakai lagi; pesan disimpan bersama request.
+Select a method	Pilih metode
+Select an item on the left.	Pilih item di sebelah kiri.
+Set collection {{baseUrl}} to this URL	Atur {{baseUrl}} koleksi ke URL ini
+Set {{baseUrl}} in "{}" to this URL	Atur {{baseUrl}} di "{}" ke URL ini
+Start stream	Mulai stream
+Subscribed to {}{}	Subscribe ke {}{}
+This fraction of requests fails with a simulated network error instead of being sent	Bagian request sebesar ini gagal dengan galat jaringan simulasi alih-alih dikirim
+Tools of the selected MCP requests are offered to the model; calls run through those servers.	Tool dari request MCP yang dipilih ditawarkan ke model; panggilannya berjalan lewat server tersebut.
+Use “Save as example” on a response to document it and to serve it from a mock server.	Pakai “Simpan sebagai example” pada respons untuk mendokumentasikannya dan menyajikannya dari mock server.
+Variables are resolved with the active environment; secrets appear in clear text.	Variabel diisi dengan environment aktif; rahasia tampil sebagai teks biasa.
+dropped	diputus
+examples saved on requests are served by method and path	example yang tersimpan di request disajikan menurut metode dan path
+no match	tidak cocok
+prompt	prompt
+resource	resource
+showing the latest {}; export for all {} results	menampilkan {} terbaru; ekspor untuk semua {} hasil
+tool	tool
+{} ({}){} in {}	{} ({}){} dalam {}
+{} collections ({} requests), {} environments, {} globals	{} koleksi ({} request), {} environment, {} global
+{} copy	{} salinan
+{} events	{} event
+{} keys	{} kunci
+{} rows	{} baris
+{} s · {} req/s · {} VUs · avg {}	{} dtk · {} req/dtk · {} VU · rata-rata {}
+{} script error in {}: {}	galat skrip {} di {}: {}
+Before connect	Sebelum terhubung
+On message	Saat pesan masuk
+Before call	Sebelum panggilan
+After result	Setelah hasil
+Before invoke	Sebelum pemanggilan
+After response	Setelah respons
+Before send	Sebelum kirim
+Condition	Kondisi
+Loop	Perulangan
+Script	Skrip
+Delay	Jeda
+Set variable	Atur variabel
+Output	Keluaran
+Parallel	Paralel
+Join	Gabung
+in	masuk
+break	berhenti
+next	lanjut
+success	berhasil
+failure	gagal
+true	benar
+false	salah
+done	selesai
+branches	cabang
+equals	sama dengan
+does not equal	tidak sama dengan
+contains	mengandung
+does not contain	tidak mengandung
+starts with	diawali
+ends with	diakhiri
+matches regex	cocok dengan regex
+exists	ada
+does not exist	tidak ada
+is empty	kosong
+is not empty	tidak kosong
+is truthy	bernilai truthy
+is falsy	bernilai falsy
+Valid {}: {} operations	Valid {}: {} operasi
+Not a recognized API specification	Bukan spesifikasi API yang dikenal
+type definitions	definisi tipe
+messages/services	message/service
+missing `info`	`info` tidak ada
+AsyncAPI {}: {} channels	AsyncAPI {}: {} channel
+unexpected `}` on line {}	`}` tak terduga di baris {}
+{} unclosed `{`	{} `{` tidak ditutup
+{} updated, {} added, {} in the collection but not in the spec (left untouched)	{} diperbarui, {} ditambahkan, {} ada di koleksi tetapi tidak di spec (dibiarkan)
+Spec regenerated from the collection (not saved yet)	Spec dibuat ulang dari koleksi (belum disimpan)
+choose…	pilih…
+Open file…	Buka berkas…
+Choose folder…	Pilih folder…
+No folder selected	Belum ada folder dipilih
+http://proxy:3128 or socks5://127.0.0.1:1080	http://proxy:3128 atau socks5://127.0.0.1:1080
+Imported from cURL with warnings:	Diimpor dari cURL dengan peringatan:
+{} Copy	{} Salinan
+Parallel branches at once	Cabang paralel sekaligus
+Branches of a Parallel block that run at the same time; 0 runs them all at once.	Jumlah cabang blok Parallel yang berjalan bersamaan; 0 menjalankan semuanya sekaligus.
+User properties	User properties
+User properties:	User properties:
+A fast, local-first API client. Start with one of these:	Klien API yang cepat dan lokal. Mulai dengan salah satu ini:
+HTTP request	Request HTTP
+REST, GraphQL, SOAP	REST, GraphQL, SOAP
+Messages both ways	Pesan dua arah
+Postman, OpenAPI, cURL, …	Postman, OpenAPI, cURL, …
+Organize requests	Atur request
+Chain requests visually	Rangkai request secara visual
+Connect and test	Hubungkan dan uji
+Keyboard shortcuts	Pintasan keyboard
+Recent requests	Request terakhir
+Filter requests	Saring request
+Group requests into collections to save and share them.	Kelompokkan request ke dalam koleksi untuk menyimpan dan membagikannya.
+Manage environments	Kelola environment
+Path variables	Variabel path
+No response yet	Belum ada respons
+Enter a URL and press Send to see the response here.	Masukkan URL dan tekan Kirim untuk melihat respons di sini.
+to send	untuk mengirim
+Merpati asks the release feed for the latest version and shows what is new. Nothing about you or your work is sent.	Merpati menanyakan versi terbaru ke feed rilis dan menampilkan apa yang baru. Tidak ada data tentang Anda atau pekerjaan Anda yang dikirim.
+Check now	Periksa sekarang
+Update {}	Pembaruan {}
+A new version of Merpati is available	Versi baru Merpati tersedia
+{} is ready — you have {}.	{} sudah tersedia — Anda memakai {}.
+What's new	Yang baru
+See the release page for the changes.	Lihat halaman rilis untuk daftar perubahan.
+Downloading… {} of {}	Mengunduh… {} dari {}
+Downloaded {}	{} sudah diunduh
+Open it, drag Merpati to Applications to replace this version, then start Merpati again.	Buka berkasnya, seret Merpati ke Applications untuk mengganti versi ini, lalu buka Merpati lagi.
+Open it and replace this version with the new one, then start Merpati again.	Buka berkasnya dan ganti versi ini dengan yang baru, lalu buka Merpati lagi.
+Download failed: {}	Unduhan gagal: {}
+Skip this version	Lewati versi ini
+Open installer	Buka installer
+Downloading…	Mengunduh…
+Download and install	Unduh dan pasang
+Get the update	Dapatkan pembaruan
+Release notes	Catatan rilis
+Remind me later	Ingatkan nanti
+Could not check for updates: {}	Tidak bisa memeriksa pembaruan: {}
+Merpati {} is the latest version.	Merpati {} sudah versi terbaru.
+The download does not match the published checksum and was deleted.	Unduhan tidak cocok dengan checksum yang diterbitkan dan sudah dihapus.
+New gRPC	gRPC baru
+New MQTT	MQTT baru
+New Socket.IO	Socket.IO baru
+New MCP	MCP baru
+New AI request	Request AI baru
+(deleted)	(dihapus)
+Hide	Sembunyikan
+Show	Tampilkan
+Close console	Tutup konsol
+Clear console	Bersihkan konsol
+Copy lines	Salin baris
+No console output yet	Belum ada keluaran konsol
+console.log() from scripts and every request you send show up here.	console.log() dari skrip dan setiap request yang Anda kirim muncul di sini.
+Nothing matches this filter	Tidak ada yang cocok dengan filter ini
+Copy message	Salin pesan
+Requests	Request
+Appearance, language, updates and history.	Tampilan, bahasa, pembaruan, dan riwayat.
+Defaults for every request you send.	Bawaan untuk setiap request yang Anda kirim.
+Limits for scripts and the JavaScript packages they can load.	Batas untuk skrip dan paket JavaScript yang dapat dimuatnya.
+Send requests through a proxy server.	Kirim request melalui server proxy.
+Trust extra certificate authorities and send client certificates.	Percayai otoritas sertifikat tambahan dan kirim sertifikat klien.
+Keys for the things you do most.	Tombol untuk hal yang paling sering Anda lakukan.
+Actions	Aksi
+Preferences	Preferensi
+1 variable	1 variabel
+Quick look	Lihat cepat
+Check for updates…	Periksa pembaruan…
+Collection runner	Runner koleksi
+Search requests and commands…	Cari request dan perintah…
+No requests yet	Belum ada request
+Create one with ⌘N or import a collection.	Buat dengan ⌘N atau impor sebuah koleksi.
+Check the spelling or try another word.	Periksa ejaan atau coba kata lain.
+Navigate	Navigasi
+1 result	1 hasil
+Switch environment…	Ganti environment…
+Activate	Aktifkan
+Edit variables	Edit variabel
+Variables in scope right now	Variabel yang berlaku saat ini
+Active	Aktif
+No environment is active	Tidak ada environment yang aktif
+Choose…	Pilih…
+Secret values stay hidden.	Nilai rahasia tetap tersembunyi.
+Changes apply when you save.	Perubahan berlaku saat Anda menyimpan.
+Appearance	Tampilan
+Follow the system, or always use light or dark.	Ikuti sistem, atau selalu gunakan terang atau gelap.
+The language of menus and messages.	Bahasa menu dan pesan.
+Text size of the whole interface.	Ukuran teks seluruh antarmuka.
+Response panel	Panel respons
+Where the response appears next to the request.	Letak respons terhadap request.
+Below	Di bawah
+Side by side	Berdampingan
+Updates	Pembaruan
+The oldest entries are removed when History is full.	Entri terlama dihapus saat Riwayat penuh.
+Sending	Pengiriman
+Request timeout	Batas waktu request
+How long to wait for a response; 0 waits forever.	Berapa lama menunggu respons; 0 menunggu tanpa batas.
+Auto lets client and server agree on one.	Otomatis membiarkan klien dan server menyepakati versinya.
+Percent-encode characters that are not allowed in a URL.	Percent-encode karakter yang tidak diizinkan dalam URL.
+Go on to the address a 3xx response points to.	Lanjut ke alamat yang ditunjuk respons 3xx.
+Security	Keamanan
+Turn this off only for local servers with self-signed certificates.	Matikan hanya untuk server lokal dengan sertifikat self-signed.
+Default headers	Header bawaan
+Responses	Respons
+Keep bodies in memory up to	Simpan body di memori hingga
+Larger bodies are kept in a temporary file.	Body yang lebih besar disimpan di berkas sementara.
+Pretty-print bodies up to	Rapikan body hingga
+Larger bodies are shown as plain text.	Body yang lebih besar ditampilkan sebagai teks biasa.
+Limits	Batas
+Script timeout	Batas waktu skrip
+Scripts that run longer are stopped.	Skrip yang berjalan lebih lama akan dihentikan.
+Script engine	Mesin skrip
+Registry URL	URL registry
+System proxy	Proxy sistem
+Custom proxy	Proxy kustom
+Send requests through a proxy you set here.	Kirim request melalui proxy yang Anda atur di sini.
+Stored in the Keychain, not in the settings file.	Disimpan di Keychain, bukan di berkas pengaturan.
+Hosts reached directly, separated by commas.	Host yang dihubungi langsung, dipisahkan koma.
+A PAC script picks the proxy for each request instead of the proxy URL.	Skrip PAC memilih proxy untuk setiap request, menggantikan URL proxy.
+No file	Tidak ada berkas
+Certificate authorities	Otoritas sertifikat
+Trusted in addition to the system certificate store.	Dipercaya sebagai tambahan penyimpanan sertifikat sistem.
+CA file	Berkas CA
+Add certificate	Tambah sertifikat
+No client certificates	Tidak ada sertifikat klien
+Add one to send it to servers that ask for it (mutual TLS).	Tambahkan untuk dikirim ke server yang memintanya (mutual TLS).
+Remove certificate	Hapus sertifikat
+Navigation	Navigasi
+Source code	Kode sumber
+Report an issue	Laporkan masalah
+Settings file	Berkas pengaturan
+Copy path	Salin path
+License	Lisensi
+Cookies set by responses are kept here and sent with matching requests.	Cookie dari respons disimpan di sini dan dikirim bersama request yang cocok.
+Domains	Domain
+No domains yet	Belum ada domain
+Add a domain…	Tambah domain…
+Add a domain	Tambah domain
+No cookies yet	Belum ada cookie
+Cookies set by responses appear here. Add a domain to set one by hand.	Cookie dari respons muncul di sini. Tambahkan domain untuk mengaturnya secara manual.
+Stored in this workspace, never committed.	Disimpan di workspace ini, tidak pernah di-commit.
+1 cookie	1 cookie
+Clear all	Hapus semua
+Path	Path
+Expires	Kedaluwarsa
+No cookies for this domain. Add one below.	Tidak ada cookie untuk domain ini. Tambahkan di bawah.
+Session	Sesi
+Delete cookie	Hapus cookie
+Edit cookie	Edit cookie
+Add or replace a cookie	Tambah atau ganti cookie
+Cookie	Cookie
+Bring in collections, environments and requests from other tools.	Bawa koleksi, environment, dan request dari aplikasi lain.
+Drop to import	Lepaskan untuk mengimpor
+Drop a file here, or click to choose one	Letakkan berkas di sini, atau klik untuk memilih
+or paste the content	atau tempel isinya
+A Postman or OpenAPI file, a HAR export or a cURL command…	Berkas Postman atau OpenAPI, ekspor HAR, atau perintah cURL…
+Imported items are added to this workspace.	Item yang diimpor ditambahkan ke workspace ini.
+Ready to import	Siap diimpor
+Save request	Simpan request
+Save to	Simpan ke
+No collections yet. Create one below.	Belum ada koleksi. Buat di bawah.
+New collection name	Nama koleksi baru
+Create collection	Buat koleksi
+Your changes will be lost if you close the tab without saving them.	Perubahan Anda akan hilang jika tab ditutup tanpa disimpan.
+The collection, its folders and its requests are removed from the workspace folder.	Koleksi beserta folder dan request-nya dihapus dari folder workspace.
+The folder and the requests in it are removed from the workspace folder.	Folder dan request di dalamnya dihapus dari folder workspace.
+The request is removed from the workspace folder.	Request dihapus dari folder workspace.
+The environment and its variables are removed from the workspace folder.	Environment dan variabelnya dihapus dari folder workspace.
+New workspace	Workspace baru
+A folder of plain files you can keep in Git.	Folder berisi berkas biasa yang bisa disimpan di Git.
+Location	Lokasi
+This folder already holds a workspace; it will be opened as it is.	Folder ini sudah berisi workspace; workspace itu akan dibuka apa adanya.
+Rename environment	Ganti nama environment
+A copy that can pull changes from the original and merge back.	Salinan yang bisa menarik perubahan dari aslinya dan menggabungkannya kembali.
+{} variables	{} variabel
+Theme: {}	Tema: {}
+Language: {}	Bahasa: {}
+No results for “{}”	Tidak ada hasil untuk “{}”
+{} results	{} hasil
+Version {}	Versi {}
+{} cookies in {} domains	{} cookie di {} domain
+{} cookies	{} cookie
+This can't be imported: {}	Tidak dapat diimpor: {}
+{} more warnings	{} peringatan lainnya
+Save changes to “{}”?	Simpan perubahan pada “{}”?
+Delete collection “{}”?	Hapus koleksi “{}”?
+Delete folder “{}”?	Hapus folder “{}”?
+Delete request “{}”?	Hapus request “{}”?
+Delete environment “{}”?	Hapus environment “{}”?
+Working…	Memproses…
+Use a secret in any field as	Gunakan rahasia di kolom mana pun sebagai
+Filter secrets	Filter rahasia
+Link external secret…	Tautkan rahasia eksternal…
+No secrets yet	Belum ada rahasia
+Add one below, then use it in any field without putting it in a file.	Tambahkan di bawah, lalu gunakan di kolom mana pun tanpa menaruhnya di berkas.
+No secrets match the filter.	Tidak ada rahasia yang cocok dengan filter.
+Local	Lokal
+Add a secret	Tambah rahasia
+Cache	Cache
+Browse…	Jelajahi…
+Nothing here.	Kosong.
+No external providers	Tidak ada penyedia eksternal
+Connect HashiCorp Vault, AWS Secrets Manager, Azure Key Vault or 1Password.	Hubungkan HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, atau 1Password.
+Secrets are kept in {}, never in workspace files.	Rahasia disimpan di {}, tidak pernah di berkas workspace.
+New {} provider	Penyedia {} baru
+There are no changes to apply.	Tidak ada perubahan untuk diterapkan.
+Select none	Batalkan semua pilihan
+Include this change	Sertakan perubahan ini
+Pull changes from “{}”	Tarik perubahan dari “{}”
+Merge into “{}”	Gabungkan ke “{}”
+{} changes, {} conflicts: choose a side to include them	{} perubahan, {} konflik: pilih salah satu sisi untuk menyertakannya
+{} changes from “{}” to “{}”	{} perubahan dari “{}” ke “{}”
+Use {}	Gunakan {}
+Keep {}	Pertahankan {}
+{} of {} selected	{} dari {} dipilih
+{} collection	{} koleksi
+{} collections	{} koleksi
+{} request	{} request
+{} environment	{} environment
+{} environments	{} environment
+{} global variable	{} variabel global
+{} global variables	{} variabel global
+Script memory limit	Batas memori skrip
+{} domain	{} domain
+{} domains	{} domain
+{} cookie	{} cookie
+{} from “{}” to “{}”	{} dari “{}” ke “{}”
+{}, {}: choose a side to include them	{}, {}: pilih salah satu sisi untuk menyertakannya
+{} change	{} perubahan
+{} changes	{} perubahan
+{} conflict	{} konflik
+{} conflicts	{} konflik
+Sent with every request; headers you set above override them.	Dikirim bersama setiap permintaan; header yang Anda atur di atas menimpanya.
+Calculated when the request is sent	Dihitung saat permintaan dikirim
+none	tidak ada
+Choose a body type above to send data with the request.	Pilih jenis body di atas untuk mengirim data bersama permintaan.
+Form fields	Field formulir
+Sent as application/x-www-form-urlencoded.	Dikirim sebagai application/x-www-form-urlencoded.
+Sent as multipart/form-data. Switch a field to File to upload files.	Dikirim sebagai multipart/form-data. Ubah field menjadi File untuk mengunggah berkas.
+Language of the raw body (sets the Content-Type)	Bahasa body raw (menentukan Content-Type)
+The body is not valid JSON; it is sent as typed.	Body bukan JSON yang valid; dikirim apa adanya.
+Select files	Pilih berkas
+Clear files	Hapus berkas
+No file selected	Belum ada berkas dipilih
+The file's bytes are sent as the request body.	Isi berkas dikirim sebagai body permintaan.
+File not found	Berkas tidak ditemukan
+Remove file	Lepas berkas
+Change…	Ganti…
+Fetching schema…	Mengambil skema…
+{} types	{} tipe
+Schema explorer	Penjelajah skema
+Filter fields	Saring field
+Filter snippets	Saring snippet
+No snippets match.	Tidak ada snippet yang cocok.
+These settings apply to this request only and override the app settings.	Pengaturan ini hanya berlaku untuk permintaan ini dan menimpa pengaturan aplikasi.
+Follow 3xx responses to their Location.	Ikuti respons 3xx ke Location-nya.
+Follow original HTTP method	Ikuti metode HTTP asli
+Redirect with the original method instead of switching to GET.	Alihkan dengan metode asli alih-alih beralih ke GET.
+Keep Authorization header on redirect	Pertahankan header Authorization saat pengalihan
+Also send it when the redirect goes to another host.	Tetap kirim saat pengalihan menuju host lain.
+Stop after this many redirects.	Berhenti setelah sebanyak ini pengalihan.
+Reject servers whose TLS certificate is not trusted.	Tolak server yang sertifikat TLS-nya tidak tepercaya.
+Cancel the request after this long; 0 waits forever.	Batalkan permintaan setelah selama ini; 0 menunggu tanpa batas.
+HTTP/2 is used only with servers that support it.	HTTP/2 hanya dipakai dengan server yang mendukungnya.
+Request	Permintaan
+Percent-encode reserved characters in the path and query.	Encode persen karakter khusus di path dan query.
+Do not send stored cookies or keep the ones this response sets.	Jangan kirim cookie tersimpan atau simpan cookie dari respons ini.
+Shown in the generated collection documentation.	Ditampilkan di dokumentasi koleksi yang dihasilkan.
+Delete example	Hapus contoh
+Waiting for events	Menunggu event
+Events the server sends appear here.	Event yang dikirim server muncul di sini.
+Request skipped	Permintaan dilewati
+No response	Tidak ada respons
+The request failed before a response arrived; see Body for the error.	Permintaan gagal sebelum respons tiba; lihat Body untuk galatnya.
+Check the URL: variables must resolve to a full http(s) address.	Periksa URL: variabel harus menjadi alamat http(s) lengkap.
+A header name or value contains characters that are not allowed.	Nama atau nilai header berisi karakter yang tidak diizinkan.
+Check the host name and your network connection.	Periksa nama host dan koneksi jaringan Anda.
+Check that the server is running and that the host and port are right.	Pastikan server berjalan serta host dan port-nya benar.
+The server closed the connection. Try again, or check the server logs.	Server menutup koneksi. Coba lagi, atau periksa log server.
+The server did not answer in time. Try again or raise the timeout in Settings.	Server tidak menjawab tepat waktu. Coba lagi atau naikkan batas waktu di Pengaturan.
+For self-signed certificates, turn off SSL verification in the request Settings.	Untuk sertifikat self-signed, matikan verifikasi SSL di Pengaturan permintaan.
+Check that the server speaks HTTPS on this port.	Pastikan server melayani HTTPS di port ini.
+Check the proxy settings.	Periksa pengaturan proxy.
+Raise the maximum redirects in Settings, or turn off following redirects.	Naikkan batas pengalihan di Pengaturan, atau matikan mengikuti pengalihan.
+Check that the body files still exist and can be read.	Pastikan berkas body masih ada dan dapat dibaca.
+Try again	Coba lagi
+Hide details	Sembunyikan detail
+Show details	Tampilkan detail
+No headers	Tidak ada header
+The response has no headers.	Respons tidak memiliki header.
+{} headers	{} header
+Copy all	Salin semua
+No cookies	Tidak ada cookie
+Attributes	Atribut
+{} passed	{} lulus
+{} failed	{} gagal
+{} skipped	{} dilewati
+No tests yet	Belum ada tes
+Add pm.test(...) calls in the Post-response script to check the response.	Tambahkan panggilan pm.test(...) di skrip Post-response untuk memeriksa respons.
+Write a test	Tulis tes
+Script error in {} ({})	Galat skrip di {} ({})
+No tests match this filter.	Tidak ada tes yang cocok dengan filter ini.
+SKIP	LEWAT
+PASS	LULUS
+FAIL	GAGAL
+Copy test name	Salin nama tes
+Waiting (TTFB)	Menunggu (TTFB)
+From sending the request to the first response byte: connecting, TLS and the server's work.	Dari pengiriman permintaan hingga byte respons pertama: koneksi, TLS, dan kerja server.
+Content download	Unduh konten
+Receiving the response body.	Menerima body respons.
+Total	Total
+Timing	Waktu
+Remote address	Alamat remote
+Encrypted with TLS (HTTPS)	Terenkripsi dengan TLS (HTTPS)
+Not encrypted (plain HTTP)	Tidak terenkripsi (HTTP biasa)
+Response size	Ukuran respons
+URL	URL
+Copy value	Salin nilai
+Copy name	Salin nama
+Copy row	Salin baris
+Use the auth of the parent folder or collection.	Gunakan auth dari folder atau koleksi induk.
+No authorization is sent with this request.	Tidak ada otorisasi yang dikirim bersama permintaan ini.
+Send a key and value as a header or query parameter.	Kirim kunci dan nilai sebagai header atau parameter query.
+Send a token in the Authorization header.	Kirim token di header Authorization.
+Send a username and password in the Authorization header.	Kirim nama pengguna dan kata sandi di header Authorization.
+Answer the server's challenge with a hashed password.	Jawab tantangan server dengan kata sandi yang di-hash.
+Sign a JSON Web Token and send it with the request.	Tandatangani JSON Web Token dan kirim bersama permintaan.
+Sign the request with OAuth 1.0 consumer and token credentials.	Tandatangani permintaan dengan kredensial consumer dan token OAuth 1.0.
+Get an access token from an authorization server and send it.	Ambil access token dari server otorisasi lalu kirimkan.
+Sign the request with Hawk credentials.	Tandatangani permintaan dengan kredensial Hawk.
+Sign the request with AWS Signature Version 4.	Tandatangani permintaan dengan AWS Signature Version 4.
+Windows NTLM challenge-response authentication.	Autentikasi challenge-response NTLM Windows.
+Sign the request for Akamai EdgeGrid APIs.	Tandatangani permintaan untuk API Akamai EdgeGrid.
+Sign a token with the Atlassian S2S Authentication Protocol.	Tandatangani token dengan Atlassian S2S Authentication Protocol.
+Hide value	Sembunyikan nilai
+Show value	Tampilkan nilai
+Auth type	Jenis auth
+Most servers work with the defaults; change these only when told to.	Kebanyakan server bekerja dengan bawaan; ubah hanya bila diminta.
+Inherited from “{}”	Diwarisi dari “{}”
+This request uses {} from “{}”.	Permintaan ini memakai {} dari “{}”.
+Change it in the folder or collection settings.	Ubah di pengaturan folder atau koleksi.
+Nothing to inherit	Tidak ada yang diwarisi
+No token	Tidak ada token
+Expired	Kedaluwarsa
+Copy token	Salin token
+Expires in {}	Kedaluwarsa dalam {}
+Renewed automatically	Diperbarui otomatis
+Scopes	Scope
+Deactivate	Nonaktifkan
+Variables available in every request and environment	Variabel yang tersedia di setiap permintaan dan environment
+No environments yet	Belum ada environment
+Keep values like base URLs and tokens per stage.	Simpan nilai seperti base URL dan token per tahap.
+Active — click to deactivate	Aktif — klik untuk menonaktifkan
+Secret values are masked and never written to the workspace files	Nilai rahasia disamarkan dan tidak pernah ditulis ke berkas workspace
+Add a new variable	Tambah variabel baru
+No variables match “{}”.	Tidak ada variabel yang cocok dengan “{}”.
+Pick another one in the Environments list.	Pilih yang lain di daftar Environment.
+Global variables · {} variables	Variabel global · {} variabel
+Environment · {} variables	Environment · {} variabel
+Requests resolve variables from this environment	Permintaan mengambil variabel dari environment ini
+Filter variables	Saring variabel
+Close this tab or pick another collection.	Tutup tab ini atau pilih koleksi lain.
+Close this tab or pick another folder.	Tutup tab ini atau pilih folder lain.
+Folder in {} · {} requests	Folder di {} · {} permintaan
+Collection · {} requests	Koleksi · {} permintaan
+Open the Collection Runner	Buka Collection Runner
+Folders	Folder
+Inherited	Diwarisi
+Shown in the sidebar and in run reports.	Ditampilkan di sidebar dan laporan run.
+Also the name of the collection file.	Juga nama berkas koleksi.
+Folder variables override collection variables for requests in this folder.	Variabel folder menimpa variabel koleksi untuk permintaan di folder ini.
+Collection variables are available to every request in the collection.	Variabel koleksi tersedia untuk setiap permintaan di koleksi.
+Type a name in the last row to add a variable.	Ketik nama di baris terakhir untuk menambah variabel.
+{} requests × {} iterations	{} permintaan × {} iterasi
+{} users · {} s	{} pengguna · {} d
+Start load test	Mulai uji beban
+None	Tidak ada
+This collection has no requests to run.	Koleksi ini tidak punya permintaan untuk dijalankan.
+Move {}	Pindahkan {}
+Move up	Pindah ke atas
+Move down	Pindah ke bawah
+Run only this	Jalankan ini saja
+Drag the handles to change the order; right-click a request for more.	Seret pegangan untuk mengubah urutan; klik kanan permintaan untuk opsi lain.
+Options	Opsi
+How many times to run the requests.	Berapa kali permintaan dijalankan.
+Pause between requests.	Jeda antar permintaan.
+CSV or JSON; one iteration per row.	CSV atau JSON; satu iterasi per baris.
+Select file	Pilih berkas
+Remove data file	Lepas berkas data
+Keep variable values	Simpan nilai variabel
+Write variables changed by scripts back after the run.	Tulis kembali variabel yang diubah skrip setelah run.
+Save cookies	Simpan cookie
+Keep cookies set during the run in the cookie jar.	Simpan cookie dari run di cookie jar.
+Stop when a request or a test fails.	Berhenti saat permintaan atau tes gagal.
+Load profile	Profil beban
+Users sending requests at the same time.	Pengguna yang mengirim permintaan bersamaan.
+How long the test runs.	Lama uji berjalan.
+Ramp-up	Ramp-up
+Time to reach all virtual users.	Waktu untuk mencapai semua pengguna virtual.
+Ready to run	Siap dijalankan
+Choose the requests and options on the left, then press Run.	Pilih permintaan dan opsi di kiri, lalu tekan Jalankan.
+tests	tes
+tests and scripts	tes dan skrip
+network	jaringan
+total	total
+per request	per permintaan
+Running… {} of {}	Berjalan… {} dari {}
+All {} tests passed in {} requests.	Semua {} tes lulus dalam {} permintaan.
+{} failures in {} requests.	{} kegagalan dalam {} permintaan.
+HTML report	Laporan HTML
+Tests	Tes
+Error	Galat
+Waiting for results…	Menunggu hasil…
+No results match this filter.	Tidak ada hasil yang cocok dengan filter ini.
+Close details	Tutup detail
+Starting virtual users…	Memulai pengguna virtual…
+Load test	Uji beban
+Set virtual users and duration, then start the test to measure throughput and latency.	Atur pengguna virtual dan durasi, lalu mulai uji untuk mengukur throughput dan latensi.
+{} virtual users	{} pengguna virtual
+Throughput	Throughput
+requests per second	permintaan per detik
+Error rate	Tingkat galat
+{} errors	{} galat
+Avg latency	Latensi rata-rata
+min {}	min {}
+The test was stopped before the end; numbers cover the time it ran.	Uji dihentikan sebelum selesai; angka mencakup waktu berjalannya.
+Throughput and latency	Throughput dan latensi
+Latency percentiles	Persentil latensi
+Per request	Per permintaan
+Avg	Rata-rata
+Max	Maks
+Requests per second	Permintaan per detik
+Average latency	Latensi rata-rata
+Collecting samples…	Mengumpulkan sampel…
+avg	rata-rata
+users	pengguna
+The tree view shows JSON bodies; this body is shown formatted instead.	Tampilan pohon untuk body JSON; body ini ditampilkan terformat.
+The body is not valid JSON, so it cannot be shown as a tree.	Body bukan JSON yang valid, jadi tidak bisa ditampilkan sebagai pohon.
+Collapse all	Ciutkan semua
+Expand all	Bentangkan semua
+Binary response	Respons biner
+{} items	{} item
+Copy key	Salin kunci
+Invalid URL	URL tidak valid
+Invalid header	Header tidak valid
+DNS lookup failed	Pencarian DNS gagal
+Connection refused	Koneksi ditolak
+Connection reset	Koneksi direset
+Invalid certificate	Sertifikat tidak valid
+TLS error	Galat TLS
+Proxy error	Galat proxy
+Too many redirects	Terlalu banyak pengalihan
+Cancelled	Dibatalkan
+File error	Galat berkas
+Protocol error	Galat protokol
+Tests did not run	Tes tidak berjalan
+Post-response tests run only when a response arrives.	Tes post-response hanya berjalan saat respons tiba.
+1 header	1 header
+Setup	Pengaturan
+(missing block)	(blok tidak ada)
+1 block	1 blok
+1 connection	1 koneksi
+1 error	1 galat
+1 operation	1 operasi
+1 problem found	1 masalah ditemukan
+1 step	1 langkah
+1 warning	1 peringatan
+AI	AI
+API specs	Spesifikasi API
+Add block here	Tambah blok di sini
+Asks an AI model	Bertanya ke model AI
+Block	Blok
+Build your flow	Susun flow Anda
+Building the preview…	Membuat pratinjau…
+Builds text or JSON from a template	Menyusun teks atau JSON dari templat
+Chain requests, conditions, loops and AI steps, then run them in one go.	Rangkai request, kondisi, perulangan, dan langkah AI, lalu jalankan sekaligus.
+Check the flow for problems	Periksa masalah pada flow
+Check the spec again, with the files it uses	Periksa ulang spesifikasi beserta berkas yang dipakainya
+Choose the collection to sync with.	Pilih koleksi yang akan disinkronkan.
+Clear the log and block states	Bersihkan log dan status blok
+Clear the selection	Hapus pilihan
+Click a problem to select its block.	Klik masalah untuk memilih bloknya.
+Collection “{}” created from the spec	Koleksi “{}” dibuat dari spesifikasi
+Compared with	Dibandingkan dengan
+Continues on true or false	Lanjut lewat true atau false
+Continues on “true” or “false”.	Lanjut lewat “true” atau “false”.
+Copy file path	Salin path berkas
+Create a collection with a request for every operation	Buat koleksi dengan satu request untuk tiap operasi
+Data	Data
+Debug	Debug
+Default	Bawaan
+Delete block	Hapus blok
+Delete connection	Hapus koneksi
+Delete file	Hapus berkas
+Delete flow	Hapus flow
+Delete the selection	Hapus yang dipilih
+Delete “{}”?	Hapus “{}”?
+Delete…	Hapus…
+Documentation and collections are made from OpenAPI and Smithy specs.	Dokumentasi dan koleksi dibuat dari spesifikasi OpenAPI dan Smithy.
+Duplicate the block	Duplikasi blok
+Editor	Editor
+Endpoints	Endpoint
+Entry point	Titik awal
+Example	Contoh
+Expression	Ekspresi
+Filter flows	Saring flow
+Filter specs	Saring spesifikasi
+Fix the problems under the editor; the preview follows as you type.	Perbaiki masalah di bawah editor; pratinjau mengikuti saat Anda mengetik.
+Flow settings	Pengaturan flow
+Flows are saved in flows/ inside the workspace and also run with `merpati flow run`.	Flow disimpan di flows/ dalam workspace dan juga bisa dijalankan dengan `merpati flow run`.
+From	Dari
+Generate	Buat
+In	Di
+Inspector	Inspektor
+Items	Item
+JSON value	Nilai JSON
+Keyboard	Keyboard
+Later blocks read this block's output with this reference.	Blok berikutnya membaca output blok ini dengan referensi ini.
+Level	Level
+Limit steps	Batasi langkah
+Ln {}, Col {}	Brs {}, Kol {}
+Log	Log
+Logic	Logika
+Matching operations get the spec's URL, parameters and description; new ones are added. Scripts, examples and auth you added are kept.	Operasi yang cocok mendapat URL, parameter, dan deskripsi dari spesifikasi; yang baru ditambahkan. Script, contoh, dan auth yang Anda tambahkan tetap disimpan.
+Model of {} files	Model dari {} berkas
+Move the block (⇧ for bigger steps)	Geser blok (⇧ untuk langkah lebih besar)
+Named results appear in the run log and in `merpati flow run`.	Hasil bernama muncul di log eksekusi dan di `merpati flow run`.
+Names a result of the flow	Memberi nama hasil flow
+New OpenAPI spec	Spesifikasi OpenAPI baru
+New Smithy model	Model Smithy baru
+New spec	Spesifikasi baru
+Next run	Eksekusi berikut
+No API specs yet	Belum ada spesifikasi API
+No collections yet: generate one from the spec first.	Belum ada koleksi: buat dulu dari spesifikasi.
+No flows match “{}”	Tidak ada flow yang cocok dengan “{}”
+No preview for this format	Tidak ada pratinjau untuk format ini
+No problems	Tidak ada masalah
+No specs match “{}”	Tidak ada spesifikasi yang cocok dengan “{}”
+Not an API spec: nothing to check	Bukan spesifikasi API: tidak ada yang diperiksa
+Not saved	Belum tersimpan
+Not validated	Tidak divalidasi
+Operator	Operator
+Outputs	Output
+Parameters	Parameter
+Remove connections	Hapus koneksi blok
+Remove input	Hapus input
+Repeats for each item or a number of times	Mengulang untuk tiap item atau beberapa kali
+Required	Wajib
+Reset zoom	Atur ulang zoom
+Run settings	Pengaturan eksekusi
+Run the flow	Jalankan flow
+Run the flow to see each step, its timing and its messages here.	Jalankan flow untuk melihat tiap langkah, durasinya, dan pesannya di sini.
+Running… {}	Berjalan… {}
+Runs JavaScript	Menjalankan JavaScript
+Runs branches at the same time	Menjalankan cabang secara bersamaan
+Scope	Cakupan
+Sends a saved or inline request	Mengirim request tersimpan atau inline
+Split	Berdampingan
+Statuses that count as success, like 2xx or 200-299. Empty: any status below 400.	Status yang dihitung berhasil, misalnya 2xx atau 200-299. Kosong: status apa pun di bawah 400.
+Stop the run	Hentikan eksekusi
+Stops a run after this many block runs (protects against endless loops).	Menghentikan eksekusi setelah sekian kali blok berjalan (mencegah perulangan tanpa akhir).
+Stores a value in a variable	Menyimpan nilai ke variabel
+Sync	Sinkron
+Sync with a collection	Sinkronkan dengan koleksi
+The file is removed from specs/. This cannot be undone.	Berkas dihapus dari specs/. Tindakan ini tidak bisa dibatalkan.
+The flow file is removed from the workspace. This cannot be undone.	Berkas flow dihapus dari workspace. Tindakan ini tidak bisa dibatalkan.
+The preview could not be built	Pratinjau tidak bisa dibuat
+The spec has no operations yet.	Spesifikasi belum punya operasi.
+Times	Kali
+To	Ke
+Update a collection from this spec, or the spec from a collection	Perbarui koleksi dari spesifikasi ini, atau spesifikasi dari koleksi
+Valid	Valid
+Values the flow starts with; blocks read them as {{inputs.name}}.	Nilai awal flow; blok membacanya sebagai {{inputs.name}}.
+Waiting for the first block…	Menunggu blok pertama…
+Waits before continuing	Menunggu sebelum lanjut
+Waits for every parallel branch	Menunggu semua cabang paralel
+Warn	Peringatan
+What the block produced in the last run.	Hasil blok pada eksekusi terakhir.
+What the flow does and what it needs	Apa yang dilakukan flow dan apa yang dibutuhkannya
+Where the flow begins	Tempat flow dimulai
+Write OpenAPI or Smithy specs next to your collections and turn them into requests.	Tulis spesifikasi OpenAPI atau Smithy di samping koleksi Anda dan ubah menjadi request.
+Writes a message to the run log	Menulis pesan ke log eksekusi
+Zoom around the pointer	Zoom di sekitar penunjuk
+Zoom in	Perbesar
+Zoom level (click for 100 %)	Tingkat zoom (klik untuk 100 %)
+Zoom out	Perkecil
+inputs: {}	input: {}
+item	item
+{} blocks	{} blok
+{} connections	{} koneksi
+{} earlier lines not shown	{} baris sebelumnya tidak ditampilkan
+{} operations	{} operasi
+{} problems found	{} masalah ditemukan
+{} steps	{} langkah
+{} warnings	{} peringatan
+{}/{} tests	{}/{} tes
+“{}” runs when “{}” finishes on “{}”.	“{}” berjalan saat “{}” selesai lewat “{}”.
+customized	disesuaikan
+handshake {}	handshake {}
+Could not connect	Tidak dapat terhubung
+Dismiss	Tutup
+Retry	Coba lagi
+Binary	Biner
+Connect first	Hubungkan dulu
+Bytes as hex (01 02 ff) or base64	Byte sebagai hex (01 02 ff) atau base64
+Type a message: JSON or text, with {{variables}}	Tulis pesan: JSON atau teks, dengan {{variables}}
+Sent as Sec-WebSocket-Protocol, comma separated.	Dikirim sebagai Sec-WebSocket-Protocol, dipisahkan koma.
+No saved messages	Belum ada pesan tersimpan
+Send now	Kirim sekarang
+No messages yet	Belum ada pesan
+Connect, then send a message to see the conversation here.	Hubungkan, lalu kirim pesan untuk melihat percakapannya di sini.
+Transport in use	Transport yang dipakai
+/namespace	/namespace
+Emit	Emit
+Enter an event name first	Isi nama event dulu
+Expect ack	Minta ack
+Ask the server to acknowledge; its answer appears in the log	Minta server mengonfirmasi; jawabannya muncul di log
+Event listeners	Pendengar event
+Incoming events with these names are expected; the log can show only them.	Event masuk dengan nama ini yang ditunggu; log bisa menampilkan hanya event ini.
+Remove event	Hapus event
+Listen to this event	Dengarkan event ini
+Add event	Tambah event
+Save events from the Emit section to reuse them; they are stored with the request.	Simpan event dari bagian Emit untuk dipakai lagi; event disimpan bersama request.
+Emit now	Emit sekarang
+ack	ack
+Auto: long-polling first, then upgrade to WebSocket, like the official client	Otomatis: long-polling dulu, lalu naik ke WebSocket, seperti klien resmi
+For https:// servers	Untuk server https://
+Handshake auth	Auth handshake
+A JSON object sent with the connection (socket.handshake.auth).	Objek JSON yang dikirim bersama koneksi (socket.handshake.auth).
+JSON, text or binary (an attachment, a Buffer on the server).	JSON, teks, atau biner (lampiran, Buffer di server).
+Remove argument	Hapus argumen
+Add argument	Tambah argumen
+No arguments: the event is emitted without data.	Tanpa argumen: event dikirim tanpa data.
+No events yet	Belum ada event
+Connect, then emit an event; events from the server appear here.	Hubungkan, lalu emit event; event dari server muncul di sini.
+retained	retained
+{} props	{} properti
+Could not connect to the broker	Tidak dapat terhubung ke broker
+Enter a topic first	Isi topik dulu
+Payload: JSON or text, with {{variables}}	Payload: JSON atau teks, dengan {{variables}}
+Subscriptions	Langganan
+No subscriptions yet.	Belum ada langganan.
+Remove subscription	Hapus langganan
+Subscribe after connecting	Berlangganan setelah terhubung
+Add subscription	Tambah langganan
+Publish now	Publish sekarang
+Start without stored subscriptions	Mulai tanpa langganan tersimpan
+For mqtts:// and wss:// brokers	Untuk broker mqtts:// dan wss://
+Published by the broker when this client disconnects unexpectedly.	Dipublikasikan broker saat klien ini terputus tiba-tiba.
+Send a last will	Kirim last will
+Payload	Payload
+unary	unary
+server stream	server stream
+client stream	client stream
+bidi stream	stream dua arah
+Loading schema…	Memuat skema…
+Load schema	Muat skema
+Search methods	Cari method
+No methods match	Tidak ada method yang cocok
+Reload schema	Muat ulang skema
+{} methods	{} method
+Schema error	Skema gagal dimuat
+No schema	Belum ada skema
+server reflection	server reflection
+Schema from {}	Skema dari {}
+Could not load the schema	Tidak dapat memuat skema
+Pick a method to get a template of its input message.	Pilih method untuk mendapatkan templat pesan inputnya.
+The request message as JSON	Pesan request sebagai JSON
+Metadata	Metadata
+When TLS is on	Saat TLS aktif
+Calling…	Memanggil…
+No response headers yet.	Belum ada header respons.
+No trailers yet.	Belum ada trailer.
+The server lists its services itself (grpc.reflection v1 or v1alpha).	Server menyebutkan layanannya sendiri (grpc.reflection v1 atau v1alpha).
+No .proto files yet.	Belum ada berkas .proto.
+import path	import path
+Remove import path	Hapus import path
+Add .proto files	Tambah berkas .proto
+Add import path	Tambah import path
+Services	Layanan
+Pick a method and press Invoke to call it.	Pilih method lalu tekan Invoke untuk memanggilnya.
+template	templat
+{} args	{} argumen
+Could not connect to the server	Tidak dapat terhubung ke server
+Auto: Streamable HTTP, falling back to HTTP+SSE	Otomatis: Streamable HTTP, beralih ke HTTP+SSE bila perlu
+the workspace folder	folder workspace
+Use this server in other MCP hosts.	Pakai server ini di host MCP lain.
+Copy config	Salin konfigurasi
+Starting the server and listing what it offers.	Menjalankan server dan mendaftar apa yang ditawarkannya.
+Not connected	Tidak terhubung
+Connect to list the server's tools, resources and prompts.	Hubungkan untuk melihat tools, resources, dan prompts server.
+This server has no tools.	Server ini tidak punya tools.
+This server has no resources.	Server ini tidak punya resources.
+This server has no prompts.	Server ini tidak punya prompts.
+Pick a saved call to load it.	Pilih panggilan tersimpan untuk memuatnya.
+Pick an item on the left to see it and call it.	Pilih item di kiri untuk melihat dan memanggilnya.
+Nothing selected	Belum ada yang dipilih
+JSON object	Objek JSON
+Reset	Atur ulang
+Fill with a template of the arguments	Isi dengan templat argumen
+A call is running	Panggilan sedang berjalan
+Waiting for the server…	Menunggu server…
+Result	Hasil
+Success	Berhasil
+Copy result	Salin hasil
+Right-click a saved call to remove it.	Klik kanan panggilan tersimpan untuk menghapusnya.
+Answering…	Menjawab…
+No traffic yet	Belum ada lalu lintas
+Connect to see the JSON-RPC messages exchanged with the server.	Hubungkan untuk melihat pesan JSON-RPC yang dipertukarkan dengan server.
+Generating…	Membuat jawaban…
+Completed	Selesai
+model	model
+Fetching models…	Mengambil model…
+Conversation{}	Percakapan{}
+Extra body	Body tambahan
+JSON merged into the provider request	JSON yang digabung ke request provider
+MCP tools	Tools MCP
+No MCP servers yet	Belum ada server MCP
+Chat	Chat
+Raw response	Respons mentah
+{} out	{} keluar
+Output tokens	Token output
+{} in	{} masuk
+Input tokens	Token input
+Finish reason	Alasan selesai
+The provider's response appears here after a send.	Respons provider muncul di sini setelah dikirim.
+Optional instructions for the model	Instruksi opsional untuk model
+User	Pengguna
+Assistant	Asisten
+Write a message…	Tulis pesan…
+Make assistant	Jadikan asisten
+Make user	Jadikan pengguna
+User message	Pesan pengguna
+Assistant message	Pesan asisten
+Tool call · {}	Panggilan tool · {}
+Tool result · {}	Hasil tool · {}
+Copy answer	Salin jawaban
+The model could not answer	Model tidak dapat menjawab
+Listening	Mendengarkan
+Starting…	Memulai…
+Not started	Belum berjalan
+Respond with	Balas dengan
+Status code	Kode status
+Use this response from now on	Pakai respons ini mulai sekarang
+Could not start the listener	Tidak dapat menjalankan listener
+Waiting for requests	Menunggu request
+Requests sent to the address above appear here. Try:	Request yang dikirim ke alamat di atas muncul di sini. Coba:
+Copy command	Salin perintah
+The listener is stopped	Listener berhenti
+Start it to get a local URL that records every request sent to it.	Jalankan untuk mendapatkan URL lokal yang merekam setiap request yang masuk.
+Select a request	Pilih request
+Its headers and body appear here.	Header dan body-nya muncul di sini.
+truncated	terpotong
+No body	Tanpa body
+Send this request again to another URL, e.g. your local app.	Kirim ulang request ini ke URL lain, misalnya aplikasi lokal Anda.
+Connected	Terhubung
+Connection failed	Koneksi gagal
+Or press ↩ in the address field	Atau tekan ↩ di kolom alamat
+Copy address	Salin alamat
+Select	Pilih
+Load into the composer	Muat ke penyusun pesan
+Keep this message with the request	Simpan pesan ini bersama request
+Clear the log	Kosongkan log
+Search messages	Cari pesan
+Sent	Terkirim
+Received	Diterima
+No messages match	Tidak ada pesan yang cocok
+Close (Esc)	Tutup (Esc)
+Test results	Hasil tes
+Close this tab, or open a mock server from another collection.	Tutup tab ini, atau buka mock server dari koleksi lain.
+{} · examples saved on requests are served by method and path	{} · contoh yang disimpan di request dilayani berdasarkan method dan path
+Use as {{baseUrl}}	Pakai sebagai {{baseUrl}}
+Server	Server
+Stop the server to change these settings.	Hentikan server untuk mengubah pengaturan ini.
+No examples yet	Belum ada contoh
+Send a request and use “Save as example” on the response.	Kirim request lalu pakai “Simpan sebagai contoh” pada responsnya.
+{} examples	{} contoh
+Requests to the mock server appear here.	Request ke mock server muncul di sini.
+Start the server, then send requests to it.	Jalankan server, lalu kirim request ke sana.
+Matched	Cocok dengan
+Paused	Dijeda
+Pause	Jeda
+Resume	Lanjutkan
+Stop recording; traffic still flows	Berhenti merekam; lalu lintas tetap berjalan
+Record traffic again	Rekam lalu lintas lagi
+Certificate rejected	Sertifikat ditolak
+Could not start the proxy	Tidak dapat menjalankan proxy
+Waiting for traffic	Menunggu lalu lintas
+Set {} as the HTTP and HTTPS proxy of a browser, app or device.	Atur {} sebagai proxy HTTP dan HTTPS di browser, aplikasi, atau perangkat.
+The proxy is stopped	Proxy berhenti
+Start it, then point a browser, app or device at it to record their requests.	Jalankan, lalu arahkan browser, aplikasi, atau perangkat ke sana untuk merekam request-nya.
+No requests match	Tidak ada request yang cocok
+Its headers, bodies and timings appear here.	Header, body, dan waktunya muncul di sini.
+Record	Rekam
+Hosts whose HTTPS is passed through untouched	Host yang HTTPS-nya diteruskan tanpa diubah
+Stop the proxy to change its port and HTTPS options.	Hentikan proxy untuk mengubah port dan opsi HTTPS-nya.
+Not trusted yet	Belum dipercaya
+Search URLs	Cari URL
+Tick requests in the list first	Centang request di daftar dulu
+Choose a collection first	Pilih koleksi dulu
+Save {} to collection	Simpan {} ke koleksi
+Connect and send a message to see the conversation here.	Hubungkan dan kirim pesan untuk melihat percakapannya di sini.
+Connect to the broker; messages on your subscriptions appear here.	Hubungkan ke broker; pesan dari langganan Anda muncul di sini.
+HTTPS passed through	HTTPS diteruskan apa adanya
+no filters	tanpa filter
+{} filters	{} filter
+Check for updates on startup	Periksa pembaruan saat aplikasi dibuka
+The version installed on this computer.	Versi yang terpasang di komputer ini.
+Updates are only downloaded over HTTPS, not from {}.	Pembaruan hanya diunduh lewat HTTPS, tidak dari {}.
+Too many redirects.	Terlalu banyak pengalihan.
+The release publishes no checksum for {}, so it was not downloaded.	Rilis ini tidak menerbitkan checksum untuk {}, jadi berkas itu tidak diunduh.
+The download stalled.	Unduhan macet.
+The download is incomplete ({} of {} bytes).	Unduhan tidak lengkap ({} dari {} byte).
+Merpati wants to install an update.	Merpati ingin memasang pembaruan.
+This release has no app archive for this Mac.	Rilis ini tidak punya arsip aplikasi untuk Mac ini.
+Installing updates in place needs macOS.	Memasang pembaruan secara langsung hanya bisa di macOS.
+Updating…	Memperbarui…
+Download	Unduh
+Verify	Verifikasi
+Install	Pasang
+Looking for the newest version…	Mencari versi terbaru…
+Checking the checksum and the signature…	Memeriksa checksum dan tanda tangan…
+Checking the checksum…	Memeriksa checksum…
+Replacing Merpati with the new version…	Mengganti Merpati dengan versi baru…
+Merpati is restarting…	Merpati sedang dimulai ulang…
+The update was not installed	Pembaruan tidak dipasang
+Download failed	Unduhan gagal
+Merpati was not changed. Try again, or get the new version from the release page.	Merpati tidak diubah. Coba lagi, atau ambil versi baru dari halaman rilis.
+Merpati quits, installs the new version and opens again with your tabs.	Merpati akan ditutup, memasang versi baru, lalu terbuka lagi dengan tab Anda.
+Installing…	Memasang…
+Install and restart	Pasang dan mulai ulang
+The archive could not be unpacked.	Arsip tidak bisa diekstrak.
+The archive does not contain Merpati.app.	Arsip tidak berisi Merpati.app.
+The download is not Merpati.	Unduhan ini bukan Merpati.
+The downloaded version does not match the release.	Versi yang diunduh tidak sesuai dengan rilisnya.
+The downloaded app's signature is not valid.	Tanda tangan aplikasi yang diunduh tidak valid.
+The downloaded app is signed by someone else.	Aplikasi yang diunduh ditandatangani oleh pihak lain.
+The installed app was not found.	Aplikasi yang terpasang tidak ditemukan.
+The update could not be copied.	Pembaruan tidak bisa disalin.
+The installed app could not be moved aside.	Aplikasi yang terpasang tidak bisa dipindahkan sementara.
+The new version could not be moved into place.	Versi baru tidak bisa dipindahkan ke tempatnya.
+The new version could not be moved into place; the previous one is in {}	Versi baru tidak bisa dipindahkan ke tempatnya; versi sebelumnya ada di {}
+No administrator password was entered, so Merpati was not changed.	Kata sandi administrator tidak dimasukkan, jadi Merpati tidak diubah.
+Merpati could not be restarted: {}	Merpati tidak bisa dimulai ulang: {}
+Merpati {} is already installed. Quit Merpati and open it again.	Merpati {} sudah terpasang. Tutup Merpati, lalu buka lagi.

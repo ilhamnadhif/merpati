@@ -1,0 +1,151 @@
+name: Release
+
+# Builds the app and CLI for macOS (universal), Linux and Windows when a `v*`
+# tag is pushed, then publishes one GitHub release with every file and the
+# matching CHANGELOG section as its notes. Signing and notarization run only
+# when the Apple secrets below are configured; otherwise the app is signed
+# ad hoc.
+#
+#   APPLE_CERTIFICATE_P12       base64 of the "Developer ID Application" .p12
+#   APPLE_CERTIFICATE_PASSWORD  its password
+#   APPLE_SIGN_IDENTITY         e.g. "Developer ID Application: Name (TEAMID)"
+#   APPLE_ID, APPLE_TEAM_ID, APPLE_APP_PASSWORD   for notarytool
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  macos:
+    runs-on: macos-latest
+    env:
+      # Secrets cannot appear in `if:` directly; empty when not configured.
+      APPLE_CERTIFICATE_P12: ${{ secrets.APPLE_CERTIFICATE_P12 }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag matches the crate version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)"
+          [ "v$version" = "$GITHUB_REF_NAME" ] || { echo "tag $GITHUB_REF_NAME but Cargo.toml says $version"; exit 1; }
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+      - name: Import signing certificate
+        if: env.APPLE_CERTIFICATE_P12 != ''
+        env:
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          echo "$APPLE_CERTIFICATE_P12" | base64 --decode > cert.p12
+          security create-keychain -p ci build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p ci build.keychain
+          security import cert.p12 -k build.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k ci build.keychain
+          rm cert.p12
+      - name: Notary credentials
+        if: env.APPLE_ID != ''
+        run: |
+          xcrun notarytool store-credentials merpati-notary --apple-id "$APPLE_ID" \
+            --team-id "${{ secrets.APPLE_TEAM_ID }}" --password "${{ secrets.APPLE_APP_PASSWORD }}"
+          echo "MERPATI_NOTARY_PROFILE=merpati-notary" >> "$GITHUB_ENV"
+      - name: Package
+        env:
+          MERPATI_SIGN_IDENTITY: ${{ secrets.APPLE_SIGN_IDENTITY }}
+        run: scripts/package-macos.sh
+      # Checksums for people checking downloads by hand (the in-app updater
+      # also accepts the SHA-256 digest GitHub publishes for each file).
+      - name: Checksums
+        run: cd target/dist-pkg && shasum -a 256 *.dmg *.zip *.tar.gz > SHA256SUMS-macos.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          if-no-files-found: error
+          path: |
+            target/dist-pkg/*.dmg
+            target/dist-pkg/*.zip
+            target/dist-pkg/*.tar.gz
+            target/dist-pkg/merpati.rb
+            target/dist-pkg/SHA256SUMS-macos.txt
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libwayland-dev libgtk-3-dev libdbus-1-dev
+      - run: cargo build --profile dist --locked -p merpati-app -p merpati-cli
+      - name: Package
+        run: |
+          V="${GITHUB_REF_NAME#v}"
+          mkdir -p pkg/merpati-$V
+          cp target/dist/merpati-app target/dist/merpati packaging/linux/merpati.desktop pkg/merpati-$V/
+          cp packaging/macos/icon-1024.png pkg/merpati-$V/merpati.png
+          cp README.md LICENSE-MIT LICENSE-APACHE pkg/merpati-$V/
+          tar -C pkg -czf merpati-$V-linux-x86_64.tar.gz merpati-$V
+          sha256sum merpati-$V-linux-x86_64.tar.gz > SHA256SUMS-linux.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          if-no-files-found: error
+          path: |
+            merpati-*-linux-x86_64.tar.gz
+            SHA256SUMS-linux.txt
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --profile dist --locked -p merpati-app -p merpati-cli
+      - name: Package
+        shell: pwsh
+        run: |
+          $v = "$env:GITHUB_REF_NAME".TrimStart("v")
+          New-Item -ItemType Directory -Force pkg | Out-Null
+          Copy-Item target/dist/merpati-app.exe, target/dist/merpati.exe, README.md, LICENSE-MIT, LICENSE-APACHE pkg/
+          Compress-Archive -Path pkg/* -DestinationPath "merpati-$v-windows-x86_64.zip"
+          $h = (Get-FileHash -Algorithm SHA256 "merpati-$v-windows-x86_64.zip").Hash.ToLower()
+          "$h  merpati-$v-windows-x86_64.zip" | Out-File -Encoding ascii SHA256SUMS-windows.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          if-no-files-found: error
+          path: |
+            merpati-*-windows-x86_64.zip
+            SHA256SUMS-windows.txt
+
+  publish:
+    # One job creates the release, so parallel builds never race to create it.
+    needs: [macos, linux, windows]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Release notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          # The CHANGELOG section of this version, without its heading.
+          awk -v v="$version" '
+            /^## / { if (found) exit; if ($2 == v) { found = 1; next } }
+            found { print }
+          ' CHANGELOG.md > notes.md
+          [ -s notes.md ] || echo "See CHANGELOG.md." > notes.md
+          ls -la dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Merpati ${{ github.ref_name }}
+          body_path: notes.md
+          files: dist/*

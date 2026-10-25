@@ -1,0 +1,21 @@
+# Homebrew cask for Merpati. `scripts/package-macos.sh` fills in the version
+# and checksum; publish the DMG on the release page and put the result in a tap.
+cask "merpati" do
+  version "__VERSION__"
+  sha256 "__SHA256__"
+
+  url "https://github.com/ilhamnadhif/merpati/releases/download/v#{version}/Merpati-#{version}-__ARCH__.dmg"
+  name "Merpati"
+  desc "Lightweight native API client (HTTP, GraphQL, gRPC, WebSocket, MQTT, MCP)"
+  homepage "https://github.com/ilhamnadhif/merpati"
+
+  depends_on macos: ">= :monterey"
+
+  app "Merpati.app"
+  binary "#{appdir}/Merpati.app/Contents/MacOS/merpati-app", target: "merpati-app"
+
+  zap trash: [
+    "~/Library/Application Support/Merpati",
+    "~/Library/Preferences/dev.merpati.app.plist",
+  ]
+end

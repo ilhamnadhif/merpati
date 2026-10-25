@@ -1,0 +1,21 @@
+[package]
+name = "merpati-html"
+description = "Handlebars templating and an HTML/CSS-subset renderer for egui (Postman visualizer)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+egui.workspace = true
+handlebars = { version = "6", default-features = false }
+html5ever = "0.40"
+serde_json.workspace = true
+base64.workspace = true
+percent-encoding.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+eframe = { workspace = true, features = ["wgpu"] }
+egui_extras.workspace = true
+image = { version = "0.25", default-features = false, features = ["png"] }

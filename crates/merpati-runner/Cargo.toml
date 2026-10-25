@@ -1,0 +1,39 @@
+[package]
+name = "merpati-runner"
+description = "Request pipeline (scripts, variables, auth, send, tests), Collection Runner and reporters"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+merpati-core.workspace = true
+merpati-http.workspace = true
+merpati-auth.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+indexmap.workspace = true
+csv.workspace = true
+quick-junit.workspace = true
+chrono.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+tempfile.workspace = true
+parking_lot.workspace = true
+bytes.workspace = true
+rand.workspace = true
+reqwest.workspace = true
+merpati-grpc = { path = "../merpati-grpc" }
+merpati-ai = { path = "../merpati-ai" }
+merpati-mcp = { path = "../merpati-mcp", default-features = false }
+merpati-socketio = { path = "../merpati-socketio" }
+merpati-mqtt = { path = "../merpati-mqtt" }
+
+[dev-dependencies]
+tempfile.workspace = true
+axum.workspace = true
+merpati-script.workspace = true
+tokio-tungstenite.workspace = true
+futures-util.workspace = true

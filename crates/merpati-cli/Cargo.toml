@@ -1,0 +1,45 @@
+[package]
+name = "merpati-cli"
+description = "Merpati command line: run collections in CI, mock servers, import/export, codegen, load tests"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "merpati"
+path = "src/main.rs"
+
+[dependencies]
+merpati-core = { workspace = true, features = ["keychain"] }
+merpati-http.workspace = true
+merpati-auth.workspace = true
+merpati-script.workspace = true
+merpati-convert.workspace = true
+merpati-runner.workspace = true
+merpati-mock.workspace = true
+merpati-flows = { path = "../merpati-flows" }
+merpati-secrets = { path = "../merpati-secrets" }
+tokio.workspace = true
+tokio-util.workspace = true
+clap.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+indexmap.workspace = true
+anyhow.workspace = true
+chrono.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[dev-dependencies]
+axum.workspace = true
+tokio.workspace = true
+tempfile.workspace = true
+serde_json.workspace = true
+# WebSocket echo server for the session test.
+tokio-tungstenite.workspace = true
+futures-util.workspace = true
+# Mutual TLS server for the client certificate tests.
+rustls.workspace = true
+tokio-rustls = { version = "0.26", default-features = false, features = ["ring", "logging", "tls12"] }
+rcgen = { version = "0.14", default-features = false, features = ["ring", "pem", "crypto"] }

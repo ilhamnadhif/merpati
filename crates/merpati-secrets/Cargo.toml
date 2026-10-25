@@ -1,0 +1,30 @@
+[package]
+name = "merpati-secrets"
+description = "External secret managers for Merpati vault variables: HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, 1Password"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+merpati-core.workspace = true
+merpati-http.workspace = true
+merpati-auth.workspace = true
+reqwest.workspace = true
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+parking_lot.workspace = true
+tracing.workspace = true
+url.workspace = true
+percent-encoding.workspace = true
+base64.workspace = true
+chrono.workspace = true
+
+[dev-dependencies]
+axum.workspace = true
+tempfile.workspace = true
+hmac.workspace = true
+sha2.workspace = true
+hex.workspace = true

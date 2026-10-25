@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<!-- Hardened runtime without exceptions: no JIT (the script engine is an
+     interpreter), no unsigned libraries, no sandbox (workspaces live anywhere). -->
+<dict/>
+</plist>
