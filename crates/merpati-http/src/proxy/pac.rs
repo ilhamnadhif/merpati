@@ -149,6 +149,9 @@ fn fetch(location: &str, timeout: Duration, resolve_to: Option<SocketAddr>) -> R
 }
 
 fn fetch_http(url: url::Url, timeout: Duration, resolve_to: Option<SocketAddr>) -> Result<String, ProxyError> {
+    // This client is built outside the engine, which installs the TLS
+    // provider; without one reqwest panics on an https:// PAC URL.
+    crate::tls::install_provider();
     // The URL may carry credentials; errors name only the host.
     let host = url.host_str().unwrap_or_default().to_string();
     let resolve_host = host.clone();
