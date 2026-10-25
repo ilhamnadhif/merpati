@@ -7,6 +7,7 @@ mod automation;
 mod body_view;
 mod capture_tab;
 mod container_tab;
+mod crash;
 mod dialogs;
 mod env_tab;
 mod flow_tab;
@@ -49,6 +50,7 @@ fn main() -> eframe::Result {
         )
         .init();
     merpati_http::tls::install_provider();
+    crash::install(&AppSettings::config_dir());
 
     let settings_path = AppSettings::default_path();
     let settings = AppSettings::load(&settings_path);

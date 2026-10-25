@@ -18,6 +18,10 @@ pub enum Step {
     Open(String),
     /// Opens a new, empty request tab (its URL field gets the caret).
     NewRequest(bool),
+    /// Shows the response body as `pretty`, `raw`, `preview` or `tree`.
+    BodyView(String),
+    /// Panics on the UI thread (checks the crash report).
+    Panic(String),
     Send(bool),
     /// Presses the Send button of the active request tab.
     ClickSend(bool),
@@ -476,6 +480,20 @@ pub fn tick(app: &mut MerpatiApp, ctx: &egui::Context) {
             );
         }
         Step::NewRequest(_) => app.new_request_tab(),
+        Step::Panic(message) => panic!("{message}"),
+        Step::BodyView(v) => {
+            if let Some(TabKind::Request(t)) = app.tabs.get_mut(app.active).map(|t| &mut t.kind)
+                && let Some(r) = t.result.as_mut()
+            {
+                use crate::body_view::BodyView;
+                r.body.view = match v.as_str() {
+                    "raw" => BodyView::Raw,
+                    "preview" => BodyView::Preview,
+                    "tree" => BodyView::Tree,
+                    _ => BodyView::Pretty,
+                };
+            }
+        }
         Step::UpdateInstall(_) => {
             if app.update.available.is_some() {
                 crate::update::press_primary(app);

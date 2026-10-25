@@ -2,6 +2,19 @@
 
 All notable changes to Merpati. The newest version comes first.
 
+## 0.1.1 — 2026-10-25
+
+### Fixed
+- The app closed when a response in HTML or XML contained non-ASCII text (for example the
+  "★" on the jsonplaceholder.typicode.com home page): the syntax highlighter cut the text inside
+  a character. Text that a highlighter splits mid-character is no longer dropped either.
+- An https:// PAC (proxy auto-config) file could fail to download when nothing had set up TLS
+  yet.
+
+### Added
+- If Merpati ever closes unexpectedly, the details are written to `crash.log` in its settings
+  folder (only on this computer) and the next start says so.
+
 ## 0.1.0 — 2026-10-25
 
 First public release: a native API client for macOS (Apple Silicon and Intel), with builds for

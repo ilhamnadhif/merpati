@@ -338,10 +338,12 @@ fn lex(text: &str, lang: Lang) -> Vec<(usize, Kind)> {
             }
         }
         Lang::Xml => {
+            // Bytes, not `&text[i..]`: `i` walks byte by byte through text
+            // such as "★" and may stop inside a character.
             while i < b.len() {
-                if text[i..].starts_with("<!--") {
+                if b[i..].starts_with(b"<!--") {
                     push(i, Kind::Comment);
-                    match text[i..].find("-->") {
+                    match b[i..].windows(3).position(|w| w == b"-->") {
                         Some(e) => i += e + 3,
                         None => i = b.len(),
                     }
@@ -507,6 +509,13 @@ pub fn highlight(key: HlKey<'_>) -> LayoutJob {
         cuts.push(*e);
     }
     cuts.push(text.len());
+    // A change point inside a character moves to the character's end, so
+    // every piece is valid text and none of it is left out.
+    for c in &mut cuts {
+        while *c < text.len() && !text.is_char_boundary(*c) {
+            *c += 1;
+        }
+    }
     cuts.sort_unstable();
     cuts.dedup();
 
@@ -518,7 +527,7 @@ pub fn highlight(key: HlKey<'_>) -> LayoutJob {
     let mut si = 0;
     for w in cuts.windows(2) {
         let (s, e) = (w[0], w[1]);
-        if s >= e || !text.is_char_boundary(s) || !text.is_char_boundary(e) {
+        if s >= e {
             continue;
         }
         while pi + 1 < points.len() && points[pi + 1].0 <= s {
@@ -626,6 +635,40 @@ pub fn pretty_xml(text: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Non-ASCII text anywhere (an HTML page with "★", a JSON string with
+    /// emoji, an unquoted attribute) never panics and keeps every character.
+    #[test]
+    fn non_ascii_text_is_highlighted_whole() {
+        let samples = [
+            "<p>Rated ★★★★☆</p><!-- é --><a title=ñ x=\"ü\">→</a>",
+            "<html><body>★<br/>日本語 <img alt='🙂'>\n</body></html>",
+            "★<!--",
+            "<t ★ é=1>",
+            r#"{"név": "Zoë 🙂", "ключ": [1, "→"], "x": "\é"}"#,
+            "const s = '★'; // ünïcode\n/* 🙂 */ pm.test(\"é\", () => {})",
+            "query { ★ é: f(a: \"ü\") # 🙂\n}",
+            "naïve: ★\n- 🙂: \"é\"\n# ü",
+            "plain ★ text",
+        ];
+        let vars = VarNames::new(["é".to_string()]);
+        for text in samples {
+            for lang in [Lang::Xml, Lang::Json, Lang::JavaScript, Lang::GraphQl, Lang::Yaml, Lang::Text] {
+                for search in ["", "é", "★", "a"] {
+                    let job = highlight(HlKey {
+                        text,
+                        lang,
+                        dark: false,
+                        search,
+                        vars: Some(&vars),
+                        font_size: 13.0,
+                        wrap: false,
+                    });
+                    assert_eq!(job.text, text, "{lang:?} search {search:?}");
+                }
+            }
+        }
+    }
 
     #[test]
     fn json_keys_and_values() {

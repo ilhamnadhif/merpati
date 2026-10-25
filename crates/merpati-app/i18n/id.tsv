@@ -1714,3 +1714,4 @@ The new version could not be moved into place; the previous one is in {}	Versi b
 No administrator password was entered, so Merpati was not changed.	Kata sandi administrator tidak dimasukkan, jadi Merpati tidak diubah.
 Merpati could not be restarted: {}	Merpati tidak bisa dimulai ulang: {}
 Merpati {} is already installed. Quit Merpati and open it again.	Merpati {} sudah terpasang. Tutup Merpati, lalu buka lagi.
+Merpati closed unexpectedly last time. Details: {}	Merpati tertutup tiba-tiba sebelumnya. Rinciannya: {}

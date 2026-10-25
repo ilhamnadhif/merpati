@@ -525,6 +525,9 @@ impl MerpatiApp {
         if crate::update::check_on_startup(&app) {
             crate::update::check(&mut app, false);
         }
+        if let Some(log) = crate::crash::take_pending(&AppSettings::config_dir()) {
+            app.toast(trf("Merpati closed unexpectedly last time. Details: {}", &[&log.display()]), true);
+        }
         if moved_secrets && let Err(e) = app.settings.save(&app.settings_path) {
             tracing::warn!("could not save settings: {e}");
         }
