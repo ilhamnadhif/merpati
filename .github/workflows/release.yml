@@ -101,19 +101,20 @@ jobs:
         run: |
           cd target/dist-pkg
           deb=$(ls *.deb); rpm=$(ls *.rpm); appimage=$(ls *.AppImage)
+          # Hard dependencies only: the recommended portal and keyring are for desktops.
           check='merpati --version && if ldd /usr/bin/merpati-app | grep "not found"; then exit 1; fi'
           for image in ubuntu:20.04 ubuntu:24.04 debian:11 debian:12; do
             echo "== $image"
             docker run --rm -v "$PWD:/pkg:ro" "$image" bash -ec \
-              "apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /pkg/$deb >/dev/null && $check"
+              "apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends /pkg/$deb >/dev/null && $check"
           done
           for image in fedora:41 rockylinux:8 rockylinux:9; do
             echo "== $image"
-            docker run --rm -v "$PWD:/pkg:ro" "$image" bash -ec "dnf install -y -q /pkg/$rpm >/dev/null && $check"
+            docker run --rm -v "$PWD:/pkg:ro" "$image" bash -ec "dnf install -y -q --setopt=install_weak_deps=False /pkg/$rpm >/dev/null && $check"
           done
           echo "== opensuse/leap:15.6"
           docker run --rm -v "$PWD:/pkg:ro" opensuse/leap:15.6 bash -ec \
-            "zypper --non-interactive --quiet install --allow-unsigned-rpm /pkg/$rpm >/dev/null && $check"
+            "zypper --non-interactive --quiet install --no-recommends --allow-unsigned-rpm /pkg/$rpm >/dev/null && $check"
           echo "== AppImage"
           chmod +x "$appimage"
           (mkdir -p /tmp/ai && cd /tmp/ai && "$OLDPWD/$appimage" --appimage-extract >/dev/null && squashfs-root/usr/bin/merpati --version)
