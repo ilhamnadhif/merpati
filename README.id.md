@@ -44,9 +44,9 @@ diimpor dan dijalankan apa adanya untuk pemakaian umum.
 ## Instalasi
 
 Aplikasi berjalan di macOS 12 Monterey atau lebih baru (Apple Silicon dan Intel, satu build
-universal), Windows 10 dan 11 (x64), serta Linux x86_64 dan ARM64: Ubuntu 22.04+, Debian 12+,
-Fedora, RHEL/Rocky/Alma 9+, openSUSE Leap 15.6+ dan, lewat AppImage, sebagian besar distribusi
-lain (Arch, Manjaro, ...). macOS adalah platform utama; lihat [Batasan](#batasan).
+universal), Windows 10 dan 11 (x64), serta Linux x86_64 dan ARM64 dengan glibc 2.28 atau lebih
+baru: Ubuntu 20.04+, Debian 11+, Fedora, RHEL/Rocky/Alma 8+, openSUSE Leap 15.6+ dan, lewat
+AppImage, sebagian besar distribusi lain (Arch, Manjaro, ...). macOS adalah platform utama; lihat [Batasan](#batasan).
 
 | Sistem | Unduh dari [rilis terbaru](https://github.com/ilhamnadhif/merpati/releases/latest) |
 | --- | --- |
@@ -140,7 +140,7 @@ berisi dua binary yang sama beserta berkas `.desktop` dan ikon: ekstrak lalu jal
 `.desktop` ke `~/.local/share/applications`.
 
 Semua berkas Linux dan Windows dibangun di GitHub Actions; workflow rilis memasang paketnya di
-Ubuntu 22.04/24.04, Debian 12, Fedora 41, Rocky Linux 9, dan openSUSE Leap 15.6 serta memasang,
+Ubuntu 20.04/24.04, Debian 11/12, Fedora 41, Rocky Linux 8/9, dan openSUSE Leap 15.6 serta memasang,
 menjalankan, dan meng-uninstall installer Windows sebelum menerbitkan. Setiap rilis mencantumkan
 SHA-256 setiap berkas (`SHA256SUMS-*.txt`).
 

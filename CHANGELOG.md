@@ -9,9 +9,9 @@ All notable changes to Merpati. The newest version comes first.
   shortcuts, **Check for Updates…**, Settings…, links to the repository, release notes and issues.
   On Linux and Windows, **Check for updates…** is in the workspace menu.
 - **Linux packages**: `.deb` (Ubuntu, Debian, Mint, Pop!_OS), `.rpm` (Fedora, RHEL, Rocky, Alma,
-  openSUSE), AppImage (Arch, Manjaro and others) and `.tar.gz`, for x86_64 and ARM64. The release
-  workflow installs them on Ubuntu 22.04/24.04, Debian 12, Fedora 41, Rocky Linux 9 and openSUSE
-  Leap 15.6 before publishing.
+  openSUSE), AppImage (Arch, Manjaro and others) and `.tar.gz`, for x86_64 and ARM64, built
+  against glibc 2.28. The release workflow installs them on Ubuntu 20.04/24.04, Debian 11/12,
+  Fedora 41, Rocky Linux 8/9 and openSUSE Leap 15.6 before publishing.
 - **Windows installer** (`Merpati-Setup-<version>-x64.exe`): per-user or all-users install, Start
   menu entry, optional `merpati` on `PATH`, updates in place; the portable `.zip` stays.
 - **Updates per kind of install**: an AppImage replaces itself and restarts like the macOS app; a

@@ -43,9 +43,9 @@ run unchanged for common use.
 ## Install
 
 The app runs on macOS 12 Monterey or later (Apple Silicon and Intel, one universal build),
-Windows 10 and 11 (x64), and Linux on x86_64 and ARM64: Ubuntu 22.04+, Debian 12+, Fedora,
-RHEL/Rocky/Alma 9+, openSUSE Leap 15.6+ and, through the AppImage, most other distributions
-(Arch, Manjaro, ...). macOS is the main platform; see [Known limitations](#known-limitations).
+Windows 10 and 11 (x64), and Linux on x86_64 and ARM64 with glibc 2.28 or later: Ubuntu 20.04+,
+Debian 11+, Fedora, RHEL/Rocky/Alma 8+, openSUSE Leap 15.6+ and, through the AppImage, most
+other distributions (Arch, Manjaro, ...). macOS is the main platform; see [Known limitations](#known-limitations).
 
 | System | Download from the [latest release](https://github.com/ilhamnadhif/merpati/releases/latest) |
 | --- | --- |
@@ -138,7 +138,7 @@ or copy the binaries to a folder on your `PATH` (such as `~/.local/bin`) and the
 to `~/.local/share/applications`.
 
 Every Linux and Windows file is built on GitHub Actions; the release workflow installs the
-packages on Ubuntu 22.04/24.04, Debian 12, Fedora 41, Rocky Linux 9 and openSUSE Leap 15.6 and
+packages on Ubuntu 20.04/24.04, Debian 11/12, Fedora 41, Rocky Linux 8/9 and openSUSE Leap 15.6 and
 installs, starts and uninstalls the Windows installer before publishing. Each release lists the
 SHA-256 of every file (`SHA256SUMS-*.txt`).
 

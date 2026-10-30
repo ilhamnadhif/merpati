@@ -12,8 +12,8 @@
 # Needs dpkg-dev (dpkg-deb, dpkg-shlibdeps), rpm (rpmbuild) and, for the
 # AppImage, appimagetool (downloaded into target/ unless APPIMAGETOOL points
 # to one; it brings its own mksquashfs). Package dependencies are computed from the
-# binaries (dpkg-shlibdeps, rpm's automatic requires), so build on the oldest
-# distribution you want to support (CI uses Ubuntu 22.04).
+# binaries (dpkg-shlibdeps, rpm's automatic requires), so build against the
+# oldest glibc you want to support (CI builds in manylinux_2_28: glibc 2.28).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

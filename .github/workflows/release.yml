@@ -75,8 +75,9 @@ jobs:
             target/dist-pkg/SHA256SUMS-macos.txt
 
   linux:
-    # Built on Ubuntu 22.04 so the packages also run on older distributions
-    # (checked below on Ubuntu, Debian, Fedora, Rocky Linux and openSUSE).
+    # The binaries are built against glibc 2.28 (the manylinux_2_28 image,
+    # AlmaLinux 8) so they run on older distributions too; packaging and the
+    # install checks on several distributions happen on the Ubuntu host.
     strategy:
       fail-fast: false
       matrix:
@@ -86,10 +87,14 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-      - run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libwayland-dev libdbus-1-dev dpkg-dev rpm
-      - run: cargo build --profile dist --locked -p merpati-app -p merpati-cli
+      - name: Build (glibc 2.28)
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp/home -v "$PWD:/src" -w /src \
+            quay.io/pypa/manylinux_2_28_${{ matrix.arch }} bash -ec '
+              curl --proto "=https" --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable >/dev/null
+              . "$HOME/.cargo/env"
+              cargo build --profile dist --locked -p merpati-app -p merpati-cli'
+      - run: sudo apt-get update && sudo apt-get install -y dpkg-dev rpm
       - name: Package (.tar.gz, .deb, .rpm, .AppImage)
         run: scripts/package-linux.sh
       - name: Install and run on other distributions
@@ -97,12 +102,12 @@ jobs:
           cd target/dist-pkg
           deb=$(ls *.deb); rpm=$(ls *.rpm); appimage=$(ls *.AppImage)
           check='merpati --version && if ldd /usr/bin/merpati-app | grep "not found"; then exit 1; fi'
-          for image in ubuntu:22.04 ubuntu:24.04 debian:12; do
+          for image in ubuntu:20.04 ubuntu:24.04 debian:11 debian:12; do
             echo "== $image"
             docker run --rm -v "$PWD:/pkg:ro" "$image" bash -ec \
               "apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /pkg/$deb >/dev/null && $check"
           done
-          for image in fedora:41 rockylinux:9; do
+          for image in fedora:41 rockylinux:8 rockylinux:9; do
             echo "== $image"
             docker run --rm -v "$PWD:/pkg:ro" "$image" bash -ec "dnf install -y -q /pkg/$rpm >/dev/null && $check"
           done
