@@ -4,6 +4,7 @@ Name=Merpati
 Comment=Lightweight native API client
 Exec=merpati-app %f
 Icon=merpati
+StartupWMClass=merpati
 Terminal=false
 Categories=Development;Network;
 Keywords=API;HTTP;REST;GraphQL;gRPC;WebSocket;Postman;

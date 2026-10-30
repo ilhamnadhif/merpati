@@ -11,6 +11,7 @@ pub mod environment;
 pub mod error;
 pub mod fork;
 pub mod history;
+pub mod jsonpath;
 pub mod model;
 pub mod postman;
 pub mod prepared;

@@ -33,6 +33,21 @@ pub struct Running {
 pub struct ResultView {
     pub exec: Execution,
     pub body: BodyState,
+    /// When the response arrived (shown when comparing).
+    pub at: chrono::DateTime<chrono::Local>,
+}
+
+/// How much of the tab the response panel takes.
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
+pub enum PanelMode {
+    /// The split set by the divider ([`RequestTab::split`]).
+    #[default]
+    Normal,
+    /// The request editor is folded to its section tabs (below) or hidden
+    /// (side by side).
+    Maximized,
+    /// Only the response's header bar is shown.
+    Minimized,
 }
 
 #[derive(Default)]
@@ -63,6 +78,8 @@ pub enum RespSection {
     Tests,
     Details,
     Visualize,
+    /// The previous response against this one.
+    Compare,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -96,6 +113,19 @@ pub struct RequestTab {
     pub ws_epoch: u64,
     /// Rendered `pm.visualizer.set` output, keyed by a hash of its input.
     viz: Option<(u64, Result<merpati_html::Document, String>)>,
+    /// Maximized or minimized response panel.
+    pub panel: PanelMode,
+    /// The mode the last frame was laid out with.
+    drawn_panel: PanelMode,
+    /// The response before the current one (Compare).
+    pub prev: Option<Box<crate::response_diff::Snapshot>>,
+    /// Keep `prev` when new responses arrive.
+    pub prev_pinned: bool,
+    compare: crate::response_diff::CompareState,
+    /// Set as variable, generated tests, confirmations.
+    tools: crate::response_actions::Tools,
+    /// A body value action requested by UI automation.
+    pending_value: Option<crate::response_actions::ValueAction>,
 }
 
 pub struct GqlSubscription {
@@ -202,6 +232,13 @@ impl RequestTab {
             gql_sub: None,
             ws_epoch: 0,
             viz: None,
+            panel: PanelMode::Normal,
+            drawn_panel: PanelMode::Normal,
+            prev: None,
+            prev_pinned: false,
+            compare: Default::default(),
+            tools: Default::default(),
+            pending_value: None,
         }
     }
 
@@ -215,6 +252,10 @@ impl RequestTab {
 
     pub fn start_running(&mut self, cancel: CancellationToken) {
         self.gql_sub = None;
+        // A minimized panel opens again to show the new response.
+        if self.panel == PanelMode::Minimized {
+            self.panel = PanelMode::Normal;
+        }
         self.running = Some(Running { cancel, started: Instant::now() });
     }
 
@@ -237,12 +278,73 @@ impl RequestTab {
             return;
         }
         let had_tests = !exec.tests.is_empty();
-        let body_view = self.result.as_ref().map(|r| r.body.view).unwrap_or(crate::body_view::BodyView::Pretty);
+        // The new body keeps how the last one was viewed (view, wrap, filter).
         let mut body = BodyState::default();
-        body.view = body_view;
-        self.result = Some(Box::new(ResultView { exec, body }));
+        if let Some(old) = &self.result {
+            body.view = old.body.view;
+            body.wrap = old.body.wrap;
+            body.filter = old.body.filter.clone();
+            body.filter_open = old.body.filter_open;
+        }
+        // The response being replaced becomes the one to compare with,
+        // unless a baseline is kept.
+        if let Some(old) = self.result.take()
+            && let Some(resp) = old.exec.response
+            && !(self.prev_pinned && self.prev.is_some())
+        {
+            self.prev = Some(Box::new(crate::response_diff::Snapshot { resp, at: old.at }));
+        }
+        self.compare.reset();
+        self.result = Some(Box::new(ResultView { exec, body, at: chrono::Local::now() }));
         if self.resp_section == RespSection::Tests && !had_tests {
             self.resp_section = RespSection::Body;
+        }
+    }
+
+    /// UI automation of the response panel: `maximize`, `minimize`,
+    /// `restore`, `compare`, `compare_headers`, `generate_tests`,
+    /// `add_generated_tests` (presses "Add tests" in the preview),
+    /// `set_var:<path>`, `add_test:<path>` (a path of the JSON body).
+    pub fn automation(&mut self, action: &str) {
+        use crate::response_actions::ValueAction;
+        match action {
+            "maximize" => self.panel = PanelMode::Maximized,
+            "minimize" => self.panel = PanelMode::Minimized,
+            "restore" => self.panel = PanelMode::Normal,
+            "compare" | "compare_headers" => {
+                self.resp_section = RespSection::Compare;
+                self.compare.mode = if action == "compare" {
+                    crate::response_diff::Mode::Body
+                } else {
+                    crate::response_diff::Mode::Headers
+                };
+            }
+            "add_generated_tests" => self.tools.auto_insert = true,
+            "generate_tests" => {
+                if let Some(resp) = self.result.as_ref().and_then(|r| r.exec.response.as_ref()) {
+                    self.tools.generate(resp);
+                }
+            }
+            other => {
+                let Some((kind, path)) = other.split_once(':') else { return };
+                let json: Option<serde_json::Value> = self
+                    .result
+                    .as_ref()
+                    .and_then(|r| r.exec.response.as_ref())
+                    .and_then(|r| r.body.read_all().ok())
+                    .and_then(|b| serde_json::from_slice(&b).ok());
+                let Some(value) =
+                    json.as_ref().and_then(|j| crate::test_gen::lookup(j, &crate::test_gen::parse_path(path))).cloned()
+                else {
+                    return;
+                };
+                let path = path.to_string();
+                self.pending_value = match kind {
+                    "set_var" => Some(ValueAction::SetVariable { path, value }),
+                    "add_test" => Some(ValueAction::AddTest { path, value }),
+                    _ => None,
+                };
+            }
         }
     }
 }
@@ -272,6 +374,12 @@ struct Actions {
     duplicate: bool,
     /// What a pasted cURL command could not import exactly.
     curl_warnings: Vec<String>,
+    /// "Set as variable" / "Add test" from the body.
+    value_action: Option<crate::response_actions::ValueAction>,
+    /// Open the "Generate tests" preview.
+    generate_tests: bool,
+    /// Copy the request as sent (resolved) as a cURL command.
+    copy_curl: bool,
 }
 
 fn get_item(app: &MerpatiApp, tab: &RequestTab) -> Option<RequestItem> {
@@ -330,35 +438,109 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut RequestTab
     header(ui, tab, &mut item, &ectx, &mut actions);
     ui.add_space(4.0);
 
-    let resp_panel = |ui: &mut Ui, tab: &mut RequestTab, actions: &mut Actions| response_panel(ui, tab, &ectx, actions);
+    let resp_panel = |ui: &mut Ui, tab: &mut RequestTab, actions: &mut Actions| {
+        let rect = ui.max_rect();
+        response_panel(ui, tab, &ectx, actions);
+        rect
+    };
     let avail = ui.available_rect_before_wrap();
-    if ectx.side_layout {
-        let w = (avail.width() * tab.split).clamp(260.0, (avail.width() - 280.0).max(260.0));
+    let mut after = crate::response_actions::After::default();
+    let panel_rect = if ectx.side_layout {
+        let w = match tab.panel {
+            PanelMode::Normal => (avail.width() * tab.split).clamp(260.0, (avail.width() - 280.0).max(260.0)),
+            PanelMode::Maximized => avail.width(),
+            PanelMode::Minimized => MINIMIZED_RAIL,
+        };
         let rect = egui::Panel::right(egui::Id::unique(("resp-side", tab_id)))
             .exact_size(w)
             .resizable(false)
             .frame(egui::Frame::new().inner_margin(egui::Margin { left: 10, right: 0, top: 0, bottom: 0 }))
             .show(ui, |ui| resp_panel(ui, tab, &mut actions))
-            .response
-            .rect;
-        let handle = egui::Rect::from_min_max(rect.left_top(), egui::pos2(rect.left() + 6.0, rect.bottom()));
-        split_handle(ui, egui::Id::unique(("split-side", tab_id)), handle, true, avail.width(), &mut tab.split);
+            .inner;
+        let handle = egui::Rect::from_min_max(
+            egui::pos2(rect.left() - 10.0, rect.top()),
+            egui::pos2(rect.left() - 4.0, rect.bottom()),
+        );
+        if tab.panel != PanelMode::Maximized {
+            split_handle(ui, egui::Id::unique(("split-side", tab_id)), handle, true, avail, tab);
+        }
+        rect
     } else {
-        let h = (avail.height() * tab.split).clamp(120.0, (avail.height() - 140.0).max(120.0));
+        let h = match tab.panel {
+            PanelMode::Normal => (avail.height() * tab.split).clamp(120.0, (avail.height() - 140.0).max(120.0)),
+            // The request keeps its section tabs.
+            PanelMode::Maximized => (avail.height() - 44.0).max(120.0),
+            PanelMode::Minimized => MINIMIZED_BAR,
+        };
         let rect = egui::Panel::bottom(egui::Id::unique(("resp-below", tab_id)))
             .exact_size(h)
             .resizable(false)
             .frame(egui::Frame::new().inner_margin(egui::Margin { left: 0, right: 0, top: 8, bottom: 0 }))
             .show(ui, |ui| resp_panel(ui, tab, &mut actions))
-            .response
-            .rect;
-        let handle = egui::Rect::from_min_max(rect.left_top(), egui::pos2(rect.right(), rect.top() + 6.0));
-        split_handle(ui, egui::Id::unique(("split-below", tab_id)), handle, false, avail.height(), &mut tab.split);
+            .inner;
+        let handle = egui::Rect::from_min_max(
+            egui::pos2(rect.left(), rect.top() - 8.0),
+            egui::pos2(rect.right(), rect.top() - 2.0),
+        );
+        split_handle(ui, egui::Id::unique(("split-below", tab_id)), handle, false, avail, tab);
+        rect
+    };
+    if !(ectx.side_layout && tab.panel == PanelMode::Maximized) {
+        request_sections(ui, tab, &mut item, &ectx, &mut actions);
     }
-    request_sections(ui, tab, &mut item, &ectx, &mut actions);
+    // Over the response, or the whole tab when the response is a narrow rail.
+    let notice_rect = if panel_rect.width() < 320.0 { avail } else { panel_rect };
+    let scripts_shown = tab.section == Section::Scripts
+        && tab.script_event == ScriptEvent::PostResponse
+        && tab.panel != PanelMode::Maximized;
+    crate::response_actions::notice(ui, &mut tab.tools, notice_rect, scripts_shown, &mut after);
+
+    // Body value actions (context menu of the body, or automation).
+    if let Some(a) = actions.value_action.take().or_else(|| tab.pending_value.take())
+        && crate::response_actions::start(&mut tab.tools, a, &mut item)
+    {
+        after.changed = true;
+    }
+    if actions.generate_tests
+        && let Some(resp) = tab.result.as_ref().and_then(|r| r.exec.response.as_ref())
+    {
+        tab.tools.generate(resp);
+    }
+    let dialogs = crate::response_actions::dialogs(app, ui.ctx(), &mut tab.tools, &mut item, collection_id.as_deref());
+    after.changed |= dialogs.changed;
+    if dialogs.rerun_tests {
+        actions.rerun_tests = true;
+        tab.resp_section = RespSection::Tests;
+        if tab.panel == PanelMode::Minimized {
+            tab.panel = PanelMode::Normal;
+        }
+    }
+    if after.rerun_tests {
+        actions.rerun_tests = true;
+    }
+    if after.open_scripts || dialogs.open_scripts {
+        tab.section = Section::Scripts;
+        tab.script_event = ScriptEvent::PostResponse;
+        if tab.panel == PanelMode::Maximized {
+            tab.panel = PanelMode::Normal;
+        }
+    }
+    if actions.copy_curl
+        && let Some(prepared) = tab.result.as_ref().and_then(|r| r.exec.prepared.as_ref())
+    {
+        let code = merpati_convert::codegen::generate(merpati_convert::codegen::Language::Curl, prepared);
+        ui.ctx().copy_text(code);
+        app.toast(tr("Copied the request as sent, as a cURL command"), false);
+    }
 
     if item != original {
         put_item(app, tab, item.clone());
+    }
+    // A new panel size lays the frame out again before it is shown, so
+    // lists sized by the panel don't show a frame of the old size.
+    if tab.panel != tab.drawn_panel {
+        tab.drawn_panel = tab.panel;
+        ui.ctx().request_discard("response panel resized");
     }
 
     // Deferred actions that need the whole app.
@@ -464,9 +646,17 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut RequestTab
     }
 }
 
+/// Height of the minimized response panel (its header bar).
+const MINIMIZED_BAR: f32 = 44.0;
+/// Width of the minimized response panel beside the request.
+const MINIMIZED_RAIL: f32 = 46.0;
+
 /// A draggable divider between the request editor and the response panel.
-fn split_handle(ui: &mut Ui, id: egui::Id, rect: egui::Rect, vertical: bool, total: f32, split: &mut f32) {
-    let r = ui.interact(rect, id, egui::Sense::drag());
+/// Dragging a maximized or minimized panel brings back the split at the
+/// pointer; a double click restores it (or resets the split to half).
+fn split_handle(ui: &mut Ui, id: egui::Id, rect: egui::Rect, vertical: bool, avail: Rect, tab: &mut RequestTab) {
+    let total = if vertical { avail.width() } else { avail.height() };
+    let r = ui.interact(rect, id, egui::Sense::click_and_drag());
     let hovered = r.hovered() || r.dragged();
     if hovered {
         ui.ctx().set_cursor_icon(if vertical {
@@ -475,13 +665,26 @@ fn split_handle(ui: &mut Ui, id: egui::Id, rect: egui::Rect, vertical: bool, tot
             egui::CursorIcon::ResizeVertical
         });
     }
+    let split = &mut tab.split;
     if r.dragged() && total > 0.0 {
-        let d = r.drag_delta();
-        let delta = if vertical { -d.x } else { -d.y };
-        *split = (*split + delta / total).clamp(0.15, 0.85);
+        if tab.panel != PanelMode::Normal {
+            if let Some(pos) = r.interact_pointer_pos() {
+                let from_end = if vertical { avail.right() - pos.x } else { avail.bottom() - pos.y };
+                *split = (from_end / total).clamp(0.15, 0.85);
+            }
+            tab.panel = PanelMode::Normal;
+        } else {
+            let d = r.drag_delta();
+            let delta = if vertical { -d.x } else { -d.y };
+            *split = (*split + delta / total).clamp(0.15, 0.85);
+        }
     }
     if r.double_clicked() {
-        *split = 0.5;
+        if tab.panel == PanelMode::Normal {
+            *split = 0.5;
+        } else {
+            tab.panel = PanelMode::Normal;
+        }
     }
     let stroke = if hovered {
         egui::Stroke::new(2.0, crate::theme::accent(ui.visuals().dark_mode))
@@ -664,13 +867,33 @@ fn request_sections(ui: &mut Ui, tab: &mut RequestTab, item: &mut RequestItem, e
     // The sections keep the width of the editor even when the tab row is
     // wider than a narrow window.
     let area = ui.available_rect_before_wrap();
+    // With the response maximized only the section tabs show; picking one
+    // brings the editor back.
+    if tab.panel == PanelMode::Maximized {
+        let mut picked = false;
+        ui.horizontal(|ui| {
+            let strip_w = (ui.available_width() - 120.0).max(120.0);
+            ui.allocate_ui_with_layout(vec2(strip_w, 34.0), egui::Layout::top_down(egui::Align::Min), |ui| {
+                picked = kit::tab_strip_ex(ui, &mut tab.section, &items, &dots);
+            });
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                if kit::ghost(ui, Some(icons::CARET_DOWN), tr("Show editor")).clicked() {
+                    picked = true;
+                }
+            });
+        });
+        if picked {
+            tab.panel = PanelMode::Normal;
+        }
+        return;
+    }
     kit::tab_strip_ex(ui, &mut tab.section, &items, &dots);
     ui.add_space(10.0);
     let rect = Rect::from_min_max(pos2(area.left(), ui.cursor().top()), pos2(area.right(), area.bottom()));
     ui.scope_builder(egui::UiBuilder::new().max_rect(rect), |ui| {
         egui::ScrollArea::vertical().id_salt(("req-sections", &id)).auto_shrink([false; 2]).show(ui, |ui| {
             match tab.section {
-                Section::Scripts => scripts_editor(ui, tab, &mut item.scripts, &ectx.vars),
+                Section::Scripts => scripts_editor(ui, tab, &mut item.scripts, &ectx.vars, actions),
                 Section::Docs => docs_editor(ui, item),
                 section => {
                     let http = item.request.as_http_mut().expect("http request");
@@ -1542,8 +1765,40 @@ fn prettify_graphql(q: &str) -> String {
     out.trim().to_string()
 }
 
-fn scripts_editor(ui: &mut Ui, tab: &mut RequestTab, scripts: &mut merpati_core::model::Scripts, vars: &VarCtx) {
-    script_event_bar(ui, &mut tab.script_event, scripts, tr("JavaScript with the Postman-compatible pm API"));
+fn scripts_editor(
+    ui: &mut Ui,
+    tab: &mut RequestTab,
+    scripts: &mut merpati_core::model::Scripts,
+    vars: &VarCtx,
+    actions: &mut Actions,
+) {
+    let has_response = tab.result.as_ref().is_some_and(|r| r.exec.response.is_some());
+    let post = tab.script_event == ScriptEvent::PostResponse;
+    script_event_bar_with(
+        ui,
+        &mut tab.script_event,
+        scripts,
+        tr("JavaScript with the Postman-compatible pm API"),
+        if post { 150.0 } else { 0.0 },
+        |ui| {
+            if !post {
+                return;
+            }
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                let r = ui
+                    .add_enabled_ui(has_response, |ui| kit::ghost(ui, Some(icons::SPARKLE), tr("Generate tests")))
+                    .inner;
+                let r = if has_response {
+                    r.on_hover_text(tr("Write tests for the status, time, content type and body shape of the response"))
+                } else {
+                    r.on_disabled_hover_text(tr("Send the request first: tests are generated from its response."))
+                };
+                if r.clicked() {
+                    actions.generate_tests = true;
+                }
+            });
+        },
+    );
     script_panel(ui, tab.script_event, scripts, vars);
 }
 
@@ -1554,6 +1809,19 @@ pub(crate) fn script_event_bar(
     event: &mut ScriptEvent,
     scripts: &merpati_core::model::Scripts,
     help: &str,
+) {
+    script_event_bar_with(ui, event, scripts, help, 0.0, |_| {});
+}
+
+/// [`script_event_bar`] with controls (`trailing_w` wide) on the right of
+/// the row.
+fn script_event_bar_with(
+    ui: &mut Ui,
+    event: &mut ScriptEvent,
+    scripts: &merpati_core::model::Scripts,
+    help: &str,
+    trailing_w: f32,
+    trailing: impl FnOnce(&mut Ui),
 ) {
     let p = theme::pal(ui);
     ui.horizontal(|ui| {
@@ -1582,7 +1850,22 @@ pub(crate) fn script_event_bar(
             }
         }
         ui.add_space(4.0);
-        ui.add(egui::Label::new(kit::hint(ui, help)).truncate());
+        if trailing_w == 0.0 {
+            ui.add(egui::Label::new(kit::hint(ui, help)).truncate());
+        } else {
+            // The help gives way to the trailing controls.
+            let help_w = ui.available_width() - trailing_w - 8.0;
+            if help_w > 60.0 {
+                ui.allocate_ui_with_layout(
+                    vec2(help_w, 30.0),
+                    egui::Layout::left_to_right(egui::Align::Center),
+                    |ui| {
+                        ui.add(egui::Label::new(kit::hint(ui, help)).truncate());
+                    },
+                );
+            }
+            trailing(ui);
+        }
     });
     ui.add_space(8.0);
 }
@@ -2050,10 +2333,123 @@ fn subscription_panel(ui: &mut Ui, sub: &GqlSubscription, actions: &mut Actions)
     });
 }
 
+/// Maximize and minimize buttons of the response panel (added right to
+/// left: minimize ends up rightmost).
+fn panel_controls(ui: &mut Ui, panel: &mut PanelMode, side: bool) {
+    let (min_icon, min_tip) =
+        if side { (icons::CARET_RIGHT, tr("Minimize response")) } else { (icons::CARET_DOWN, tr("Minimize response")) };
+    if kit::icon_button(ui, min_icon, min_tip).clicked() {
+        *panel = PanelMode::Minimized;
+    }
+    let maximized = *panel == PanelMode::Maximized;
+    let (icon, tip) =
+        if maximized { (icons::ARROWS_IN, tr("Restore layout")) } else { (icons::ARROWS_OUT, tr("Maximize response")) };
+    if kit::icon_toggle(ui, icon, tip, maximized).clicked() {
+        *panel = if maximized { PanelMode::Normal } else { PanelMode::Maximized };
+    }
+}
+
+/// [`panel_controls`] in the top right corner, over the content (empty
+/// and loading states, which have no header row).
+fn corner_controls(ui: &mut Ui, panel: &mut PanelMode, side: bool) {
+    let r = ui.max_rect();
+    let rect = Rect::from_min_max(pos2(r.right() - 64.0, r.top()), pos2(r.right(), r.top() + 28.0));
+    let mut child =
+        ui.new_child(egui::UiBuilder::new().max_rect(rect).layout(egui::Layout::right_to_left(egui::Align::Center)));
+    child.spacing_mut().item_spacing.x = 4.0;
+    panel_controls(&mut child, panel, side);
+}
+
+/// The minimized response panel: a bar with the outcome and the buttons
+/// to bring it back (a narrow rail when the response is beside the request).
+fn minimized_panel(ui: &mut Ui, tab: &mut RequestTab, side: bool) {
+    let p = theme::pal(ui);
+    let rect = ui.max_rect();
+    let bar = ui.interact(rect, ui.make_persistent_id("resp-min-bar"), Sense::click());
+    if bar.hovered() {
+        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+    }
+    let bar = bar.on_hover_text(tr("Show the response"));
+    widgets::a11y_button(&bar, tr("Show the response"));
+    let mut restore = bar.clicked();
+    let resp = tab.result.as_ref().and_then(|r| r.exec.response.as_ref());
+    let failed = tab.result.as_ref().is_some_and(|r| r.exec.error.is_some());
+    if side {
+        ui.vertical_centered(|ui| {
+            ui.spacing_mut().item_spacing.y = 6.0;
+            if kit::icon_button(ui, icons::CARET_LEFT, tr("Restore layout")).clicked() {
+                restore = true;
+            }
+            if kit::icon_button(ui, icons::ARROWS_OUT, tr("Maximize response")).clicked() {
+                tab.panel = PanelMode::Maximized;
+            }
+            ui.add_space(4.0);
+            if tab.running.is_some() {
+                ui.add(egui::Spinner::new().size(14.0).color(p.accent));
+            } else if let Some(resp) = resp {
+                let color = theme::status_color(resp.status, ui.visuals().dark_mode);
+                ui.label(RichText::new(resp.status.to_string()).font(theme::semibold(11.5)).color(color))
+                    .on_hover_text(format!("{} {}", resp.status, resp.status_text));
+            } else if failed {
+                ui.label(RichText::new(icons::WARNING_CIRCLE).font(theme::icon_font(15.0)).color(p.err));
+            }
+        });
+    } else {
+        ui.horizontal(|ui| {
+            ui.set_height(30.0);
+            ui.spacing_mut().item_spacing.x = 8.0;
+            ui.add(egui::Label::new(RichText::new(tr("Response")).font(theme::semibold(13.5))).selectable(false));
+            if tab.running.is_some() {
+                ui.add(egui::Spinner::new().size(14.0).color(p.accent));
+                ui.label(widgets::muted(ui, tr("Sending request…")));
+            } else if let Some(resp) = resp {
+                kit::status_pill(ui, resp.status, &resp.status_text);
+                kit::metric(ui, icons::TIMER, &merpati_core::util::human_ms(resp.timings.total_ms));
+                kit::metric(ui, icons::DOWNLOAD_SIMPLE, &merpati_core::util::human_bytes(resp.total_size()));
+                if let Some(r) = &tab.result
+                    && !r.exec.tests.is_empty()
+                {
+                    let (passed, failed, _) = test_counts(&r.exec.tests);
+                    let color = if failed > 0 { p.err } else { p.ok };
+                    ui.label(
+                        RichText::new(format!("{} {passed}/{}", icons::TEST_TUBE, passed + failed))
+                            .font(theme::medium(small_size(ui) + 0.5))
+                            .color(color),
+                    )
+                    .on_hover_text(tr("Test Results"));
+                }
+            } else if let Some(err) = tab.result.as_ref().and_then(|r| r.exec.error.as_ref()) {
+                kit::pill(ui, &format!("{} {}", icons::WARNING_CIRCLE, tr(err.kind_label())), p.err);
+            } else {
+                ui.label(widgets::muted(ui, tr("No response yet")));
+            }
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.spacing_mut().item_spacing.x = 4.0;
+                if kit::icon_button(ui, icons::CARET_UP, tr("Restore layout")).clicked() {
+                    restore = true;
+                }
+                if kit::icon_button(ui, icons::ARROWS_OUT, tr("Maximize response")).clicked() {
+                    tab.panel = PanelMode::Maximized;
+                }
+            });
+        });
+    }
+    if restore {
+        tab.panel = PanelMode::Normal;
+    }
+}
+
 fn response_panel(ui: &mut Ui, tab: &mut RequestTab, ectx: &EditCtx, actions: &mut Actions) {
+    if tab.panel == PanelMode::Minimized {
+        minimized_panel(ui, tab, ectx.side_layout);
+        return;
+    }
     if let Some(sub) = &tab.gql_sub {
         subscription_panel(ui, sub, actions);
         return;
+    }
+    if tab.running.is_some() || tab.result.is_none() {
+        corner_controls(ui, &mut tab.panel, ectx.side_layout);
     }
     if let Some(r) = &tab.running {
         ui.add_space(28.0);
@@ -2091,7 +2487,6 @@ fn response_panel(ui: &mut Ui, tab: &mut RequestTab, ectx: &EditCtx, actions: &m
     let tests_passed = exec.tests.iter().filter(|t| t.passed && !t.skipped).count();
     let resp_headers = exec.response.as_ref().map(|r| r.headers.len()).unwrap_or(0);
     let cookies = exec.response.as_ref().map(|r| r.headers_all("set-cookie").count()).unwrap_or(0);
-    let narrow = ui.available_width() < 720.0;
     let tests_label = if tests_total == 0 && exec.script_errors.is_empty() {
         tr("Test Results").to_string()
     } else {
@@ -2110,14 +2505,68 @@ fn response_panel(ui: &mut Ui, tab: &mut RequestTab, ectx: &EditCtx, actions: &m
     } else if tab.resp_section == RespSection::Visualize {
         tab.resp_section = RespSection::Body;
     }
-    let status_row = |ui: &mut Ui, actions: &mut Actions| {
+    let comparable = tab.prev.is_some() && exec.response.is_some();
+    if comparable {
+        items.push((RespSection::Compare, tr("Compare").to_string()));
+    } else if tab.resp_section == RespSection::Compare {
+        tab.resp_section = RespSection::Body;
+    }
+    // Tabs and the status row share a line when both fit (the tabs'
+    // width as `kit::tab_strip` measures it, the status row's estimated).
+    let tabs_w: f32 = items
+        .iter()
+        .map(|(_, label)| {
+            let font = theme::medium(body_size(ui));
+            let w = ui.painter().layout_no_wrap(label.clone(), font, Color32::PLACEHOLDER).size().x;
+            w + 22.0
+        })
+        .sum();
+    let status_w = if exec.response.is_some() { 360.0 } else { 220.0 };
+    let narrow = ui.available_width() < tabs_w + status_w;
+    let panel = &mut tab.panel;
+    let side = ectx.side_layout;
+    let mut pin_baseline = false;
+    let mut status_row = |ui: &mut Ui, actions: &mut Actions| {
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.spacing_mut().item_spacing.x = 4.0;
+            panel_controls(ui, panel, side);
+            kit::vdivider(ui, 18.0);
+            ui.spacing_mut().item_spacing.x = 8.0;
             if let Some(resp) = &exec.response {
                 let more = crate::kit::icon_button(ui, crate::icons::DOTS_THREE, tr("More actions"));
                 egui::Popup::menu(&more).show(|ui| {
                     if ui.button(crate::kit::with_icon(crate::icons::BOOKMARK_SIMPLE, tr("Save as example"))).clicked()
                     {
                         actions.save_example = true;
+                        ui.close();
+                    }
+                    if ui
+                        .button(crate::kit::with_icon(crate::icons::SPARKLE, tr("Generate tests")))
+                        .on_hover_text(tr(
+                            "Write tests for the status, time, content type and body shape of the response",
+                        ))
+                        .clicked()
+                    {
+                        actions.generate_tests = true;
+                        ui.close();
+                    }
+                    if ui
+                        .button(crate::kit::with_icon(crate::icons::GIT_DIFF, tr("Keep as compare baseline")))
+                        .on_hover_text(tr("Compare the next responses with this one"))
+                        .clicked()
+                    {
+                        pin_baseline = true;
+                        ui.close();
+                    }
+                    if exec.prepared.is_some()
+                        && ui
+                            .button(crate::kit::with_icon(crate::icons::TERMINAL, tr("Copy as cURL (as sent)")))
+                            .on_hover_text(tr(
+                                "The request that produced this response, with variables and auth applied",
+                            ))
+                            .clicked()
+                    {
+                        actions.copy_curl = true;
                         ui.close();
                     }
                     if ui
@@ -2182,11 +2631,31 @@ fn response_panel(ui: &mut Ui, tab: &mut RequestTab, ectx: &EditCtx, actions: &m
             status_row(ui, actions);
         });
     }
+    if pin_baseline && let Some(resp) = &exec.response {
+        tab.prev = Some(Box::new(crate::response_diff::Snapshot { resp: resp.clone(), at: result.at }));
+        tab.prev_pinned = true;
+        tab.compare.reset();
+        tab.resp_section = RespSection::Compare;
+    }
     ui.add_space(8.0);
     match tab.resp_section {
+        RespSection::Compare => {
+            if let (Some(prev), Some(resp)) = (&tab.prev, &exec.response) {
+                let cur = crate::response_diff::Snapshot { resp: resp.clone(), at: result.at };
+                let acts = crate::response_diff::show(ui, &mut tab.compare, prev, &cur, tab.prev_pinned);
+                if acts.toggle_pin {
+                    tab.prev_pinned = !tab.prev_pinned;
+                }
+                if acts.maximize {
+                    tab.panel = PanelMode::Maximized;
+                }
+            }
+        }
         RespSection::Body => {
             if let Some(resp) = &exec.response {
-                crate::body_view::show(ui, &mut result.body, resp, ectx.max_pretty);
+                if let Some(a) = crate::body_view::show(ui, &mut result.body, resp, ectx.max_pretty) {
+                    actions.value_action = Some(a.into());
+                }
             } else if let Some(err) = &exec.error {
                 error_state(ui, err, actions);
             } else if exec.skipped {
@@ -2489,10 +2958,22 @@ fn tests_view(
             tr("No tests yet"),
             tr("Add pm.test(...) calls in the Post-response script to check the response."),
             |ui| {
-                if kit::secondary(ui, Some(icons::PLUS), tr("Write a test")).clicked() {
-                    *section = Section::Scripts;
-                    *script_event = ScriptEvent::PostResponse;
-                }
+                // Two buttons, centered.
+                let w = 300.0;
+                ui.allocate_ui_with_layout(vec2(w, 30.0), egui::Layout::left_to_right(egui::Align::Center), |ui| {
+                    if kit::secondary(ui, Some(icons::SPARKLE), tr("Generate tests"))
+                        .on_hover_text(tr(
+                            "Write tests for the status, time, content type and body shape of the response",
+                        ))
+                        .clicked()
+                    {
+                        actions.generate_tests = true;
+                    }
+                    if kit::secondary(ui, Some(icons::PLUS), tr("Write a test")).clicked() {
+                        *section = Section::Scripts;
+                        *script_event = ScriptEvent::PostResponse;
+                    }
+                });
             },
         );
         return;

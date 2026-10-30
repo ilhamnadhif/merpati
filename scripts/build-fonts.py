@@ -7,6 +7,7 @@ the icon constants (crates/merpati-app/src/icons.rs).
 
 --inter      folder with Inter-Regular/Medium/SemiBold.ttf (Inter 4.x release, extras/ttf)
 --jetbrains  folder with JetBrainsMono-Regular.ttf (JetBrains Mono 2.x release, fonts/ttf)
+             (both optional: leave them out to rebuild only the icon font)
 --phosphor   folder with Phosphor.ttf and codepoints.rs (the egui-phosphor crate's
              res/ and src/variants/, or the Phosphor release)
 
@@ -45,7 +46,7 @@ TEXT_RANGES = ",".join([
 ICONS = """
 ARCHIVE ARROWS_CLOCKWISE ARROWS_DOWN_UP ARROWS_IN ARROWS_LEFT_RIGHT ARROWS_OUT ARROW_BEND_UP_LEFT
 ARROW_CLOCKWISE ARROW_COUNTER_CLOCKWISE ARROW_DOWN ARROW_LEFT ARROW_LINE_DOWN ARROW_RIGHT
-ARROW_SQUARE_OUT ARROW_UP BELL BOOKMARK_SIMPLE BOOK_OPEN BRACKETS_ANGLE BRACKETS_CURLY BRAIN
+ARROW_SQUARE_OUT ARROW_UP ARROWS_IN_LINE_VERTICAL ARROWS_OUT_LINE_VERTICAL BELL BOOKMARK_SIMPLE BOOK_OPEN BRACKETS_ANGLE BRACKETS_CURLY BRAIN
 BROADCAST BROOM BUG CARDS CARET_DOWN CARET_LEFT CARET_RIGHT CARET_UP CHART_BAR CHATS CHAT_CIRCLE CHECK
 CHECK_CIRCLE CHECK_SQUARE CIRCLE CIRCLE_HALF CIRCLE_NOTCH CLIPBOARD CLIPBOARD_TEXT CLOCK
 CLOCK_COUNTER_CLOCKWISE CLOUD_ARROW_DOWN CLOUD_ARROW_UP CODE COLUMNS COMMAND COOKIE COPY CPU CROSSHAIR
@@ -84,19 +85,21 @@ def copy_license(src, name):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--inter", required=True)
-    p.add_argument("--jetbrains", required=True)
+    p.add_argument("--inter")
+    p.add_argument("--jetbrains")
     p.add_argument("--phosphor", required=True)
     p.add_argument("--inter-license", default=None)
     p.add_argument("--jetbrains-license", default=None)
     a = p.parse_args()
     os.makedirs(OUT, exist_ok=True)
 
-    for weight in ["Regular", "Medium", "SemiBold"]:
-        subset(os.path.join(a.inter, f"Inter-{weight}.ttf"), os.path.join(OUT, f"Inter-{weight}.ttf"),
-               [f"--unicodes={TEXT_RANGES}"])
-    subset(os.path.join(a.jetbrains, "JetBrainsMono-Regular.ttf"), os.path.join(OUT, "JetBrainsMono-Regular.ttf"),
-           [f"--unicodes={TEXT_RANGES}"])
+    if a.inter:
+        for weight in ["Regular", "Medium", "SemiBold"]:
+            subset(os.path.join(a.inter, f"Inter-{weight}.ttf"), os.path.join(OUT, f"Inter-{weight}.ttf"),
+                   [f"--unicodes={TEXT_RANGES}"])
+    if a.jetbrains:
+        subset(os.path.join(a.jetbrains, "JetBrainsMono-Regular.ttf"),
+               os.path.join(OUT, "JetBrainsMono-Regular.ttf"), [f"--unicodes={TEXT_RANGES}"])
 
     codepoints = {}
     with open(os.path.join(a.phosphor, "codepoints.rs"), encoding="utf-8") as f:

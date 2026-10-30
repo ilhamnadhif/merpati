@@ -559,9 +559,60 @@ pub fn highlight(key: HlKey<'_>) -> LayoutJob {
 }
 
 /// Pretty-prints JSON keeping key order; returns `None` if invalid.
+#[cfg(test)]
 pub fn pretty_json(bytes: &[u8]) -> Option<String> {
     let v: serde_json::Value = serde_json::from_slice(bytes).ok()?;
-    serde_json::to_string_pretty(&v).ok()
+    Some(pretty_json_value(&v))
+}
+
+/// Pretty-prints a value like `serde_json::to_string_pretty` (two-space
+/// indent, one member per line), so the response viewer can map each line
+/// back to the value printed on it.
+pub fn pretty_json_value(v: &serde_json::Value) -> String {
+    let mut out = String::new();
+    write_json_pretty(&mut out, v, 0);
+    out
+}
+
+/// Appends `v` pretty-printed, its inner lines indented `indent` levels.
+pub fn write_json_pretty(out: &mut String, v: &serde_json::Value, indent: usize) {
+    use serde_json::Value;
+    let pad = |out: &mut String, n: usize| {
+        for _ in 0..n {
+            out.push_str("  ");
+        }
+    };
+    match v {
+        Value::Object(m) if !m.is_empty() => {
+            out.push_str("{\n");
+            for (i, (k, child)) in m.iter().enumerate() {
+                pad(out, indent + 1);
+                out.push_str(&serde_json::to_string(k).unwrap_or_default());
+                out.push_str(": ");
+                write_json_pretty(out, child, indent + 1);
+                if i + 1 < m.len() {
+                    out.push(',');
+                }
+                out.push('\n');
+            }
+            pad(out, indent);
+            out.push('}');
+        }
+        Value::Array(a) if !a.is_empty() => {
+            out.push_str("[\n");
+            for (i, child) in a.iter().enumerate() {
+                pad(out, indent + 1);
+                write_json_pretty(out, child, indent + 1);
+                if i + 1 < a.len() {
+                    out.push(',');
+                }
+                out.push('\n');
+            }
+            pad(out, indent);
+            out.push(']');
+        }
+        _ => out.push_str(&serde_json::to_string(v).unwrap_or_default()),
+    }
 }
 
 /// Very small XML/HTML pretty printer: one tag per line with indentation.
@@ -594,10 +645,26 @@ pub fn pretty_xml(text: &str) -> String {
             }
             indent(depth, &mut out);
             out.push_str(tag);
-            out.push('\n');
             if !closing && !self_closing {
-                let name: String =
-                    tag[1..].chars().take_while(|c| c.is_alphanumeric()).collect::<String>().to_lowercase();
+                let name: String = tag[1..]
+                    .chars()
+                    .take_while(|c| c.is_alphanumeric() || matches!(c, '-' | '_' | ':' | '.'))
+                    .collect();
+                // An element holding only text stays on one line: `<title>Hi</title>`.
+                let rest = &text[end..];
+                if let Some(lt) = rest.find('<')
+                    && let Some(after) = rest[lt..].strip_prefix("</").and_then(|r| r.strip_prefix(name.as_str()))
+                    && let Some(gt) = after.find('>')
+                    && after[..gt].trim().is_empty()
+                {
+                    out.push_str(rest[..lt].trim());
+                    out.push_str(&rest[lt..lt + 2 + name.len() + gt + 1]);
+                    out.push('\n');
+                    i = end + lt + 2 + name.len() + gt + 1;
+                    continue;
+                }
+                out.push('\n');
+                let name = name.to_lowercase();
                 let void = matches!(
                     name.as_str(),
                     "br" | "hr"
@@ -616,6 +683,8 @@ pub fn pretty_xml(text: &str) -> String {
                 if !void {
                     depth += 1;
                 }
+            } else {
+                out.push('\n');
             }
             i = end;
         } else {
@@ -702,9 +771,36 @@ mod tests {
         }
     }
 
+    /// The viewer maps lines back to values, so the printer must lay JSON
+    /// out exactly like serde_json does.
+    #[test]
+    fn pretty_json_matches_serde() {
+        let samples = [
+            r#"{"a": 1, "b": [1, 2, {"c": null, "d": []}], "e": {}, "f": "x\"y\n", "g": {"h": [[]]}, "é": 1.5e3}"#,
+            "[]",
+            "{}",
+            "\"text\"",
+            "[[1], [], {\"k\": [true, false]}]",
+            "-0.25",
+        ];
+        for s in samples {
+            let v: serde_json::Value = serde_json::from_str(s).unwrap();
+            assert_eq!(pretty_json_value(&v), serde_json::to_string_pretty(&v).unwrap(), "{s}");
+        }
+        assert_eq!(pretty_json(b"{\"a\":1}").as_deref(), Some("{\n  \"a\": 1\n}"));
+        assert_eq!(pretty_json(b"{oops"), None);
+    }
+
     #[test]
     fn xml_pretty() {
         let p = pretty_xml("<a><b x=\"1\">t</b><c/></a>");
-        assert_eq!(p, "<a>\n  <b x=\"1\">\n    t\n  </b>\n  <c/>\n</a>\n");
+        assert_eq!(p, "<a>\n  <b x=\"1\">t</b>\n  <c/>\n</a>\n");
+        // Mixed content keeps one node per line; empty elements and
+        // prefixed names stay on one line too.
+        let p = pretty_xml("<p>Hello <b>world</b>!</p><x:y a='1'> </x:y ><e></e><br><i>★ é</i>");
+        assert_eq!(p, "<p>\n  Hello\n  <b>world</b>\n  !\n</p>\n<x:y a='1'></x:y >\n<e></e>\n<br>\n<i>★ é</i>\n");
+        // A closing tag of another element is not this element's end.
+        let p = pretty_xml("<ab>t</a></ab>");
+        assert!(p.starts_with("<ab>\n  t\n"), "{p}");
     }
 }

@@ -64,6 +64,17 @@ for now: `request_tab` (banners, stat cards, read-only tables, disclosures),
 Reuse them instead of drawing a new variant; move one into `kit.rs` when a
 third screen needs it.
 
+## App shell on macOS
+
+- **Menu bar** (`menu.rs`, muda): the app, File, Edit, View, Window and Help
+  menus. An item with a shortcut hands egui the same key press (or
+  Copy/Cut/Paste) the shortcut would have, so `MerpatiApp::shortcuts` and text
+  editing stay the one place that handles keys on every platform. Add new
+  shortcuts there first, then a menu item that sends the key.
+- **Scrolling**: trackpad gestures stick to one axis (`scroll_lock.rs`), so text
+  that scrolls both ways doesn't shake. A canvas that pans in 2D calls
+  `scroll_lock::allow_free_scroll(ctx, rect)` every frame.
+
 ## Rules
 
 - One primary (accent) button per view.

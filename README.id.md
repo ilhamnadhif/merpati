@@ -28,19 +28,34 @@ diimpor dan dijalankan apa adanya untuk pemakaian umum.
   panggilan AI, lalu dijalankan dari aplikasi atau CLI.
 - **Spec Hub** untuk berkas OpenAPI, AsyncAPI, Protobuf, GraphQL, dan Smithy dengan validasi
   langsung, pratinjau dokumentasi langsung, dan sinkronisasi spec ⇄ koleksi.
+- **Alat respons yang menghemat bolak-balik**: lipat JSON/XML, saring dengan JSONPath
+  (`$.data[?(@.active)].email`), bandingkan dengan respons sebelumnya, jadikan nilai apa pun
+  variabel atau tes lewat klik kanan, dan buat tes (status, waktu, skema) dari sebuah respons.
 - **Mock server, listener webhook, dan proxy penangkap lalu lintas**, semuanya lokal.
 - Dua belas jenis autentikasi, dari Basic dan OAuth 2.0 sampai AWS SigV4, NTLM, dan Akamai
   EdgeGrid.
 - Antarmuka bahasa Inggris dan Indonesia, tema terang dan gelap, ramah keyboard dan pembaca layar,
   tanpa telemetri.
-- **Pembaruan** dari rilis GitHub; di macOS cukup satu klik untuk memasang versi baru dan memulai
-  ulang.
+- **Native di mana saja**: menu bar macOS sungguhan, installer Windows, serta paket `.deb`, `.rpm`,
+  dan AppImage untuk Linux (x86_64 dan ARM64).
+- **Pembaruan** dari rilis GitHub; di macOS dan AppImage cukup satu klik untuk memasang versi baru
+  dan memulai ulang.
 
 ## Instalasi
 
 Aplikasi berjalan di macOS 12 Monterey atau lebih baru (Apple Silicon dan Intel, satu build
-universal), Linux x86_64, dan Windows x86_64. macOS adalah platform utama; lihat
-[Batasan](#batasan).
+universal), Windows 10 dan 11 (x64), serta Linux x86_64 dan ARM64: Ubuntu 22.04+, Debian 12+,
+Fedora, RHEL/Rocky/Alma 9+, openSUSE Leap 15.6+ dan, lewat AppImage, sebagian besar distribusi
+lain (Arch, Manjaro, ...). macOS adalah platform utama; lihat [Batasan](#batasan).
+
+| Sistem | Unduh dari [rilis terbaru](https://github.com/ilhamnadhif/merpati/releases/latest) |
+| --- | --- |
+| macOS | `Merpati-<versi>-universal.dmg`, atau [installer satu baris](#installer-satu-baris-macos-disarankan) |
+| Windows | `Merpati-Setup-<versi>-x64.exe` (installer) atau `merpati-<versi>-windows-x86_64.zip` (portabel) |
+| Ubuntu, Debian, Mint, Pop!_OS | `merpati_<versi>_amd64.deb` / `_arm64.deb` |
+| Fedora, RHEL, Rocky, Alma, openSUSE | `merpati-<versi>-1.x86_64.rpm` / `.aarch64.rpm` |
+| Arch, Manjaro, dan lainnya | `Merpati-<versi>-x86_64.AppImage` / `-aarch64.AppImage` |
+| Linux apa pun, manual | `merpati-<versi>-linux-x86_64.tar.gz` / `-aarch64.tar.gz` |
 
 ### Installer satu baris (macOS, disarankan)
 
@@ -84,18 +99,50 @@ xattr -dr com.apple.quarantine /Applications/Merpati.app   # selama rilis belum 
 
 Cask ini juga menautkan `merpati-app` ke folder `bin` milik Homebrew.
 
-### Linux dan Windows
+### Windows
 
-Unduh dari [rilis terbaru](https://github.com/ilhamnadhif/merpati/releases/latest):
+Jalankan **`Merpati-Setup-<versi>-x64.exe`**. Installer memasang Merpati untuk akun Anda tanpa
+hak administrator (pilih *Install for all users* di dialog pertama untuk memasang ke Program
+Files), menambahkannya ke menu Start, bisa menambahkan tool command line `merpati` ke `PATH`, dan
+memasang di atas versi lama saat memperbarui. Uninstall lewat **Settings › Apps** seperti aplikasi
+lain.
 
-- **`merpati-<versi>-linux-x86_64.tar.gz`**: aplikasi (`merpati-app`), CLI (`merpati`), berkas
-  `.desktop`, dan ikon. Ekstrak lalu jalankan `./merpati-app`, atau salin binary-nya ke folder di
-  `PATH` (misalnya `~/.local/bin`) dan berkas `.desktop` ke `~/.local/share/applications`.
-- **`merpati-<versi>-windows-x86_64.zip`**: `merpati-app.exe` dan `merpati.exe`. Ekstrak lalu
-  jalankan `merpati-app.exe`.
+Installer belum ditandatangani dengan sertifikat code-signing, jadi SmartScreen bisa menampilkan
+*Windows protected your PC*: pilih **More info › Run anyway**.
 
-Keduanya dibangun oleh workflow rilis di GitHub Actions; setiap rilis juga menyertakan
-`SHA256SUMS-linux.txt` dan `SHA256SUMS-windows.txt` untuk memeriksanya.
+Tidak mau installer? Ekstrak **`merpati-<versi>-windows-x86_64.zip`** di mana saja lalu jalankan
+`merpati-app.exe`.
+
+### Linux
+
+Unduh paket untuk distribusi dan arsitektur Anda (`amd64`/`x86_64` atau `arm64`/`aarch64`), lalu:
+
+```sh
+# Ubuntu, Debian, Linux Mint, Pop!_OS, elementary OS
+sudo apt install ./merpati_<versi>_amd64.deb
+
+# Fedora, RHEL, Rocky Linux, AlmaLinux
+sudo dnf install ./merpati-<versi>-1.x86_64.rpm
+
+# openSUSE
+sudo zypper install --allow-unsigned-rpm ./merpati-<versi>-1.x86_64.rpm
+
+# Arch, Manjaro, dan lainnya: AppImage berjalan tanpa dipasang
+chmod +x Merpati-<versi>-x86_64.AppImage
+./Merpati-<versi>-x86_64.AppImage
+```
+
+Paket menaruh `merpati-app` dan `merpati` di `/usr/bin` dan menambahkan Merpati ke menu aplikasi.
+AppImage butuh FUSE, yang sudah ada di distribusi desktop; bila tidak mau jalan, pasang paket
+`fuse`/`fuse2` distribusi Anda atau jalankan dengan `--appimage-extract-and-run`. Berkas `.tar.gz`
+berisi dua binary yang sama beserta berkas `.desktop` dan ikon: ekstrak lalu jalankan
+`./merpati-app`, atau salin binary ke folder di `PATH` (misalnya `~/.local/bin`) dan berkas
+`.desktop` ke `~/.local/share/applications`.
+
+Semua berkas Linux dan Windows dibangun di GitHub Actions; workflow rilis memasang paketnya di
+Ubuntu 22.04/24.04, Debian 12, Fedora 41, Rocky Linux 9, dan openSUSE Leap 15.6 serta memasang,
+menjalankan, dan meng-uninstall installer Windows sebelum menerbitkan. Setiap rilis mencantumkan
+SHA-256 setiap berkas (`SHA256SUMS-*.txt`).
 
 ### Hanya command line
 
@@ -128,9 +175,14 @@ atau melewati versi itu.
 - **Di macOS**, **Install and restart** mengunduh arsip aplikasi
   (`Merpati-<versi>-macos-universal.zip`), memverifikasinya (SHA-256 yang diterbitkan GitHub,
   bundle id, versi, dan tanda tangan kode), mengganti `Merpati.app`, lalu membuka versi baru.
-- **Di Linux dan Windows**, Merpati mengunduh arsip untuk sistem Anda ke folder Unduhan,
-  memeriksanya dengan `SHA256SUMS-*.txt` dari rilis (unduhan tanpa checksum ditolak), lalu
-  membukanya; penggantian berkasnya Anda lakukan sendiri.
+- **Di Linux**, AppImage mengganti dirinya dengan cara yang sama (**Install and restart**).
+  Instalasi `.deb` atau `.rpm` mengunduh paket baru dan membukanya di aplikasi pemasang perangkat
+  lunak Anda; instalasi `.tar.gz` mengunduh arsip baru.
+- **Di Windows**, Merpati mengunduh installer baru (atau `.zip` untuk salinan portabel) lalu
+  membukanya; installer menutup Merpati, memperbaruinya, dan bisa menjalankannya lagi.
+
+Setiap unduhan diperiksa dengan SHA-256 yang diterbitkan GitHub untuk berkas itu (atau
+`SHA256SUMS-*.txt` dari rilis); unduhan tanpa checksum ditolak.
 
 Installer satu baris di atas juga bisa memperbarui.
 
@@ -143,6 +195,11 @@ rm -rf ~/Library/Application\ Support/Merpati   # pengaturan, workspace bawaan, 
 
 Workspace yang Anda buat di tempat lain tetap di tempatnya. Rahasia yang tersimpan adalah item
 Keychain dengan nama service `dev.merpati.workspace`; hapus lewat Keychain Access.
+
+Di **Windows**, uninstall Merpati lewat **Settings › Apps** dan hapus `%APPDATA%\Merpati` untuk
+pengaturannya. Di **Linux**, hapus paketnya (`sudo apt remove merpati`, `sudo dnf remove merpati`)
+atau AppImage-nya, lalu hapus `~/.config/Merpati`; rahasia ada di keyring Anda (GNOME Keyring atau
+KWallet).
 
 ## Mulai
 
@@ -170,6 +227,20 @@ Keychain dengan nama service `dev.merpati.workspace`; hapus lewat Keychain Acces
   (TTFB dan total), pencarian, simpan ke berkas atau sebagai example. Respons besar dialirkan ke
   berkas sementara dan ditampilkan secara virtual, jadi respons 100 MB berisi setengah juta baris
   tidak membuat antarmuka macet.
+- Tampilan Pretty dengan nomor baris dan pelipatan (JSON per kurung; XML, HTML, dan YAML per
+  indentasi), Expand all / Collapse all / lipat ke level 1 atau 2.
+- **Filter JSONPath** untuk respons JSON: `$`, `.nama`, `['nama']`, `[n]`, `[*]`, `..` (rekursif),
+  union, slice, dan filter seperti `[?(@.price < 10 && @.inStock)]` atau `[?(@.name =~ /^a/i)]`,
+  dengan jumlah kecocokan; di tampilan Pretty dan Tree.
+- Klik kanan sebuah nilai: salin nilainya atau JSONPath-nya, **Set as variable…** (environment
+  aktif, koleksi, atau global; bisa sekaligus ditambahkan ke skrip post-response agar setiap run
+  mengisinya) atau **Add test for this value**.
+- **Compare** dengan respons sebelumnya di tab yang sama: perubahan status, waktu, ukuran, dan
+  header serta diff baris body (JSON dengan kunci terurut). Sematkan respons sebagai pembanding.
+- **Generate tests** dari sebuah respons (status, waktu respons, Content-Type, dan skema JSON),
+  ditampilkan dulu sebelum ditambahkan ke skrip post-response.
+- Perbesar panel respons atau kecilkan jadi satu baris; **Copy as cURL (as sent)** dengan nilai
+  yang sudah diisi.
 - Templat `pm.visualizer` dirender di dalam aplikasi (Handlebars, HTML, dan subset CSS termasuk
   grid, flexbox, float, dan positioning).
 - Cookie jar per domain (RFC 6265) yang bisa dilihat dan diubah, sertifikat CA tambahan, sertifikat
@@ -540,9 +611,10 @@ Issue dan pull request dipersilakan.
 - Build rilis belum ditandatangani dengan Apple Developer ID dan belum dinotarisasi, jadi macOS
   memberi peringatan bila diunduh lewat browser; lihat catatan di bagian [Instalasi](#disk-image).
 - macOS adalah tempat Merpati dibangun, diukur, dan diuji langsung. Build Linux dan Windows berasal
-  dari CI dan kurang teruji: Linux menjalankan rangkaian tes (kecuali GUI) di CI, sedangkan build
-  Windows baru dikompilasi dan diperiksa clippy, belum pernah dijalankan di mesin Windows
-  sungguhan.
+  dari CI dan kurang teruji: CI menjalankan seluruh tes di Linux, memasang paketnya di beberapa
+  distribusi, dan memasang installer Windows di Windows, tetapi belum ada yang memakainya
+  langsung. Laporan sangat diterima.
+- Installer dan executable Windows belum ditandatangani (SmartScreen memberi peringatan sekali).
 - Diuji dengan layanan sungguhan: Ollama, HashiCorp Vault, socket.io, mosquitto, server referensi
   MCP, dan gRPC. OpenAI, Anthropic, dan Gemini dengan kunci cloud, AWS Secrets Manager, Azure Key
   Vault, 1Password, dan penyedia OAuth komersial untuk MCP baru diuji dengan mock.

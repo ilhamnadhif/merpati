@@ -1715,3 +1715,122 @@ No administrator password was entered, so Merpati was not changed.	Kata sandi ad
 Merpati could not be restarted: {}	Merpati tidak bisa dimulai ulang: {}
 Merpati {} is already installed. Quit Merpati and open it again.	Merpati {} sudah terpasang. Tutup Merpati, lalu buka lagi.
 Merpati closed unexpectedly last time. Details: {}	Merpati tertutup tiba-tiba sebelumnya. Rinciannya: {}
+About Merpati	Tentang Merpati
+A lightweight API client written in Rust	Klien API ringan yang ditulis dengan Rust
+Check for Updates…	Periksa Pembaruan…
+Settings…	Pengaturan…
+Quit Merpati	Keluar dari Merpati
+Hide Merpati	Sembunyikan Merpati
+Hide Others	Sembunyikan Lainnya
+Show All	Tampilkan Semua
+Import…	Impor…
+Open Workspace…	Buka Workspace…
+New Workspace…	Workspace Baru…
+Close Tab	Tutup Tab
+Send Request	Kirim Request
+Undo	Urungkan
+Redo	Ulangi
+Cut	Potong
+Select All	Pilih Semua
+Command Palette	Palet Perintah
+Search Requests	Cari Request
+Switch Environment	Ganti Environment
+Show/Hide Sidebar	Tampilkan/Sembunyikan Sidebar
+Show/Hide Console	Tampilkan/Sembunyikan Konsol
+Enter Full Screen	Masuk Layar Penuh
+Show Previous Tab	Tampilkan Tab Sebelumnya
+Show Next Tab	Tampilkan Tab Berikutnya
+Window	Jendela
+Minimize	Minimalkan
+Zoom	Perbesar
+Bring All to Front	Bawa Semua ke Depan
+Keyboard Shortcuts	Pintasan Keyboard
+Merpati on GitHub	Merpati di GitHub
+Release Notes	Catatan Rilis
+Report an Issue…	Laporkan Masalah…
+Help	Bantuan
+View	Tampilan
+Open workspace folder	Buka folder workspace
+1 changed	1 berubah
+1 unchanged line	1 baris tidak berubah
+A secret variable with this name exists; its value is replaced and stays in the secret store.	Variabel rahasia dengan nama ini sudah ada; nilainya diganti dan tetap di penyimpanan rahasia.
+A variable with this name exists; its current value is replaced.	Variabel dengan nama ini sudah ada; nilai saat ininya diganti.
+Add tests	Tambahkan tes
+Adds this line to the Post-response script:	Menambahkan baris ini ke skrip Pasca-respons:
+Also set it on every run	Setel juga di setiap eksekusi
+Baseline kept: new responses are compared with it. Click to compare with the previous response again.	Acuan dipertahankan: respons baru dibandingkan dengannya. Klik untuk kembali membandingkan dengan respons sebelumnya.
+Binary bodies are compared by size only.	Body biner hanya dibandingkan ukurannya.
+Bodies larger than {} are compared by size only.	Body yang lebih besar dari {} hanya dibandingkan ukurannya.
+Compare the next responses with this one	Bandingkan respons berikutnya dengan respons ini
+Copied the request as sent, as a cURL command	Request yang dikirim disalin sebagai perintah cURL
+Copy as cURL (as sent)	Salin sebagai cURL (seperti dikirim)
+Copy line	Salin baris
+Current · {}	Sekarang · {}
+From the {} response · {}	Dari respons {} · {}
+Generate tests	Buat tes
+Keep as compare baseline	Jadikan acuan perbandingan
+Keep this baseline: compare new responses with it instead of the previous one	Pertahankan acuan ini: bandingkan respons baru dengannya, bukan dengan respons sebelumnya
+Masked in the app, kept in the secret store	Disamarkan di aplikasi, disimpan di penyimpanan rahasia
+Maximize response	Maksimalkan respons
+Minimize response	Minimalkan respons
+Only the first {} lines of each body are compared.	Hanya {} baris pertama tiap body yang dibandingkan.
+Open Scripts	Buka Skrip
+Previous · {}	Sebelumnya · {}
+Restore layout	Pulihkan tata letak
+Review or edit the tests, then add them to the Post-response script.	Tinjau atau ubah tesnya, lalu tambahkan ke skrip Pasca-respons.
+Run tests	Jalankan tes
+Saved as the current value, which stays on this computer.	Disimpan sebagai nilai saat ini, yang tetap di komputer ini.
+Secret	Rahasia
+Send the request first: tests are generated from its response.	Kirim request dulu: tes dibuat dari responsnya.
+Set as variable	Setel sebagai variabel
+Show editor	Tampilkan editor
+Show the response	Tampilkan respons
+Show these lines	Tampilkan baris ini
+Test added: {}	Tes ditambahkan: {}
+Tests added to the Post-response script	Tes ditambahkan ke skrip Pasca-respons
+The bodies differ in too many lines to line them up; showing the whole body as replaced.	Body berbeda di terlalu banyak baris untuk disejajarkan; seluruh body ditampilkan sebagai diganti.
+The body is the same as in the previous response.	Body sama dengan respons sebelumnya.
+The headers are the same as in the previous response.	Header sama dengan respons sebelumnya.
+The request that produced this response, with variables and auth applied	Request yang menghasilkan respons ini, dengan variabel dan autentikasi diterapkan
+The tests run on this response right after they are added.	Tes dijalankan pada respons ini segera setelah ditambahkan.
+This test is already in the Post-response script.	Tes ini sudah ada di skrip Pasca-respons.
+Variable “{}” set in {}	Variabel “{}” disetel di {}
+Write tests for the status, time, content type and body shape of the response	Tulis tes untuk status, waktu, tipe konten, dan bentuk body respons
+same	sama
+{} changed	{} berubah
+{} test	{} tes
+{} tests	{} tes
+{} unchanged lines	{} baris tidak berubah
+1 key	1 kunci
+1 item	1 item
+1 child	1 anak
+{} children	{} anak
+1 line	1 baris
+{} lines	{} baris
+Wrap lines	Bungkus baris
+No matches	Tidak ada yang cocok
+1 match	1 cocok
+{} matches	{} cocok
+Filter with JSONPath	Saring dengan JSONPath
+Collapse to level {}	Ciutkan ke level {}
+Set as variable…	Jadikan variabel…
+Add test for this value	Tambahkan tes untuk nilai ini
+Showing the first {} matches.	Menampilkan {} kecocokan pertama.
+{} (at character {})	{} (pada karakter ke-{})
+Nothing matches this JSONPath. Change the path, or press Esc to see the whole body.	Tidak ada yang cocok dengan JSONPath ini. Ubah path-nya, atau tekan Esc untuk melihat seluruh body.
+The path is empty	Path kosong
+A path starts with $	Path diawali dengan $
+The path ends too early	Path berakhir terlalu cepat
+Unexpected character	Karakter tidak terduga
+Expected a name after the dot	Diharapkan nama setelah titik
+Expected ] to close the bracket	Diharapkan ] untuk menutup kurung siku
+The quoted name is not closed	Nama bertanda kutip tidak ditutup
+Unknown escape in a quoted name	Escape tidak dikenal dalam nama bertanda kutip
+Invalid number	Angka tidak valid
+Expected ) to close the parenthesis	Diharapkan ) untuk menutup kurung
+Expected a value or a query starting with @ or $	Diharapkan nilai atau kueri yang diawali @ atau $
+Use == to compare	Gunakan == untuk membandingkan
+Only (@.length-n) is supported inside ( )	Hanya (@.length-n) yang didukung di dalam ( )
+Invalid regular expression	Ekspresi reguler tidak valid
+{} could not be replaced ({}). The new version is in {}.	{} tidak bisa diganti ({}). Versi baru ada di {}.
+{} lines changed. Maximize the response to see them.	{} baris berubah. Maksimalkan respons untuk melihatnya.

@@ -20,6 +20,14 @@ pub enum Step {
     NewRequest(bool),
     /// Shows the response body as `pretty`, `raw`, `preview` or `tree`.
     BodyView(String),
+    /// Response body: opens the JSONPath filter with this path.
+    BodyFilter(String),
+    /// Response body: `expand`, `collapse`, `level1`, `level2`.
+    BodyFold(String),
+    /// Response body: searches for the text and jumps to the next match.
+    BodySearch(String),
+    /// Response body: scrolls the body view to `[x, y]`.
+    BodyScroll([f32; 2]),
     /// Panics on the UI thread (checks the crash report).
     Panic(String),
     Send(bool),
@@ -83,6 +91,11 @@ pub enum Step {
     /// download, or release page) once the startup check found an update
     /// (needs `MERPATI_UPDATE_URL`; waits up to 20 s).
     UpdateInstall(bool),
+    /// Response panel of the active request tab (`request_tab::RequestTab::automation`):
+    /// `maximize`, `minimize`, `restore`, `compare`, `compare_headers`,
+    /// `generate_tests`, `add_generated_tests`, `set_var:<json path>`,
+    /// `add_test:<json path>`.
+    RespPanel(String),
     Quit(bool),
 }
 
@@ -494,6 +507,19 @@ pub fn tick(app: &mut MerpatiApp, ctx: &egui::Context) {
                 };
             }
         }
+        Step::BodyFilter(_) | Step::BodyFold(_) | Step::BodySearch(_) | Step::BodyScroll(_) => {
+            if let Some(TabKind::Request(t)) = app.tabs.get_mut(app.active).map(|t| &mut t.kind)
+                && let Some(r) = t.result.as_mut()
+            {
+                match step {
+                    Step::BodyFilter(p) => r.body.set_filter(&p),
+                    Step::BodyFold(f) => r.body.fold(&f),
+                    Step::BodySearch(s) => r.body.find_next(&s),
+                    Step::BodyScroll(o) => r.body.scroll_body(o),
+                    _ => {}
+                }
+            }
+        }
         Step::UpdateInstall(_) => {
             if app.update.available.is_some() {
                 crate::update::press_primary(app);
@@ -503,6 +529,11 @@ pub fn tick(app: &mut MerpatiApp, ctx: &egui::Context) {
                 auto.wait_until = Some(Instant::now() + Duration::from_millis(100));
             } else {
                 eprintln!("automation: no update to install");
+            }
+        }
+        Step::RespPanel(a) => {
+            if let Some(TabKind::Request(t)) = app.tabs.get_mut(app.active).map(|t| &mut t.kind) {
+                t.automation(&a);
             }
         }
         Step::Quit(_) => ctx.send_viewport_cmd(egui::ViewportCommand::Close),

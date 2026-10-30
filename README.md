@@ -27,16 +27,34 @@ run unchanged for common use.
   AI calls, and runs from the app or the CLI.
 - **Spec Hub** for OpenAPI, AsyncAPI, Protobuf, GraphQL and Smithy files with live validation, a
   live docs preview and spec ⇄ collection sync.
+- **Response tools that save round trips**: fold JSON/XML, filter with JSONPath
+  (`$.data[?(@.active)].email`), compare with the previous response, turn any value into a
+  variable or a test with a right-click, and generate tests (status, timing, schema) from a
+  response.
 - **Mock server, webhook listener and capture proxy**, all local.
 - Twelve auth types, from Basic and OAuth 2.0 to AWS SigV4, NTLM and Akamai EdgeGrid.
 - English and Indonesian UI, light and dark themes, keyboard and screen-reader friendly, no
   telemetry.
-- **Updates** from GitHub releases; on macOS one click installs the new version and restarts.
+- **Native everywhere**: a real macOS menu bar, a Windows installer, `.deb`, `.rpm` and AppImage
+  packages for Linux (x86_64 and ARM64).
+- **Updates** from GitHub releases; on macOS and with the AppImage one click installs the new
+  version and restarts.
 
 ## Install
 
-The app runs on macOS 12 Monterey or later (Apple Silicon and Intel, one universal build), Linux
-x86_64 and Windows x86_64. macOS is the main platform; see [Known limitations](#known-limitations).
+The app runs on macOS 12 Monterey or later (Apple Silicon and Intel, one universal build),
+Windows 10 and 11 (x64), and Linux on x86_64 and ARM64: Ubuntu 22.04+, Debian 12+, Fedora,
+RHEL/Rocky/Alma 9+, openSUSE Leap 15.6+ and, through the AppImage, most other distributions
+(Arch, Manjaro, ...). macOS is the main platform; see [Known limitations](#known-limitations).
+
+| System | Download from the [latest release](https://github.com/ilhamnadhif/merpati/releases/latest) |
+| --- | --- |
+| macOS | `Merpati-<version>-universal.dmg`, or the [one-line installer](#one-line-installer-macos-recommended) |
+| Windows | `Merpati-Setup-<version>-x64.exe` (installer) or `merpati-<version>-windows-x86_64.zip` (portable) |
+| Ubuntu, Debian, Mint, Pop!_OS | `merpati_<version>_amd64.deb` / `_arm64.deb` |
+| Fedora, RHEL, Rocky, Alma, openSUSE | `merpati-<version>-1.x86_64.rpm` / `.aarch64.rpm` |
+| Arch, Manjaro and others | `Merpati-<version>-x86_64.AppImage` / `-aarch64.AppImage` |
+| Any Linux, by hand | `merpati-<version>-linux-x86_64.tar.gz` / `-aarch64.tar.gz` |
 
 ### One-line installer (macOS, recommended)
 
@@ -79,19 +97,50 @@ xattr -dr com.apple.quarantine /Applications/Merpati.app   # until releases are 
 
 The cask also links `merpati-app` into Homebrew's `bin`.
 
-### Linux and Windows
+### Windows
 
-Download from the [latest release](https://github.com/ilhamnadhif/merpati/releases/latest):
+Run **`Merpati-Setup-<version>-x64.exe`**. It installs Merpati for your user account without
+administrator rights (choose *Install for all users* in the first dialog to put it in Program
+Files), adds it to the Start menu, can add the `merpati` command-line tool to `PATH`, and installs
+over an older version when you update. Uninstall it from **Settings › Apps** like any other app.
 
-- **`merpati-<version>-linux-x86_64.tar.gz`**: the app (`merpati-app`), the CLI (`merpati`), a
-  `.desktop` file and an icon. Unpack it and run `./merpati-app`, or copy the binaries into a folder
-  on your `PATH` (such as `~/.local/bin`) and the `.desktop` file into
-  `~/.local/share/applications`.
-- **`merpati-<version>-windows-x86_64.zip`**: `merpati-app.exe` and `merpati.exe`. Unpack and run
-  `merpati-app.exe`.
+The installer isn't signed with a code-signing certificate yet, so SmartScreen may say *Windows
+protected your PC*: choose **More info › Run anyway**.
 
-Both are built by the release workflow on GitHub Actions; each release also has
-`SHA256SUMS-linux.txt` and `SHA256SUMS-windows.txt` to check them with.
+Prefer no installer? Unpack **`merpati-<version>-windows-x86_64.zip`** anywhere and run
+`merpati-app.exe`.
+
+### Linux
+
+Download the package for your distribution and architecture (`amd64`/`x86_64` or
+`arm64`/`aarch64`), then:
+
+```sh
+# Ubuntu, Debian, Linux Mint, Pop!_OS, elementary OS
+sudo apt install ./merpati_<version>_amd64.deb
+
+# Fedora, RHEL, Rocky Linux, AlmaLinux
+sudo dnf install ./merpati-<version>-1.x86_64.rpm
+
+# openSUSE
+sudo zypper install --allow-unsigned-rpm ./merpati-<version>-1.x86_64.rpm
+
+# Arch, Manjaro and anything else: the AppImage runs without installing
+chmod +x Merpati-<version>-x86_64.AppImage
+./Merpati-<version>-x86_64.AppImage
+```
+
+The packages put `merpati-app` and `merpati` in `/usr/bin` and add Merpati to the application
+menu. The AppImage needs FUSE, which desktop distributions have; if it won't start, install your
+distribution's `fuse`/`fuse2` package or run it with `--appimage-extract-and-run`. The `.tar.gz`
+holds the same two binaries with a `.desktop` file and an icon: unpack it and run `./merpati-app`,
+or copy the binaries to a folder on your `PATH` (such as `~/.local/bin`) and the `.desktop` file
+to `~/.local/share/applications`.
+
+Every Linux and Windows file is built on GitHub Actions; the release workflow installs the
+packages on Ubuntu 22.04/24.04, Debian 12, Fedora 41, Rocky Linux 9 and openSUSE Leap 15.6 and
+installs, starts and uninstalls the Windows installer before publishing. Each release lists the
+SHA-256 of every file (`SHA256SUMS-*.txt`).
 
 ### Command line only
 
@@ -123,9 +172,14 @@ to install it, be reminded later, or skip that version.
 - **On macOS**, **Install and restart** downloads the app archive
   (`Merpati-<version>-macos-universal.zip`), verifies it (the SHA-256 GitHub publishes, the bundle
   id, the version and the code signature), replaces `Merpati.app` and opens the new version.
-- **On Linux and Windows**, Merpati downloads the archive for your system to the Downloads folder,
-  checks it against the release's `SHA256SUMS-*.txt` (a download without a checksum is refused) and
-  opens it; you replace the files yourself.
+- **On Linux**, the AppImage replaces itself the same way (**Install and restart**). A `.deb` or
+  `.rpm` install downloads the new package and opens it in your software installer; a `.tar.gz`
+  install downloads the new archive.
+- **On Windows**, Merpati downloads the new installer (or the `.zip` for a portable copy) and opens
+  it; the installer closes Merpati, updates it and can start it again.
+
+Every download is checked against the SHA-256 that GitHub publishes for the file (or the release's
+`SHA256SUMS-*.txt`); a download without a checksum is refused.
 
 The one-line installer above also updates.
 
@@ -138,6 +192,11 @@ rm -rf ~/Library/Application\ Support/Merpati   # settings, the default workspac
 
 Workspaces you created elsewhere stay where you put them. Saved secrets are Keychain items with the
 service name `dev.merpati.workspace`; remove them in Keychain Access.
+
+On **Windows**, uninstall Merpati in **Settings › Apps** and delete `%APPDATA%\Merpati` for its
+settings. On **Linux**, remove the package (`sudo apt remove merpati`, `sudo dnf remove merpati`)
+or the AppImage, and delete `~/.config/Merpati`; secrets are in your keyring (GNOME Keyring or
+KWallet).
 
 ## Getting started
 
@@ -164,6 +223,20 @@ service name `dev.merpati.workspace`; remove them in Keychain Access.
   (TTFB and total), search, save to a file or as an example. Large responses are streamed to a
   temporary file and shown virtually, so a 100 MB response of half a million lines keeps the UI
   responsive.
+- Pretty view with line numbers and folding (JSON by brackets; XML, HTML and YAML by indentation),
+  Expand all / Collapse all / collapse to level 1 or 2.
+- **JSONPath filter** for JSON responses: `$`, `.name`, `['name']`, `[n]`, `[*]`, `..` (recursive),
+  unions, slices and filters such as `[?(@.price < 10 && @.inStock)]` or `[?(@.name =~ /^a/i)]`,
+  with a match count; in the Pretty and Tree views.
+- Right-click a value: copy it or its JSONPath, **Set as variable…** (active environment,
+  collection or globals; optionally added to the post-response script so every run sets it) or
+  **Add test for this value**.
+- **Compare** with the previous response of the tab: status, time, size and header changes and a
+  line diff of the bodies (JSON with sorted keys). Pin a response to keep it as the baseline.
+- **Generate tests** from a response (status, response time, Content-Type and a JSON schema),
+  previewed before they are added to the post-response script.
+- Maximize the response panel or minimize it to one line; **Copy as cURL (as sent)** with the
+  resolved values.
 - `pm.visualizer` templates render inside the app (Handlebars, HTML and a CSS subset with grid,
   flexbox, floats and positioning).
 - A cookie jar per domain (RFC 6265) you can view and edit, extra CA certificates, client
@@ -534,8 +607,10 @@ Issues and pull requests are welcome.
 - Release builds are not signed with an Apple Developer ID or notarized yet, so macOS warns when
   they are downloaded with a browser; see the note under [Install](#disk-image).
 - macOS is where Merpati is built, measured and tested by hand. The Linux and Windows builds come
-  from CI and are less tested: Linux runs the test suite (except the GUI) in CI, while the Windows
-  build has only been compiled and linted, not yet run on a real Windows machine.
+  from CI and are less tested: CI runs the whole test suite on Linux, installs the packages on
+  several distributions and the Windows installer on Windows, but nobody has used them by hand yet.
+  Reports are welcome.
+- The Windows installer and executables are not code-signed yet (SmartScreen warns once).
 - Tested against real services: Ollama, HashiCorp Vault, socket.io, mosquitto, the MCP reference
   server and gRPC. OpenAI, Anthropic and Gemini with cloud keys, AWS Secrets Manager, Azure Key
   Vault, 1Password and commercial OAuth providers for MCP were tested with mocks only.

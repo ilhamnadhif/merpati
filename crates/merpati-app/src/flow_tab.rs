@@ -926,7 +926,8 @@ fn canvas(app: &MerpatiApp, ui: &mut Ui, tab: &mut FlowTab) {
     painter.rect_filled(rect, radius, p.chrome);
 
     // Zoom around the pointer with pinch or ⌘ + scroll; scroll or drag the
-    // empty canvas to pan.
+    // empty canvas to pan (diagonally too: no trackpad axis lock here).
+    crate::scroll_lock::allow_free_scroll(ui.ctx(), rect);
     if ui.rect_contains_pointer(rect) && !egui::Popup::is_any_open(ui.ctx()) {
         let zoom = ui.input(|i| i.zoom_delta());
         if (zoom - 1.0).abs() > f32::EPSILON {

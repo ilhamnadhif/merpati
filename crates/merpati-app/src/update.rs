@@ -51,7 +51,7 @@ const MAX_REDIRECTS: usize = 10;
 /// Context data flag the settings dialog sets to ask for a check now.
 const CHECK_NOW: &str = "merpati-update-check-now";
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Asset {
     pub name: String,
     pub url: String,
@@ -243,27 +243,90 @@ fn for_arch<'a>(candidates: &[&'a Asset], arch: &str) -> Option<&'a Asset> {
         .copied()
 }
 
-/// The installer for `os`/`arch` (`std::env::consts` names) among `assets`.
-pub fn pick_asset<'a>(assets: &'a [Asset], os: &str, arch: &str) -> Option<&'a Asset> {
-    let candidates: Vec<&Asset> = assets
-        .iter()
-        .filter(|a| {
-            let n = a.name.to_ascii_lowercase();
-            !n.contains("cli")
-                && !n.contains("sha256")
-                && match os {
-                    "macos" => n.ends_with(".dmg"),
-                    "windows" => {
-                        n.contains("windows") && (n.ends_with(".zip") || n.ends_with(".msi") || n.ends_with(".exe"))
-                    }
-                    _ => {
-                        n.contains("linux")
-                            && (n.ends_with(".tar.gz") || n.ends_with(".appimage") || n.ends_with(".deb"))
-                    }
-                }
+/// How this copy of Merpati was installed. An update fetches the same kind
+/// of file, so a `.deb` stays a `.deb` and an AppImage an AppImage.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Install {
+    /// macOS app bundle (the `.zip` replaces it; the `.dmg` otherwise).
+    Mac,
+    /// Windows, installed with the setup program.
+    WindowsSetup,
+    /// Windows, unpacked from the `.zip`.
+    WindowsZip,
+    /// Linux AppImage (`$APPIMAGE` is set): replaced in place.
+    AppImage,
+    /// Linux package from the `.deb` (Debian, Ubuntu, Mint, ...).
+    Deb,
+    /// Linux package from the `.rpm` (Fedora, RHEL, openSUSE, ...).
+    Rpm,
+    /// Linux, unpacked from the `.tar.gz`.
+    LinuxArchive,
+}
+
+impl Install {
+    /// This process's kind of install.
+    pub fn current() -> Install {
+        static KIND: OnceLock<Install> = OnceLock::new();
+        *KIND.get_or_init(|| {
+            let exe = std::env::current_exe().ok().and_then(|e| e.canonicalize().ok());
+            let appimage = std::env::var_os("APPIMAGE").is_some();
+            Install::detect(std::env::consts::OS, exe.as_deref(), appimage, |p| p.exists())
         })
-        .collect();
-    for_arch(&candidates, arch)
+    }
+
+    fn detect(os: &str, exe: Option<&Path>, appimage: bool, exists: impl Fn(&Path) -> bool) -> Install {
+        match os {
+            "macos" => Install::Mac,
+            // The setup program leaves its uninstaller next to the app.
+            "windows" if exe.and_then(Path::parent).is_some_and(|d| exists(&d.join("unins000.exe"))) => {
+                Install::WindowsSetup
+            }
+            "windows" => Install::WindowsZip,
+            _ if appimage => Install::AppImage,
+            // Packages install into /usr/bin; the distribution says which kind.
+            _ if exe.is_some_and(|e| e.starts_with("/usr/")) => {
+                if exists(Path::new("/etc/debian_version")) {
+                    Install::Deb
+                } else if ["/etc/fedora-release", "/etc/redhat-release", "/etc/SUSE-brand", "/etc/SuSE-release"]
+                    .iter()
+                    .any(|f| exists(Path::new(f)))
+                {
+                    Install::Rpm
+                } else {
+                    Install::LinuxArchive
+                }
+            }
+            _ => Install::LinuxArchive,
+        }
+    }
+
+    /// Release files that fit, best first: (the name contains, it ends with).
+    fn wanted(self) -> &'static [(&'static str, &'static str)] {
+        match self {
+            Install::Mac => &[("", ".dmg")],
+            Install::WindowsSetup => &[("setup", ".exe"), ("", ".msi"), ("windows", ".zip")],
+            Install::WindowsZip => &[("windows", ".zip"), ("setup", ".exe")],
+            Install::AppImage => &[("", ".appimage")],
+            Install::Deb => &[("", ".deb"), ("", ".appimage")],
+            Install::Rpm => &[("", ".rpm"), ("", ".appimage")],
+            Install::LinuxArchive => &[("linux", ".tar.gz"), ("", ".appimage")],
+        }
+    }
+}
+
+/// The file an update of an `install` on `arch` (`std::env::consts::ARCH`)
+/// downloads, among `assets`.
+pub fn pick_asset<'a>(assets: &'a [Asset], install: Install, arch: &str) -> Option<&'a Asset> {
+    install.wanted().iter().find_map(|(contains, ends)| {
+        let candidates: Vec<&Asset> = assets
+            .iter()
+            .filter(|a| {
+                let n = a.name.to_ascii_lowercase();
+                !n.contains("cli") && !n.contains("sha256") && n.contains(contains) && n.ends_with(ends)
+            })
+            .collect();
+        for_arch(&candidates, arch)
+    })
 }
 
 /// The macOS app archive for `arch`
@@ -291,20 +354,20 @@ pub enum Plan {
     Page,
 }
 
-/// The [`Plan`] for `assets` on `os`/`arch`. `in_bundle`: this process runs
-/// from an app bundle it may replace.
-pub fn plan(assets: &[Asset], os: &str, arch: &str, in_bundle: bool) -> Plan {
-    if os == "macos"
+/// The [`Plan`] for `assets` for an `install` on `arch`. `in_bundle`: this
+/// process runs from an app bundle it may replace.
+pub fn plan(assets: &[Asset], install: Install, arch: &str, in_bundle: bool) -> Plan {
+    if install == Install::Mac
         && in_bundle
         && let Some(a) = pick_app_archive(assets, arch)
     {
         return Plan::Install(a.clone());
     }
-    pick_asset(assets, os, arch).cloned().map_or(Plan::Page, Plan::Download)
+    pick_asset(assets, install, arch).cloned().map_or(Plan::Page, Plan::Download)
 }
 
 fn plan_here(release: &Release) -> Plan {
-    plan(&release.assets, std::env::consts::OS, std::env::consts::ARCH, running_bundle().is_some())
+    plan(&release.assets, Install::current(), std::env::consts::ARCH, running_bundle().is_some())
 }
 
 /// The SHA-256 of `asset` in a `sha256sum`-style listing.
@@ -626,7 +689,7 @@ pub fn check(app: &mut MerpatiApp, manual: bool) {
 /// for the user to open (no in-place install here).
 fn start_download(app: &mut MerpatiApp) {
     let Some(release) = app.update.available.clone() else { return };
-    let Some(asset) = pick_asset(&release.assets, std::env::consts::OS, std::env::consts::ARCH).cloned() else {
+    let Some(asset) = pick_asset(&release.assets, Install::current(), std::env::consts::ARCH).cloned() else {
         crate::widgets::open_web_link(&release.page_url);
         return;
     };
@@ -837,6 +900,19 @@ pub fn on_msg(app: &mut MerpatiApp, msg: UpdateMsg) {
         UpdateMsg::Downloaded(result) => {
             app.update.stage = None;
             match result {
+                // An AppImage takes the place of the running one and restarts.
+                #[cfg(target_os = "linux")]
+                Ok(path) if Install::current() == Install::AppImage => match appimage::install(&path) {
+                    Ok(()) => {
+                        app.update.stage = Some(Stage::Restarting);
+                        app.ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                    }
+                    Err(e) => {
+                        app.update.downloaded = Some(path);
+                        app.update.error = Some(e);
+                        app.update.dialog_open = true;
+                    }
+                },
                 Ok(path) => app.update.downloaded = Some(path),
                 Err(e) => {
                     app.update.error = Some(e);
@@ -993,7 +1069,8 @@ pub fn dialog(app: &mut MerpatiApp, ctx: &egui::Context) {
     }
     let mut act = Act::None;
     let plan = plan_here(&release);
-    let install = matches!(plan, Plan::Install(_));
+    let install = matches!(plan, Plan::Install(_))
+        || matches!(plan, Plan::Download(_)) && Install::current() == Install::AppImage;
     let stage = app.update.stage;
     let modal = egui::Modal::new(egui::Id::unique("update-available")).show(ctx, |ui| {
         let p = theme::pal(ui);
@@ -1444,10 +1521,143 @@ end run"#;
     }
 }
 
+// ---------------------------------------------------------------------------
+// Linux: replacing an AppImage
+// ---------------------------------------------------------------------------
+
+#[cfg(target_os = "linux")]
+mod appimage {
+    use std::os::unix::fs::PermissionsExt as _;
+    use std::os::unix::process::CommandExt as _;
+    use std::path::Path;
+    use std::process::{Command, Stdio};
+
+    use crate::i18n::trf;
+
+    /// Waits for process `$1` to exit, then runs the AppImage `$2`.
+    const RELAUNCH_SCRIPT: &str =
+        r#"pid=$1; while kill -0 "$pid" 2>/dev/null; do sleep 0.2; done; exec "$2" >/dev/null 2>&1"#;
+
+    /// Puts the verified `downloaded` AppImage in place of the running one
+    /// (`$APPIMAGE`) and starts it once this process has exited.
+    pub fn install(downloaded: &Path) -> Result<(), String> {
+        let running = std::env::var_os("APPIMAGE").ok_or("APPIMAGE is not set")?;
+        let running = Path::new(&running);
+        replace(downloaded, running).map_err(|e| {
+            trf(
+                "{} could not be replaced ({}). The new version is in {}.",
+                &[&running.display(), &e, &downloaded.display()],
+            )
+        })?;
+        let _ = std::fs::remove_file(downloaded);
+        relaunch_after_exit(running).map_err(|e| trf("Merpati could not be restarted: {}", &[&e]))
+    }
+
+    /// Copies `new` next to `running` (same folder, so the swap is a rename),
+    /// makes it executable and moves it over `running`.
+    pub(super) fn replace(new: &Path, running: &Path) -> std::io::Result<()> {
+        let dir = running.parent().ok_or(std::io::ErrorKind::NotFound)?;
+        let name = running.file_name().ok_or(std::io::ErrorKind::NotFound)?.to_string_lossy();
+        let staged = dir.join(format!(".{name}.update"));
+        let result = std::fs::copy(new, &staged)
+            .and_then(|_| std::fs::set_permissions(&staged, std::fs::Permissions::from_mode(0o755)))
+            .and_then(|_| std::fs::rename(&staged, running));
+        if result.is_err() {
+            let _ = std::fs::remove_file(&staged);
+        }
+        result
+    }
+
+    fn relaunch_after_exit(app: &Path) -> std::io::Result<()> {
+        let mut cmd = Command::new("/bin/sh");
+        cmd.args(["-c", RELAUNCH_SCRIPT, "merpati-relaunch"]).arg(std::process::id().to_string()).arg(app);
+        // The new AppImage sets its own; automation must not run again.
+        for key in ["MERPATI_AUTOMATION", "APPIMAGE", "APPDIR", "ARGV0", "OWD"] {
+            cmd.env_remove(key);
+        }
+        cmd.stdin(Stdio::null()).stdout(Stdio::null()).stderr(Stdio::null()).process_group(0).spawn().map(drop)
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn the_running_appimage_is_replaced_by_a_rename() {
+            let dir = tempfile::tempdir().unwrap();
+            let running = dir.path().join("Merpati.AppImage");
+            let new = dir.path().join("download.AppImage");
+            std::fs::write(&running, b"old").unwrap();
+            std::fs::write(&new, b"new").unwrap();
+            replace(&new, &running).unwrap();
+            assert_eq!(std::fs::read(&running).unwrap(), b"new");
+            assert_eq!(std::fs::metadata(&running).unwrap().permissions().mode() & 0o777, 0o755);
+            assert!(!dir.path().join(".Merpati.AppImage.update").exists());
+            // A folder that is missing leaves nothing behind.
+            assert!(replace(&new, &dir.path().join("gone/Merpati.AppImage")).is_err());
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn updates_fetch_the_same_kind_of_file_as_the_install() {
+        let names = [
+            "Merpati-0.3.0-universal.dmg",
+            "Merpati-0.3.0-macos-universal.zip",
+            "Merpati-Setup-0.3.0-x64.exe",
+            "merpati-0.3.0-windows-x86_64.zip",
+            "merpati_0.3.0_amd64.deb",
+            "merpati_0.3.0_arm64.deb",
+            "merpati-0.3.0-1.x86_64.rpm",
+            "merpati-0.3.0-1.aarch64.rpm",
+            "Merpati-0.3.0-x86_64.AppImage",
+            "Merpati-0.3.0-aarch64.AppImage",
+            "merpati-0.3.0-linux-x86_64.tar.gz",
+            "merpati-0.3.0-linux-aarch64.tar.gz",
+            "merpati-cli-0.3.0-macos-universal.tar.gz",
+            "SHA256SUMS-linux.txt",
+        ];
+        let assets: Vec<Asset> =
+            names.iter().map(|n| Asset { name: n.to_string(), url: String::new(), ..Default::default() }).collect();
+        let pick = |install, arch| pick_asset(&assets, install, arch).map(|a| a.name.as_str());
+        assert_eq!(pick(Install::Mac, "aarch64"), Some("Merpati-0.3.0-universal.dmg"));
+        assert_eq!(pick(Install::WindowsSetup, "x86_64"), Some("Merpati-Setup-0.3.0-x64.exe"));
+        assert_eq!(pick(Install::WindowsZip, "x86_64"), Some("merpati-0.3.0-windows-x86_64.zip"));
+        assert_eq!(pick(Install::Deb, "x86_64"), Some("merpati_0.3.0_amd64.deb"));
+        assert_eq!(pick(Install::Deb, "aarch64"), Some("merpati_0.3.0_arm64.deb"));
+        assert_eq!(pick(Install::Rpm, "aarch64"), Some("merpati-0.3.0-1.aarch64.rpm"));
+        assert_eq!(pick(Install::AppImage, "x86_64"), Some("Merpati-0.3.0-x86_64.AppImage"));
+        assert_eq!(pick(Install::LinuxArchive, "aarch64"), Some("merpati-0.3.0-linux-aarch64.tar.gz"));
+        // A .deb install falls back to the AppImage when a release has no .deb.
+        let only_appimage = &assets[8..10];
+        assert_eq!(
+            pick_asset(only_appimage, Install::Deb, "x86_64").map(|a| a.name.as_str()),
+            Some("Merpati-0.3.0-x86_64.AppImage")
+        );
+    }
+
+    #[test]
+    fn the_kind_of_install_is_recognised() {
+        let none = |_: &Path| false;
+        let usr = Some(Path::new("/usr/bin/merpati-app"));
+        let home = Some(Path::new("/home/a/merpati-0.3.0/merpati-app"));
+        assert_eq!(Install::detect("macos", None, false, none), Install::Mac);
+        assert_eq!(Install::detect("linux", home, true, none), Install::AppImage);
+        assert_eq!(Install::detect("linux", usr, false, |p| p == Path::new("/etc/debian_version")), Install::Deb);
+        assert_eq!(Install::detect("linux", usr, false, |p| p == Path::new("/etc/fedora-release")), Install::Rpm);
+        assert_eq!(Install::detect("linux", home, false, |_| true), Install::LinuxArchive);
+        let exe = Path::new("C:/Program Files/Merpati/merpati-app.exe");
+        assert_eq!(
+            Install::detect("windows", Some(exe), false, |p| p.ends_with("unins000.exe")),
+            Install::WindowsSetup
+        );
+        assert_eq!(Install::detect("windows", Some(exe), false, none), Install::WindowsZip);
+    }
 
     #[test]
     fn versions_compare_like_semver() {
@@ -1477,11 +1687,17 @@ mod tests {
         let r = parse_feed(&gh).unwrap();
         assert_eq!(r.version, "0.2.0");
         assert_eq!(r.published.as_deref(), Some("2026-11-02"));
-        assert_eq!(pick_asset(&r.assets, "macos", "aarch64").unwrap().name, "Merpati-0.2.0-universal.dmg");
-        assert_eq!(pick_asset(&r.assets, "linux", "x86_64").unwrap().name, "merpati-0.2.0-linux-x86_64.tar.gz");
-        assert_eq!(pick_asset(&r.assets, "windows", "x86_64").unwrap().name, "merpati-0.2.0-windows-x86_64.zip");
+        assert_eq!(pick_asset(&r.assets, Install::Mac, "aarch64").unwrap().name, "Merpati-0.2.0-universal.dmg");
+        assert_eq!(
+            pick_asset(&r.assets, Install::LinuxArchive, "x86_64").unwrap().name,
+            "merpati-0.2.0-linux-x86_64.tar.gz"
+        );
+        assert_eq!(
+            pick_asset(&r.assets, Install::WindowsZip, "x86_64").unwrap().name,
+            "merpati-0.2.0-windows-x86_64.zip"
+        );
         // Never an installer for another processor.
-        assert_eq!(pick_asset(&r.assets, "linux", "aarch64"), None);
+        assert_eq!(pick_asset(&r.assets, Install::LinuxArchive, "aarch64"), None);
         let list = json!([{"tag_name": "v9", "draft": true}, gh]);
         assert_eq!(parse_feed(&list).unwrap().version, "0.2.0");
         let manifest = json!({"version": "1.0.0", "notes": "Hello", "url": "https://example.test/r",
@@ -1489,8 +1705,8 @@ mod tests {
                        {"name": "Merpati-1.0.0-x86_64.dmg", "url": "https://example.test/x.dmg"}]});
         let m = parse_feed(&manifest).unwrap();
         assert_eq!(m.name, "Merpati 1.0.0");
-        assert_eq!(pick_asset(&m.assets, "macos", "aarch64").unwrap().name, "Merpati-1.0.0-arm64.dmg");
-        assert_eq!(pick_asset(&m.assets, "macos", "x86_64").unwrap().name, "Merpati-1.0.0-x86_64.dmg");
+        assert_eq!(pick_asset(&m.assets, Install::Mac, "aarch64").unwrap().name, "Merpati-1.0.0-arm64.dmg");
+        assert_eq!(pick_asset(&m.assets, Install::Mac, "x86_64").unwrap().name, "Merpati-1.0.0-x86_64.dmg");
         assert!(parse_feed(&json!({"name": "x"})).is_err());
         assert!(parse_feed(&json!({"tag_name": "nightly"})).is_err());
     }
@@ -1527,7 +1743,7 @@ mod tests {
         ]
         .map(asset)
         .into();
-        let install = |assets: &[Asset], arch: &str| match plan(assets, "macos", arch, true) {
+        let install = |assets: &[Asset], arch: &str| match plan(assets, Install::Mac, arch, true) {
             Plan::Install(a) => Some(a.name),
             _ => None,
         };
@@ -1538,13 +1754,22 @@ mod tests {
         assert_eq!(install(&universal, "x86_64").as_deref(), Some("Merpati-0.3.0-macos-universal.zip"));
         // An archive for the other processor is not installed: the disk image is offered.
         let intel_only = ["Merpati-0.3.0-universal.dmg", "Merpati-0.3.0-macos-x86_64.zip"].map(asset);
-        assert_eq!(plan(&intel_only, "macos", "aarch64", true), Plan::Download(asset("Merpati-0.3.0-universal.dmg")));
+        assert_eq!(
+            plan(&intel_only, Install::Mac, "aarch64", true),
+            Plan::Download(asset("Merpati-0.3.0-universal.dmg"))
+        );
         // Not running from an app bundle (cargo run), or no archive: the disk image.
-        assert_eq!(plan(&all, "macos", "aarch64", false), Plan::Download(asset("Merpati-0.3.0-universal.dmg")));
-        assert_eq!(plan(&all[..1], "macos", "aarch64", true), Plan::Download(asset("Merpati-0.3.0-universal.dmg")));
+        assert_eq!(plan(&all, Install::Mac, "aarch64", false), Plan::Download(asset("Merpati-0.3.0-universal.dmg")));
+        assert_eq!(
+            plan(&all[..1], Install::Mac, "aarch64", true),
+            Plan::Download(asset("Merpati-0.3.0-universal.dmg"))
+        );
         // Other systems never install in place; nothing for them opens the release page.
-        assert_eq!(plan(&all, "windows", "x86_64", true), Plan::Download(asset("merpati-0.3.0-windows-x86_64.zip")));
-        assert_eq!(plan(&all, "linux", "x86_64", true), Plan::Page);
+        assert_eq!(
+            plan(&all, Install::WindowsZip, "x86_64", true),
+            Plan::Download(asset("merpati-0.3.0-windows-x86_64.zip"))
+        );
+        assert_eq!(plan(&all, Install::LinuxArchive, "x86_64", true), Plan::Page);
     }
 
     #[test]

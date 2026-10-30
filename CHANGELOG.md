@@ -2,18 +2,47 @@
 
 All notable changes to Merpati. The newest version comes first.
 
-## 0.1.1 — 2026-10-25
-
-### Fixed
-- The app closed when a response in HTML or XML contained non-ASCII text (for example the
-  "★" on the jsonplaceholder.typicode.com home page): the syntax highlighter cut the text inside
-  a character. Text that a highlighter splits mid-character is no longer dropped either.
-- An https:// PAC (proxy auto-config) file could fail to download when nothing had set up TLS
-  yet.
+## 0.2.0 — 2026-10-30
 
 ### Added
+- **Native macOS menu bar**: Merpati, File, Edit, View, Window and Help menus with the usual
+  shortcuts, **Check for Updates…**, Settings…, links to the repository, release notes and issues.
+  On Linux and Windows, **Check for updates…** is in the workspace menu.
+- **Linux packages**: `.deb` (Ubuntu, Debian, Mint, Pop!_OS), `.rpm` (Fedora, RHEL, Rocky, Alma,
+  openSUSE), AppImage (Arch, Manjaro and others) and `.tar.gz`, for x86_64 and ARM64. The release
+  workflow installs them on Ubuntu 22.04/24.04, Debian 12, Fedora 41, Rocky Linux 9 and openSUSE
+  Leap 15.6 before publishing.
+- **Windows installer** (`Merpati-Setup-<version>-x64.exe`): per-user or all-users install, Start
+  menu entry, optional `merpati` on `PATH`, updates in place; the portable `.zip` stays.
+- **Updates per kind of install**: an AppImage replaces itself and restarts like the macOS app; a
+  `.deb`/`.rpm` install gets the new package, Windows the new installer (or `.zip`).
+- **Response folding**: line numbers and fold carets in the Pretty view for JSON, XML/HTML and
+  YAML (`"address": { … } 3 keys`), Expand all / Collapse all and collapse to level 1 or 2.
+- **JSONPath filter** on JSON responses (`$.data[?(@.price < 10)].title`) with a match count, in
+  the Pretty and Tree views; the evaluator lives in `merpati-core` and is tested against
+  Goessner's examples.
+- **Value actions**: right-click a value to copy it or its path, **Set as variable…** (environment,
+  collection or globals; optionally also set on every run by a script line) or **Add test for this
+  value**.
+- **Compare with the previous response**: status, time, size and header changes and a line diff of
+  the bodies (JSON compared with sorted keys), with a pin to keep a baseline.
+- **Generate tests** from a response: status, response time, Content-Type and a JSON schema
+  check, previewed before they are added.
+- **Maximize and minimize the response panel**, in both layouts.
+- **Copy as cURL (as sent)** in the response menu.
+- New request tabs put the caret in the URL field; the active tab scrolls into view.
 - If Merpati ever closes unexpectedly, the details are written to `crash.log` in its settings
   folder (only on this computer) and the next start says so.
+
+### Fixed
+- The app closed when an HTML or XML response contained non-ASCII text (for example the "★" on
+  jsonplaceholder.typicode.com); highlighted text is never cut inside a character any more.
+- Response bodies no longer shake while scrolling: trackpad gestures stick to one axis, and large
+  bodies keep the width of their longest line.
+- The text cursor of an empty field was short and sat below the middle; focused inputs now show a
+  calmer accent outline.
+- An https:// PAC (proxy auto-config) file could fail to download when nothing had set up TLS yet.
+- History rows with long URLs no longer overlap the status code or widen the sidebar.
 
 ## 0.1.0 — 2026-10-25
 

@@ -4,7 +4,7 @@ members = ["crates/*"]
 default-members = ["crates/merpati-app", "crates/merpati-cli"]
 
 [workspace.package]
-version = "0.1.1"
+version = "0.2.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/ilhamnadhif/merpati"
@@ -66,6 +66,11 @@ egui = { version = "0.37", features = ["monochrome_emoji_fonts"] }
 egui_extras = { version = "0.37", features = ["image"] }
 rfd = "0.17"
 open = "5"
+# Native macOS menu bar and the clipboard its Paste item reads.
+muda = { version = "0.21.2", default-features = false }
+arboard = { version = "3.7", default-features = false }
+# Only to turn off winit's default macOS menu (same version eframe uses).
+winit = { version = "0.30", default-features = false }
 parking_lot = "0.12"
 crossbeam-channel = "0.5"
 

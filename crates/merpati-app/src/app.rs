@@ -305,6 +305,11 @@ pub struct MerpatiApp {
     pub update: crate::update::UpdateState,
     /// The tab the tab bar last scrolled into view, and the bar's width then.
     tab_in_view: Option<(u64, u32)>,
+    /// Keeps trackpad scrolls on one axis per gesture.
+    axis_lock: crate::scroll_lock::AxisLock,
+    /// The native menu bar (installed by `new`, not in tests).
+    #[cfg(target_os = "macos")]
+    menu: Option<crate::menu::AppMenu>,
 }
 
 /// A new connection or call number. Session events carry the number of the
@@ -343,6 +348,42 @@ pub fn protocol_icon(name: &str) -> &'static str {
         "MCP" => icons::PUZZLE_PIECE,
         "AI request" => icons::SPARKLE,
         _ => icons::GLOBE,
+    }
+}
+
+/// What the New menus create (the toolbar's New and, on macOS, File › New).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum NewItem {
+    Request,
+    WebSocket,
+    /// The n-th entry of [`protocol_templates`].
+    Protocol(usize),
+    Webhook,
+    Capture,
+    Flow,
+    Collection,
+    Environment,
+}
+
+impl NewItem {
+    /// Every item in menu order, with its icon and (untranslated) label.
+    pub fn all() -> Vec<(NewItem, &'static str, &'static str)> {
+        use crate::icons;
+        let mut items = vec![
+            (NewItem::Request, icons::GLOBE, "New Request"),
+            (NewItem::WebSocket, icons::PLUGS_CONNECTED, "New WebSocket"),
+        ];
+        for (i, (label, name, _)) in protocol_templates().into_iter().enumerate() {
+            items.push((NewItem::Protocol(i), protocol_icon(name), label));
+        }
+        items.extend([
+            (NewItem::Webhook, icons::WEBHOOKS_LOGO, "New webhook listener"),
+            (NewItem::Capture, icons::BROADCAST, "Capture traffic (proxy)"),
+            (NewItem::Flow, icons::FLOW_ARROW, "New flow"),
+            (NewItem::Collection, icons::STACK, "New Collection"),
+            (NewItem::Environment, icons::GLOBE_SIMPLE, "New Environment"),
+        ]);
+        items
     }
 }
 
@@ -521,9 +562,18 @@ impl MerpatiApp {
             close_after_save: None,
             update: Default::default(),
             tab_in_view: None,
+            axis_lock: Default::default(),
+            #[cfg(target_os = "macos")]
+            menu: None,
         };
         if crate::update::check_on_startup(&app) {
             crate::update::check(&mut app, false);
+        }
+        #[cfg(target_os = "macos")]
+        {
+            app.menu = Some(crate::menu::AppMenu::install(&cc.egui_ctx));
+            // ⌘Q is the menu's Quit, which closes like the window's button.
+            cc.egui_ctx.options_mut(|o| o.quit_shortcuts.clear());
         }
         if let Some(log) = crate::crash::take_pending(&AppSettings::config_dir()) {
             app.toast(trf("Merpati closed unexpectedly last time. Details: {}", &[&log.display()]), true);
@@ -782,6 +832,41 @@ impl MerpatiApp {
             self.active = self.tabs.len().saturating_sub(1);
         } else if idx < self.active {
             self.active -= 1;
+        }
+    }
+
+    /// Asks for a workspace folder and opens it.
+    pub fn pick_workspace(&mut self) {
+        let Some(dir) = rfd::FileDialog::new().set_title(tr("Open workspace folder")).pick_folder() else { return };
+        if merpati_core::storage::WorkspaceStore::is_workspace(&dir) {
+            self.open_workspace(dir, None);
+        } else {
+            self.toast(trf("{} is not a Merpati workspace (no merpati.json)", &[&dir.display()]), true);
+        }
+    }
+
+    pub fn create_new(&mut self, what: NewItem) {
+        match what {
+            NewItem::Request => self.new_request_tab(),
+            NewItem::WebSocket => self.new_ws_tab(),
+            NewItem::Protocol(i) => {
+                if let Some((_, name, kind)) = protocol_templates().into_iter().nth(i) {
+                    self.new_proto_tab(name, kind);
+                }
+            }
+            NewItem::Webhook => {
+                self.add_tab(TabKind::Webhook(Box::default()));
+            }
+            NewItem::Capture => {
+                self.add_tab(TabKind::Capture(Box::default()));
+            }
+            NewItem::Flow => {
+                let n = self.sidebar.flows.as_ref().map(|f| f.len()).unwrap_or(0) + 1;
+                let name = format!("{} {n}", tr("Flow"));
+                self.add_tab(TabKind::Flow(Box::new(crate::flow_tab::FlowTab::blank(&name))));
+            }
+            NewItem::Collection => self.dialog = Some(Dialog::prompt_new_collection()),
+            NewItem::Environment => self.dialog = Some(Dialog::prompt_new_environment()),
         }
     }
 
@@ -1305,6 +1390,36 @@ impl MerpatiApp {
         out
     }
 
+    /// Carries out the menu bar items chosen since the last frame. Shortcut
+    /// items become the key press they stand for, so `shortcuts` and text
+    /// editing handle them as usual.
+    #[cfg(target_os = "macos")]
+    fn run_menu_commands(&mut self, ctx: &egui::Context, raw_input: &mut egui::RawInput) {
+        use crate::menu::Command;
+        let Some(menu) = &self.menu else { return };
+        for command in menu.take_commands() {
+            if let Some(event) = crate::menu::as_input(command) {
+                raw_input.events.push(event);
+                continue;
+            }
+            match command {
+                Command::New(what) => self.create_new(what),
+                Command::Import => self.dialog = Some(Dialog::import()),
+                Command::OpenWorkspace => self.pick_workspace(),
+                Command::NewWorkspace => self.dialog = Some(Dialog::new_workspace()),
+                Command::CheckForUpdates => crate::update::check(self, true),
+                Command::Settings(section) => {
+                    self.dialog = Some(Dialog::Settings { draft: Box::new(self.settings.clone()), section });
+                }
+                Command::Url(url) => {
+                    crate::widgets::open_web_link(url);
+                }
+                Command::Quit => ctx.send_viewport_cmd(egui::ViewportCommand::Close),
+                Command::Key(..) | Command::Copy | Command::Cut | Command::Paste => {}
+            }
+        }
+    }
+
     fn shortcuts(&mut self, ctx: &egui::Context) {
         let cmd = Modifiers::COMMAND;
         let sc = |m: Modifiers, k: Key| KeyboardShortcut::new(m, k);
@@ -1448,6 +1563,12 @@ impl MerpatiApp {
             || new.certificates != self.settings.certificates
             || new.max_body_in_memory_bytes != self.settings.max_body_in_memory_bytes;
         crate::i18n::set_language(new.ui.language);
+        #[cfg(target_os = "macos")]
+        if new.ui.language != self.settings.ui.language
+            && let Some(menu) = &mut self.menu
+        {
+            menu.rebuild();
+        }
         self.ctx.set_theme(match new.ui.theme {
             merpati_core::settings::ThemePreference::System => egui::ThemePreference::System,
             merpati_core::settings::ThemePreference::Light => egui::ThemePreference::Light,
@@ -1479,17 +1600,17 @@ impl MerpatiApp {
             egui::Popup::menu(&ws).show(|ui| {
                 if ui.button(kit::with_icon(icons::FOLDER_OPEN, tr("Open workspace…"))).clicked() {
                     ui.close();
-                    if let Some(dir) = rfd::FileDialog::new().set_title("Open workspace folder").pick_folder() {
-                        if merpati_core::storage::WorkspaceStore::is_workspace(&dir) {
-                            self.open_workspace(dir, None);
-                        } else {
-                            self.toast(trf("{} is not a Merpati workspace (no merpati.json)", &[&dir.display()]), true);
-                        }
-                    }
+                    self.pick_workspace();
                 }
                 if ui.button(kit::with_icon(icons::FOLDER_PLUS, tr("New workspace…"))).clicked() {
                     ui.close();
                     self.dialog = Some(Dialog::new_workspace());
+                }
+                // macOS has it in the app menu of the menu bar.
+                #[cfg(not(target_os = "macos"))]
+                if ui.button(kit::with_icon(icons::ARROWS_CLOCKWISE, tr("Check for updates…"))).clicked() {
+                    ui.close();
+                    crate::update::check(self, true);
                 }
                 if ui.button(kit::with_icon(icons::ARROW_SQUARE_OUT, tr("Reveal in file manager"))).clicked() {
                     ui.close();
@@ -1517,45 +1638,15 @@ impl MerpatiApp {
             let new = kit::button_ex(ui, kit::Kind::Ghost, Some(icons::PLUS), tr("New"), false);
             egui::Popup::menu(&new).show(|ui| {
                 ui.set_min_width(220.0);
-                if ui.button(kit::with_icon(icons::GLOBE, tr("New Request"))).clicked() {
-                    ui.close();
-                    self.new_request_tab();
-                }
-                if ui.button(kit::with_icon(icons::PLUGS_CONNECTED, tr("New WebSocket"))).clicked() {
-                    ui.close();
-                    self.new_ws_tab();
-                }
-                for (label, name, kind) in crate::app::protocol_templates() {
-                    if ui.button(kit::with_icon(protocol_icon(name), tr(label))).clicked() {
-                        ui.close();
-                        self.new_proto_tab(name, kind);
+                for (i, (what, icon, label)) in NewItem::all().into_iter().enumerate() {
+                    // Separators before the local tools and before collections.
+                    if i > 0 && matches!(what, NewItem::Webhook | NewItem::Collection) {
+                        ui.separator();
                     }
-                }
-                ui.separator();
-                if ui.button(kit::with_icon(icons::WEBHOOKS_LOGO, tr("New webhook listener"))).clicked() {
-                    ui.close();
-                    self.add_tab(TabKind::Webhook(Box::default()));
-                }
-                if ui.button(kit::with_icon(icons::BROADCAST, tr("Capture traffic (proxy)"))).clicked() {
-                    ui.close();
-                    self.add_tab(TabKind::Capture(Box::default()));
-                }
-                if ui.button(kit::with_icon(icons::FLOW_ARROW, tr("New flow"))).clicked() {
-                    ui.close();
-                    let n = self.sidebar.flows.as_ref().map(|f| f.len()).unwrap_or(0) + 1;
-                    self.add_tab(TabKind::Flow(Box::new(crate::flow_tab::FlowTab::blank(&format!(
-                        "{} {n}",
-                        tr("Flow")
-                    )))));
-                }
-                ui.separator();
-                if ui.button(kit::with_icon(icons::STACK, tr("New Collection"))).clicked() {
-                    ui.close();
-                    self.dialog = Some(Dialog::prompt_new_collection());
-                }
-                if ui.button(kit::with_icon(icons::GLOBE_SIMPLE, tr("New Environment"))).clicked() {
-                    ui.close();
-                    self.dialog = Some(Dialog::prompt_new_environment());
+                    if ui.button(kit::with_icon(icon, tr(label))).clicked() {
+                        ui.close();
+                        self.create_new(what);
+                    }
                 }
             });
             if kit::button_ex(ui, kit::Kind::Ghost, Some(icons::DOWNLOAD_SIMPLE), tr("Import"), false).clicked() {
@@ -2171,6 +2262,12 @@ impl MerpatiApp {
 }
 
 impl eframe::App for MerpatiApp {
+    fn raw_input_hook(&mut self, ctx: &egui::Context, raw_input: &mut egui::RawInput) {
+        #[cfg(target_os = "macos")]
+        self.run_menu_commands(ctx, raw_input);
+        self.axis_lock.apply(ctx, raw_input);
+    }
+
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         let ctx = ui.ctx().clone();
         self.handle_msgs();
@@ -2316,6 +2413,9 @@ impl MerpatiApp {
             close_after_save: None,
             update: Default::default(),
             tab_in_view: None,
+            axis_lock: Default::default(),
+            #[cfg(target_os = "macos")]
+            menu: None,
         }
     }
 

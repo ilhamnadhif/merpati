@@ -75,29 +75,53 @@ jobs:
             target/dist-pkg/SHA256SUMS-macos.txt
 
   linux:
-    runs-on: ubuntu-latest
+    # Built on Ubuntu 22.04 so the packages also run on older distributions
+    # (checked below on Ubuntu, Debian, Fedora, Rocky Linux and openSUSE).
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { runner: ubuntu-22.04, arch: x86_64 }
+          - { runner: ubuntu-22.04-arm, arch: aarch64 }
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libwayland-dev libgtk-3-dev libdbus-1-dev
+      - run: sudo apt-get update && sudo apt-get install -y libxkbcommon-dev libwayland-dev libdbus-1-dev dpkg-dev rpm
       - run: cargo build --profile dist --locked -p merpati-app -p merpati-cli
-      - name: Package
+      - name: Package (.tar.gz, .deb, .rpm, .AppImage)
+        run: scripts/package-linux.sh
+      - name: Install and run on other distributions
         run: |
-          V="${GITHUB_REF_NAME#v}"
-          mkdir -p pkg/merpati-$V
-          cp target/dist/merpati-app target/dist/merpati packaging/linux/merpati.desktop pkg/merpati-$V/
-          cp packaging/macos/icon-1024.png pkg/merpati-$V/merpati.png
-          cp README.md LICENSE-MIT LICENSE-APACHE pkg/merpati-$V/
-          tar -C pkg -czf merpati-$V-linux-x86_64.tar.gz merpati-$V
-          sha256sum merpati-$V-linux-x86_64.tar.gz > SHA256SUMS-linux.txt
+          cd target/dist-pkg
+          deb=$(ls *.deb); rpm=$(ls *.rpm); appimage=$(ls *.AppImage)
+          check='merpati --version && if ldd /usr/bin/merpati-app | grep "not found"; then exit 1; fi'
+          for image in ubuntu:22.04 ubuntu:24.04 debian:12; do
+            echo "== $image"
+            docker run --rm -v "$PWD:/pkg:ro" "$image" bash -ec \
+              "apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq /pkg/$deb >/dev/null && $check"
+          done
+          for image in fedora:41 rockylinux:9; do
+            echo "== $image"
+            docker run --rm -v "$PWD:/pkg:ro" "$image" bash -ec "dnf install -y -q /pkg/$rpm >/dev/null && $check"
+          done
+          echo "== opensuse/leap:15.6"
+          docker run --rm -v "$PWD:/pkg:ro" opensuse/leap:15.6 bash -ec \
+            "zypper --non-interactive --quiet install --allow-unsigned-rpm /pkg/$rpm >/dev/null && $check"
+          echo "== AppImage"
+          chmod +x "$appimage"
+          (mkdir -p /tmp/ai && cd /tmp/ai && "$OLDPWD/$appimage" --appimage-extract >/dev/null && squashfs-root/usr/bin/merpati --version)
       - uses: actions/upload-artifact@v4
         with:
-          name: linux
+          name: linux-${{ matrix.arch }}
           if-no-files-found: error
           path: |
-            merpati-*-linux-x86_64.tar.gz
-            SHA256SUMS-linux.txt
+            target/dist-pkg/*.tar.gz
+            target/dist-pkg/*.deb
+            target/dist-pkg/*.rpm
+            target/dist-pkg/*.AppImage
+            target/dist-pkg/SHA256SUMS-linux-*.txt
 
   windows:
     runs-on: windows-latest
@@ -106,22 +130,39 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --profile dist --locked -p merpati-app -p merpati-cli
-      - name: Package
+      - name: Package (installer and portable .zip)
         shell: pwsh
         run: |
-          $v = "$env:GITHUB_REF_NAME".TrimStart("v")
-          New-Item -ItemType Directory -Force pkg | Out-Null
+          $v = (Select-String -Path Cargo.toml -Pattern '^version = "(.*)"' | Select-Object -First 1).Matches[0].Groups[1].Value
+          New-Item -ItemType Directory -Force target/dist-pkg, pkg | Out-Null
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
+            choco install innosetup --no-progress -y | Out-Null
+            $env:Path += ";${env:ProgramFiles(x86)}\Inno Setup 6"
+          }
+          iscc /Q "/DAppVersion=$v" "/DSourceDir=$PWD\target\dist" "/DOutputDir=$PWD\target\dist-pkg" packaging\windows\merpati.iss
           Copy-Item target/dist/merpati-app.exe, target/dist/merpati.exe, README.md, LICENSE-MIT, LICENSE-APACHE pkg/
-          Compress-Archive -Path pkg/* -DestinationPath "merpati-$v-windows-x86_64.zip"
-          $h = (Get-FileHash -Algorithm SHA256 "merpati-$v-windows-x86_64.zip").Hash.ToLower()
-          "$h  merpati-$v-windows-x86_64.zip" | Out-File -Encoding ascii SHA256SUMS-windows.txt
+          Compress-Archive -Path pkg/* -DestinationPath "target/dist-pkg/merpati-$v-windows-x86_64.zip"
+          Push-Location target/dist-pkg
+          Get-ChildItem *.exe, *.zip | ForEach-Object { "$((Get-FileHash -Algorithm SHA256 $_.Name).Hash.ToLower())  $($_.Name)" } |
+            Out-File -Encoding ascii SHA256SUMS-windows.txt
+          Pop-Location
+      - name: Install, run and uninstall
+        shell: pwsh
+        run: |
+          $setup = (Get-ChildItem target/dist-pkg/Merpati-Setup-*.exe).FullName
+          Start-Process -Wait -FilePath $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER'
+          $dir = "$env:LOCALAPPDATA\Programs\Merpati"
+          & "$dir\merpati.exe" --version
+          if (-not (Test-Path "$dir\merpati-app.exe") -or -not (Test-Path "$dir\unins000.exe")) { throw "not installed" }
+          Start-Process -Wait -FilePath "$dir\unins000.exe" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART'
       - uses: actions/upload-artifact@v4
         with:
           name: windows
           if-no-files-found: error
           path: |
-            merpati-*-windows-x86_64.zip
-            SHA256SUMS-windows.txt
+            target/dist-pkg/Merpati-Setup-*.exe
+            target/dist-pkg/merpati-*-windows-x86_64.zip
+            target/dist-pkg/SHA256SUMS-windows.txt
 
   publish:
     # One job creates the release, so parallel builds never race to create it.

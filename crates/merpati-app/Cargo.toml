@@ -50,6 +50,11 @@ sha2.workspace = true
 reqwest.workspace = true
 image ={ version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "webp", "bmp", "ico"] }
 
+[target.'cfg(target_os = "macos")'.dependencies]
+muda.workspace = true
+arboard.workspace = true
+winit.workspace = true
+
 [features]
 default = ["wgpu"]
 # Rendering backend: wgpu (Metal/Vulkan/DX12) or OpenGL via glow.
