@@ -519,7 +519,10 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut MqttTab) {
                             );
                             ui.end_row();
                             pc::form_label(ui, tr("Keep alive (s)"));
-                            ui.add(egui::DragValue::new(&mut req.keep_alive_secs).range(0..=65535));
+                            crate::widgets::a11y_name(
+                                &ui.add(egui::DragValue::new(&mut req.keep_alive_secs).range(0..=65535)),
+                                tr("Keep alive (s)"),
+                            );
                             ui.end_row();
                             pc::form_label(ui, tr("Clean session"));
                             ui.checkbox(&mut req.clean_session, tr("Start without stored subscriptions"));

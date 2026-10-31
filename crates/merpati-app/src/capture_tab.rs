@@ -306,12 +306,12 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut CaptureTab
             ui.label(RichText::new(tr("No requests match")).color(p.text_muted));
             return;
         }
-        egui::ScrollArea::vertical().id_salt("capture-list").stick_to_bottom(true).auto_shrink([false; 2]).show_rows(
+        kit::show_rows(
+            egui::ScrollArea::vertical().id_salt("capture-list").stick_to_bottom(true).auto_shrink([false; 2]),
             ui,
             30.0,
             shown.len(),
             |ui, range| {
-                ui.spacing_mut().item_spacing.y = 0.0;
                 for e in &shown[range] {
                     let time = e.started_at.with_timezone(&chrono::Local).format("%H:%M:%S").to_string();
                     let status = match (e.status, e.state, e.kind) {
@@ -412,7 +412,10 @@ fn options(ui: &mut Ui, tab: &mut CaptureTab) {
             vec![
                 Box::new(|ui: &mut Ui| {
                     muted(ui, tr("Port"));
-                    ui.add_enabled(!running, egui::DragValue::new(&mut tab.port).range(1..=65535));
+                    widgets::a11y_name(
+                        &ui.add_enabled(!running, egui::DragValue::new(&mut tab.port).range(1..=65535)),
+                        tr("Port"),
+                    );
                 }),
                 Box::new(|ui: &mut Ui| {
                     ui.add_enabled(!running, egui::Checkbox::new(&mut tab.intercept, tr("Decrypt HTTPS")));
@@ -656,7 +659,7 @@ fn save_to_collection(app: &mut MerpatiApp, ui: &mut Ui, tab: &mut CaptureTab, e
         .and_then(|id| app.ws.data.collection(id))
         .map(|c| c.name.clone())
         .unwrap_or_else(|| tr("choose collection").into());
-    egui::ComboBox::from_id_salt("capture-target")
+    let r = egui::ComboBox::from_id_salt("capture-target")
         .icon(crate::kit::combo_caret)
         .width(160.0)
         .selected_text(current)
@@ -665,6 +668,7 @@ fn save_to_collection(app: &mut MerpatiApp, ui: &mut Ui, tab: &mut CaptureTab, e
                 ui.selectable_value(&mut tab.target, Some(c.id.clone()), &c.name);
             }
         });
+    widgets::a11y_name(&r.response, tr("Save to collection"));
 }
 
 fn detail(ui: &mut Ui, e: &CaptureEntry, dark: bool) {

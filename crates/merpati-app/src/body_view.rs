@@ -2017,8 +2017,7 @@ fn json_tree_view(
         area = area.scroll_offset(off);
     }
     code_frame(ui).inner_margin(egui::Margin::symmetric(4, 6)).show(ui, |ui| {
-        area.show_rows(ui, row_h, rows.len(), |ui, range| {
-            ui.spacing_mut().item_spacing.y = 0.0;
+        kit::show_rows(area, ui, row_h, rows.len(), |ui, range| {
             let width = ui.available_width().max(200.0);
             for row in &rows[range] {
                 let (rect, resp) = ui.allocate_exact_size(vec2(width, row_h), Sense::click());

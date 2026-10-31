@@ -2226,7 +2226,7 @@ fn flow_settings(ui: &mut Ui, tab: &mut FlowTab) {
 fn request_picker(app: &MerpatiApp, ui: &mut Ui, id: &str, current: &mut ItemRef, want_ai: bool) -> bool {
     let mut changed = false;
     let shown = request_name(app, current).unwrap_or_else(|| tr("Choose a request").into());
-    egui::ComboBox::from_id_salt(id)
+    let r = egui::ComboBox::from_id_salt(id)
         .icon(crate::kit::combo_caret)
         .width(ui.available_width())
         .selected_text(crate::dialogs::ellipsize(&shown, 44))
@@ -2249,6 +2249,7 @@ fn request_picker(app: &MerpatiApp, ui: &mut Ui, id: &str, current: &mut ItemRef
                 }
             }
         });
+    widgets::a11y_name(&r.response, tr("Request"));
     changed
 }
 
@@ -2357,7 +2358,7 @@ fn config_editor(app: &MerpatiApp, ui: &mut Ui, block: &mut Block, vars: &widget
                         "{{blocks.list.output.status}}",
                     );
                     field_label(ui, tr("Operator"));
-                    egui::ComboBox::from_id_salt(("flow-op", &id))
+                    let r = egui::ComboBox::from_id_salt(("flow-op", &id))
                         .icon(crate::kit::combo_caret)
                         .width(ui.available_width())
                         .selected_text(tr(c.op.label()))
@@ -2366,6 +2367,7 @@ fn config_editor(app: &MerpatiApp, ui: &mut Ui, block: &mut Block, vars: &widget
                                 ui.selectable_value(&mut c.op, op, tr(op.label()));
                             }
                         });
+                    widgets::a11y_name(&r.response, tr("Operator"));
                     if !c.op.is_unary() {
                         var_field(ui, vars, tr("Compared with"), &format!("flow-right-{id}"), &mut c.right, "200");
                     }
@@ -2427,7 +2429,7 @@ fn config_editor(app: &MerpatiApp, ui: &mut Ui, block: &mut Block, vars: &widget
             } else {
                 let current = c.provider.unwrap_or_default();
                 field_label(ui, tr("Provider"));
-                egui::ComboBox::from_id_salt(("flow-ai-provider", &id))
+                let r = egui::ComboBox::from_id_salt(("flow-ai-provider", &id))
                     .icon(crate::kit::combo_caret)
                     .width(ui.available_width())
                     .selected_text(current.label())
@@ -2438,6 +2440,7 @@ fn config_editor(app: &MerpatiApp, ui: &mut Ui, block: &mut Block, vars: &widget
                             }
                         }
                     });
+                widgets::a11y_name(&r.response, tr("Provider"));
                 var_field(ui, vars, tr("Model"), &format!("flow-ai-model-{id}"), &mut c.model, "gpt-5-mini");
                 var_field(
                     ui,

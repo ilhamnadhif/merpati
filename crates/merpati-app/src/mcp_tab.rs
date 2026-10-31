@@ -603,7 +603,7 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut McpTab) {
             let is_http = matches!(req.transport, McpTransport::Http { .. });
             ui.scope(|ui| {
                 pc::frameless(ui);
-                egui::ComboBox::from_id_salt("mcp-transport")
+                let r = egui::ComboBox::from_id_salt("mcp-transport")
                     .icon(crate::kit::combo_caret)
                     .width(64.0)
                     .selected_text(RichText::new(if is_http { "HTTP" } else { "STDIO" }).font(theme::medium(12.5)))
@@ -622,6 +622,7 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut McpTab) {
                     })
                     .response
                     .on_hover_text(tr("Transport"));
+                widgets::a11y_name(&r, tr("Transport"));
             });
             kit::vdivider(ui, 22.0);
             let w = ui.available_width();
@@ -794,14 +795,16 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut McpTab) {
                 ui.add_space(14.0);
                 pc::section(ui, tr("Export config"), Some(tr("Use this server in other MCP hosts.")));
                 ui.horizontal(|ui| {
-                    egui::ComboBox::from_id_salt("mcp-export").icon(crate::kit::combo_caret).width(240.0).selected_text(tab.export_style.label()).show_ui(
-                        ui,
-                        |ui| {
+                    let r = egui::ComboBox::from_id_salt("mcp-export")
+                        .icon(crate::kit::combo_caret)
+                        .width(240.0)
+                        .selected_text(tab.export_style.label())
+                        .show_ui(ui, |ui| {
                             for s in ExportStyle::ALL {
                                 ui.selectable_value(&mut tab.export_style, s, s.label());
                             }
-                        },
-                    );
+                        });
+                    widgets::a11y_name(&r.response, tr("Export config"));
                     if kit::secondary(ui, Some(icons::COPY), tr("Copy config")).clicked() {
                         let v = merpati_mcp::export_config(&item_name, req, tab.export_style);
                         ui.ctx().copy_text(serde_json::to_string_pretty(&v).unwrap_or_default());
@@ -1279,7 +1282,7 @@ fn pending_ui(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut McpTab) 
                     .and_then(|id| ai.iter().find(|(i, _)| i == id))
                     .map(|(_, n)| n.clone())
                     .unwrap_or_else(|| tr("choose an AI request").into());
-                egui::ComboBox::from_id_salt(("mcp-sampling-model", tab_id))
+                let r = egui::ComboBox::from_id_salt(("mcp-sampling-model", tab_id))
                     .icon(crate::kit::combo_caret)
                     .width(220.0)
                     .selected_text(current)
@@ -1290,6 +1293,7 @@ fn pending_ui(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut McpTab) 
                             }
                         }
                     });
+                widgets::a11y_name(&r.response, tr("Model"));
                 if ai.is_empty() {
                     ui.label(kit::hint(ui, tr("Save an AI request first")));
                 }
@@ -1365,7 +1369,7 @@ fn pending_ui(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut McpTab) 
                         }
                         merpati_mcp::ElicitFieldKind::Choice { values, labels } => {
                             let current = v.as_str().unwrap_or("").to_string();
-                            egui::ComboBox::from_id_salt(("elicit", &f.name))
+                            let r = egui::ComboBox::from_id_salt(("elicit", &f.name))
                                 .icon(crate::kit::combo_caret)
                                 .width(200.0)
                                 .selected_text(&current)
@@ -1377,6 +1381,7 @@ fn pending_ui(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut McpTab) 
                                         }
                                     }
                                 });
+                            widgets::a11y_name(&r.response, f.label());
                         }
                         merpati_mcp::ElicitFieldKind::MultiChoice { values, labels, .. } => {
                             ui.horizontal_wrapped(|ui| {

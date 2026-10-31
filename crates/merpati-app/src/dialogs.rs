@@ -2229,16 +2229,23 @@ fn settings_page(app: &MerpatiApp, ui: &mut Ui, draft: &mut AppSettings, page: S
 }
 
 /// A number field with a unit, for settings rows.
-fn number<N: egui::emath::Numeric>(ui: &mut Ui, value: &mut N, range: std::ops::RangeInclusive<N>, unit: &str) {
+fn number<N: egui::emath::Numeric>(
+    ui: &mut Ui,
+    name: &str,
+    value: &mut N,
+    range: std::ops::RangeInclusive<N>,
+    unit: &str,
+) {
     let speed = (range.end().to_f64() - range.start().to_f64()) / 2000.0;
-    ui.add(egui::DragValue::new(value).range(range).suffix(unit).speed(speed.clamp(0.05, 50.0)));
+    let r = ui.add(egui::DragValue::new(value).range(range).suffix(unit).speed(speed.clamp(0.05, 50.0)));
+    crate::widgets::a11y_name(&r, name);
 }
 
 /// A size in MB stored as bytes.
-fn megabytes(ui: &mut Ui, bytes: &mut u64, max: u32) {
+fn megabytes(ui: &mut Ui, name: &str, bytes: &mut u64, max: u32) {
     let mut mb = (*bytes / (1024 * 1024)) as u32;
     let before = mb;
-    number(ui, &mut mb, 1..=max, " MB");
+    number(ui, name, &mut mb, 1..=max, " MB");
     if mb != before {
         *bytes = mb as u64 * 1024 * 1024;
     }
@@ -2269,6 +2276,7 @@ fn general_page(ui: &mut Ui, draft: &mut AppSettings) {
             ui.label(RichText::new(format!("{} px", draft.ui.font_size)).font(theme::medium(12.5)).color(p.text_muted));
             ui.spacing_mut().slider_width = 150.0;
             let r = ui.add(egui::Slider::new(&mut draft.ui.font_size, 10.0..=20.0).step_by(0.5).show_value(false));
+            crate::widgets::a11y_name(&r, tr("Font size"));
             widgets::a11y_name(&r, tr("Font size"));
         });
         g.row(tr("Response panel"), tr("Where the response appears next to the request."), |ui| {
@@ -2299,7 +2307,7 @@ fn general_page(ui: &mut Ui, draft: &mut AppSettings) {
     });
     group(ui, tr("History"), |g| {
         g.row(tr("History entries"), tr("The oldest entries are removed when History is full."), |ui| {
-            number(ui, &mut draft.history_limit, 10..=100_000, "");
+            number(ui, tr("History entries"), &mut draft.history_limit, 10..=100_000, "");
         });
     });
 }
@@ -2308,7 +2316,7 @@ fn requests_page(ui: &mut Ui, draft: &mut AppSettings) {
     let r = &mut draft.request;
     group(ui, tr("Sending"), |g| {
         g.row(tr("Request timeout"), tr("How long to wait for a response; 0 waits forever."), |ui| {
-            number(ui, &mut r.timeout_ms, 0..=3_600_000, " ms");
+            number(ui, tr("Request timeout"), &mut r.timeout_ms, 0..=3_600_000, " ms");
         });
         g.row(tr("HTTP version"), tr("Auto lets client and server agree on one."), |ui| {
             segmented(
@@ -2331,7 +2339,7 @@ fn requests_page(ui: &mut Ui, draft: &mut AppSettings) {
         });
         g.enabled(r.follow_redirects);
         g.row(tr("Maximum redirects"), "", |ui| {
-            number(ui, &mut r.max_redirects, 0..=100, "");
+            number(ui, tr("Maximum redirects"), &mut r.max_redirects, 0..=100, "");
         });
     });
     group(ui, tr("Security"), |g| {
@@ -2354,10 +2362,10 @@ fn requests_page(ui: &mut Ui, draft: &mut AppSettings) {
     });
     group(ui, tr("Responses"), |g| {
         g.row(tr("Keep bodies in memory up to"), tr("Larger bodies are kept in a temporary file."), |ui| {
-            megabytes(ui, &mut draft.max_body_in_memory_bytes, 1024);
+            megabytes(ui, tr("Keep bodies in memory up to"), &mut draft.max_body_in_memory_bytes, 1024);
         });
         g.row(tr("Pretty-print bodies up to"), tr("Larger bodies are shown as plain text."), |ui| {
-            megabytes(ui, &mut draft.max_pretty_bytes, 200);
+            megabytes(ui, tr("Pretty-print bodies up to"), &mut draft.max_pretty_bytes, 200);
         });
     });
 }
@@ -2365,13 +2373,13 @@ fn requests_page(ui: &mut Ui, draft: &mut AppSettings) {
 fn scripts_page(app: &MerpatiApp, ui: &mut Ui, draft: &mut AppSettings) {
     group(ui, tr("Limits"), |g| {
         g.row(tr("Script timeout"), tr("Scripts that run longer are stopped."), |ui| {
-            number(ui, &mut draft.script_timeout_ms, 100..=600_000, " ms");
+            number(ui, tr("Script timeout"), &mut draft.script_timeout_ms, 100..=600_000, " ms");
         });
         g.row(
             tr("Script memory limit"),
             tr("Scripts run in a separate process that is stopped when it uses more memory than this; 0 means no limit."),
             |ui| {
-                number(ui, &mut draft.script_memory_mb, 0..=65_536, " MB");
+                number(ui, tr("Script memory limit"), &mut draft.script_memory_mb, 0..=65_536, " MB");
             },
         );
         g.row(tr("Script engine"), "", |ui| {

@@ -1834,3 +1834,6 @@ Only (@.length-n) is supported inside ( )	Hanya (@.length-n) yang didukung di da
 Invalid regular expression	Ekspresi reguler tidak valid
 {} could not be replaced ({}). The new version is in {}.	{} tidak bisa diganti ({}). Versi baru ada di {}.
 {} lines changed. Maximize the response to see them.	{} baris berubah. Maksimalkan respons untuk melihatnya.
+{} requests sent, no tests ran.	{} permintaan terkirim, tidak ada tes yang dijalankan.
+The server answered {} {} without a body.	Server menjawab {} {} tanpa body.
+Code editor	Editor kode

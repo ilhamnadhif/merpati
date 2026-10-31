@@ -281,7 +281,7 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut AiTab) {
         |ui| {
             ui.scope(|ui| {
                 pc::frameless(ui);
-                egui::ComboBox::from_id_salt(("ai-provider", tab_id))
+                let r = egui::ComboBox::from_id_salt(("ai-provider", tab_id))
                     .icon(crate::kit::combo_caret)
                     .width((ui.available_width() * 0.3).clamp(96.0, 150.0))
                     .selected_text(RichText::new(req.provider.label()).font(theme::medium(12.5)))
@@ -296,6 +296,7 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut AiTab) {
                     })
                     .response
                     .on_hover_text(tr("Provider"));
+                widgets::a11y_name(&r, tr("Provider"));
             });
             kit::vdivider(ui, 22.0);
             let w = (ui.available_width() - 30.0).max(100.0);
@@ -383,7 +384,10 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut AiTab) {
                             req.temperature = on.then_some(1.0);
                         }
                         if let Some(t) = &mut req.temperature {
-                            ui.add(egui::Slider::new(t, 0.0..=2.0).step_by(0.05));
+                            widgets::a11y_name(
+                                &ui.add(egui::Slider::new(t, 0.0..=2.0).step_by(0.05)),
+                                tr("Temperature"),
+                            );
                         } else {
                             ui.label(widgets::muted(ui, tr("provider default")));
                         }
@@ -396,7 +400,7 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut AiTab) {
                             req.max_tokens = on.then_some(1024);
                         }
                         if let Some(t) = &mut req.max_tokens {
-                            ui.add(egui::DragValue::new(t).range(1..=1_000_000));
+                            widgets::a11y_name(&ui.add(egui::DragValue::new(t).range(1..=1_000_000)), tr("Max tokens"));
                         } else {
                             ui.label(widgets::muted(ui, tr("provider default")));
                         }

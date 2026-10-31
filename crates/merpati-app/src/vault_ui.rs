@@ -322,7 +322,7 @@ fn link_form(app: &MerpatiApp, ui: &mut Ui, d: &mut VaultDialog, ext: &ExternalS
             );
         });
         form_row(ui, tr("Provider"), |ui| {
-            egui::ComboBox::from_id_salt("vault-link-provider")
+            let r = egui::ComboBox::from_id_salt("vault-link-provider")
                 .icon(crate::kit::combo_caret)
                 .width(260.0)
                 .selected_text(&provider.name)
@@ -338,6 +338,7 @@ fn link_form(app: &MerpatiApp, ui: &mut Ui, d: &mut VaultDialog, ext: &ExternalS
                         }
                     }
                 });
+            widgets::a11y_name(&r.response, tr("Provider"));
         });
         form_row(ui, tr("Reference"), |ui| {
             let w = ui.available_width();
@@ -350,7 +351,10 @@ fn link_form(app: &MerpatiApp, ui: &mut Ui, d: &mut VaultDialog, ext: &ExternalS
         });
         form_row(ui, tr("Cache"), |ui| {
             ui.spacing_mut().interact_size = vec2(96.0, 30.0);
-            ui.add(egui::DragValue::new(&mut form.ttl_secs).range(0..=86_400).suffix(" s"));
+            widgets::a11y_name(
+                &ui.add(egui::DragValue::new(&mut form.ttl_secs).range(0..=86_400).suffix(" s")),
+                tr("Cache"),
+            );
             ui.label(kit::hint(ui, tr("0 fetches on every use")));
         });
         if let Err(e) = provider.settings.check_reference(&form.reference)

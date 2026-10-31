@@ -85,6 +85,8 @@ pub enum Step {
     GraphqlQuery(String),
     Expand(String),
     Window([f32; 2]),
+    /// Scrolls the collection tree to this offset (large values: the end).
+    SidebarScroll(f32),
     /// Prints resident memory to stderr (benchmarks).
     ReportMemory(String),
     /// Presses the main button of the update pop-up (install and restart,
@@ -118,6 +120,12 @@ impl Automation {
             }
         };
         Some(Automation { steps: steps.into(), wait_until: None, pending_shot: None, started: Instant::now() })
+    }
+
+    /// Every step has run (and the last screenshot is written).
+    #[cfg(test)]
+    pub fn finished(&self) -> bool {
+        self.steps.is_empty() && self.wait_until.is_none() && self.pending_shot.is_none()
     }
 }
 
@@ -482,6 +490,7 @@ pub fn tick(app: &mut MerpatiApp, ctx: &egui::Context) {
             }
         }
         Step::Window([w, h]) => ctx.send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(w, h))),
+        Step::SidebarScroll(y) => app.sidebar.scroll_to = Some(y),
         Step::ReportMemory(label) => {
             let since_start = crate::START.get().map(|s| s.elapsed().as_secs_f64() * 1000.0).unwrap_or(0.0);
             eprintln!(
@@ -539,4 +548,61 @@ pub fn tick(app: &mut MerpatiApp, ctx: &egui::Context) {
         Step::Quit(_) => ctx.send_viewport_cmd(egui::ViewportCommand::Close),
     }
     app.automation = Some(auto);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Runs the `MERPATI_AUTOMATION` script on the real app, with the
+    /// settings in `MERPATI_CONFIG_DIR`, drawn off screen on the GPU: no
+    /// window opens, so visual checks never take over the screen. The window
+    /// size is `MERPATI_SIZE` (default `1280x820`), at `MERPATI_PPP` pixels
+    /// per point (default 2).
+    ///
+    /// ```text
+    /// MERPATI_CONFIG_DIR=… MERPATI_AUTOMATION=steps.json \
+    ///   cargo test -p merpati-app offscreen -- --ignored --nocapture
+    /// ```
+    #[test]
+    #[ignore = "needs a GPU, MERPATI_AUTOMATION and MERPATI_CONFIG_DIR"]
+    fn offscreen() {
+        use merpati_core::settings::AppSettings;
+        assert!(std::env::var_os("MERPATI_AUTOMATION").is_some(), "set MERPATI_AUTOMATION");
+        assert!(std::env::var_os("MERPATI_CONFIG_DIR").is_some(), "set MERPATI_CONFIG_DIR, never the real settings");
+        let size = std::env::var("MERPATI_SIZE")
+            .ok()
+            .and_then(|s| {
+                let (w, h) = s.split_once('x')?;
+                Some(egui::vec2(w.parse().ok()?, h.parse().ok()?))
+            })
+            .unwrap_or(egui::vec2(1280.0, 820.0));
+        merpati_http::tls::install_provider();
+        let path = AppSettings::default_path();
+        let settings = AppSettings::load(&path);
+        let mut harness = egui_kittest::Harness::builder()
+            .with_size(size)
+            .with_pixels_per_point(std::env::var("MERPATI_PPP").ok().and_then(|s| s.parse().ok()).unwrap_or(2.0))
+            .wgpu()
+            // As eframe does: characters the app's fonts lack come from the
+            // system fonts, drawn as boxes while those are being looked up.
+            .with_context_setup(|ctx| {
+                ctx.add_font_provider(std::sync::Arc::new(egui_system_font_provider::SystemFontProvider::new()))
+            })
+            .allow_missing_glyphs()
+            .build_eframe(|cc| MerpatiApp::new(cc, settings, path, None));
+        let started = Instant::now();
+        let mut unnamed = std::collections::HashSet::new();
+        while !harness.state().automation_finished() {
+            assert!(started.elapsed() < Duration::from_secs(300), "the script did not finish");
+            harness.step();
+            // Listed, not failed on: the run goes on to the remaining steps.
+            for w in harness.unnamed_widgets() {
+                if unnamed.insert(w.clone()) {
+                    eprintln!("automation: no accessible name: {w}");
+                }
+            }
+            std::thread::sleep(Duration::from_millis(16));
+        }
+    }
 }

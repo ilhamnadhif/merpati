@@ -347,6 +347,8 @@ pub fn code_editor_with(
         variable_tooltip(ui, &out, text, v);
     }
     let mut response = out.response.response.clone();
+    // Callers with a more specific name set theirs after this.
+    a11y_name(&response, tr("Code editor"));
     if let Some((start, end, items)) = pending {
         if accept.is_none()
             && out.response.has_focus()

@@ -427,7 +427,8 @@ fn setup_panel(ui: &mut Ui, tab: &mut RunnerTab, run: &mut bool) {
             ui.horizontal(|ui| {
                 let selected = tab.plan.iter().filter(|p| p.3).count();
                 let summary = match tab.mode {
-                    Mode::Functional => trf("{} requests × {} iterations", &[&selected, &tab.iterations.max(1)]),
+                    Mode::Functional if tab.iterations <= 1 => trf("{} requests", &[&selected]),
+                    Mode::Functional => trf("{} requests × {} iterations", &[&selected, &tab.iterations]),
                     Mode::Performance => trf("{} users · {} s", &[&tab.vus, &tab.duration_s]),
                 };
                 ui.add(egui::Label::new(RichText::new(summary).small().color(p.text_muted)).truncate());
@@ -612,8 +613,15 @@ fn opt_row(ui: &mut Ui, label: &str, help: &str, control_w: f32, add: impl FnOnc
     ui.add_space(10.0);
 }
 
-fn number(ui: &mut Ui, value: &mut impl egui::emath::Numeric, range: std::ops::RangeInclusive<f64>, suffix: &str) {
-    ui.add(egui::DragValue::new(value).range(range).speed(0.2).suffix(suffix).update_while_editing(false));
+fn number(
+    ui: &mut Ui,
+    name: &str,
+    value: &mut impl egui::emath::Numeric,
+    range: std::ops::RangeInclusive<f64>,
+    suffix: &str,
+) {
+    let r = ui.add(egui::DragValue::new(value).range(range).speed(0.2).suffix(suffix).update_while_editing(false));
+    widgets::a11y_name(&r, name);
 }
 
 fn functional_options(ui: &mut Ui, tab: &mut RunnerTab) {
@@ -624,10 +632,10 @@ fn functional_options(ui: &mut Ui, tab: &mut RunnerTab) {
     });
     ui.add_space(8.0);
     opt_row(ui, tr("Iterations"), tr("How many times to run the requests."), 90.0, |ui| {
-        number(ui, &mut tab.iterations, 1.0..=1_000_000.0, "");
+        number(ui, tr("Iterations"), &mut tab.iterations, 1.0..=1_000_000.0, "");
     });
     opt_row(ui, tr("Delay"), tr("Pause between requests."), 90.0, |ui| {
-        number(ui, &mut tab.delay_ms, 0.0..=600_000.0, " ms");
+        number(ui, tr("Delay"), &mut tab.delay_ms, 0.0..=600_000.0, " ms");
     });
     let mut pick = false;
     opt_row(ui, tr("Data file"), tr("CSV or JSON; one iteration per row."), 110.0, |ui| {
@@ -717,7 +725,9 @@ fn functional_options(ui: &mut Ui, tab: &mut RunnerTab) {
         130.0,
         |ui| {
             let mut pct = (tab.fail_rate * 100.0).round();
-            if ui.add(egui::Slider::new(&mut pct, 0.0..=100.0).suffix("%").show_value(true).step_by(5.0)).changed() {
+            let r = ui.add(egui::Slider::new(&mut pct, 0.0..=100.0).suffix("%").show_value(true).step_by(5.0));
+            widgets::a11y_name(&r, tr("Simulate network failures"));
+            if r.changed() {
                 tab.fail_rate = pct / 100.0;
             }
         },
@@ -731,13 +741,13 @@ fn perf_options(ui: &mut Ui, tab: &mut RunnerTab) {
     });
     ui.add_space(8.0);
     opt_row(ui, tr("Virtual users"), tr("Users sending requests at the same time."), 90.0, |ui| {
-        number(ui, &mut tab.vus, 1.0..=1000.0, "");
+        number(ui, tr("Virtual users"), &mut tab.vus, 1.0..=1000.0, "");
     });
     opt_row(ui, tr("Duration"), tr("How long the test runs."), 90.0, |ui| {
-        number(ui, &mut tab.duration_s, 1.0..=3600.0, " s");
+        number(ui, tr("Duration"), &mut tab.duration_s, 1.0..=3600.0, " s");
     });
     opt_row(ui, tr("Ramp-up"), tr("Time to reach all virtual users."), 90.0, |ui| {
-        number(ui, &mut tab.ramp_s, 0.0..=3600.0, " s");
+        number(ui, tr("Ramp-up"), &mut tab.ramp_s, 0.0..=3600.0, " s");
     });
     ui.label(kit::hint(
         ui,
@@ -820,6 +830,8 @@ fn functional_results(ui: &mut Ui, tab: &mut RunnerTab) {
             banner(ui, icons::STOP, p.warn, tr("Run cancelled"));
         } else if sum.bailed {
             banner(ui, icons::WARNING, p.warn, tr("Stopped at the first failure"));
+        } else if failed + sum.requests_failed == 0 && sum.tests_passed == 0 {
+            banner(ui, icons::CHECK_CIRCLE, p.ok, &trf("{} requests sent, no tests ran.", &[&sum.executed]));
         } else if failed + sum.requests_failed == 0 {
             banner(
                 ui,
@@ -947,94 +959,101 @@ fn results_table(ui: &mut Ui, tab: &mut RunnerTab, filtered: &[usize], dark: boo
     let top = head.top();
     let mut clicked = None;
     let body_h = (height - HEAD).max(ROW * 2.0);
-    let scroll = egui::ScrollArea::vertical()
-        .id_salt("run-results")
-        .auto_shrink([false, true])
-        .max_height(body_h)
-        .show_rows(ui, ROW, filtered.len(), |ui, range| {
-            ui.spacing_mut().item_spacing.y = 0.0;
-            for &i in &filtered[range] {
-                let r = &tab.results[i];
-                let (rect, resp) = ui.allocate_exact_size(vec2(width, ROW), Sense::click());
-                let painter = ui.painter();
-                painter.hline(rect.x_range(), rect.top(), Stroke::new(1.0, p.border));
-                if tab.selected == Some(i) {
-                    painter.rect_filled(rect.shrink2(vec2(1.0, 0.5)), 0.0, p.accent_soft);
-                } else if resp.hovered() {
-                    painter.rect_filled(rect.shrink2(vec2(1.0, 0.5)), 0.0, p.faint_row());
-                }
-                let cy = rect.center().y;
-                // Iteration and method.
-                painter.text(
-                    pos2(rect.left() + 10.0, cy),
-                    Align2::LEFT_CENTER,
-                    format!("#{}", r.iteration + 1),
-                    egui::FontId::proportional(11.5),
+    let area = egui::ScrollArea::vertical().id_salt("run-results").auto_shrink([false, true]).max_height(body_h);
+    let scroll = kit::show_rows(area, ui, ROW, filtered.len(), |ui, range| {
+        for &i in &filtered[range] {
+            let r = &tab.results[i];
+            let (rect, resp) = ui.allocate_exact_size(vec2(width, ROW), Sense::click());
+            let painter = ui.painter();
+            painter.hline(rect.x_range(), rect.top(), Stroke::new(1.0, p.border));
+            if tab.selected == Some(i) {
+                painter.rect_filled(rect.shrink2(vec2(1.0, 0.5)), 0.0, p.accent_soft);
+            } else if resp.hovered() {
+                painter.rect_filled(rect.shrink2(vec2(1.0, 0.5)), 0.0, p.faint_row());
+            }
+            let cy = rect.center().y;
+            // Iteration and method.
+            painter.text(
+                pos2(rect.left() + 10.0, cy),
+                Align2::LEFT_CENTER,
+                format!("#{}", r.iteration + 1),
+                egui::FontId::proportional(11.5),
+                p.text_faint,
+            );
+            let badge = egui::WidgetText::from(widgets::method_badge(&r.method, dark)).into_galley(
+                ui,
+                Some(egui::TextWrapMode::Extend),
+                50.0,
+                egui::TextStyle::Body,
+            );
+            ui.painter().galley(pos2(rect.left() + 40.0, cy - badge.size().y / 2.0), badge, p.text);
+            // Path and name.
+            // The folders give way first, so the name stays readable.
+            let name_x = rect.left() + 92.0;
+            let name_w = (right - time_w - status_w - tests_w - name_x - 8.0).max(40.0);
+            let line = |text: &str, font: egui::FontId, color, width: f32| {
+                let mut job =
+                    egui::text::LayoutJob::single_section(text.to_string(), egui::TextFormat::simple(font, color));
+                job.wrap = egui::text::TextWrapping::truncate_at_width(width);
+                ui.painter().layout_job(job)
+            };
+            let name = line(&r.name, theme::medium(13.0), p.text, name_w);
+            let sep = line(" / ", egui::FontId::proportional(13.0), p.text_faint, f32::INFINITY);
+            let sep_w = sep.size().x;
+            let room = name_w - name.size().x - sep_w;
+            let mut x = name_x;
+            if !r.path.is_empty() && room >= 32.0 {
+                let folders = line(&r.path.join(" / "), egui::FontId::proportional(13.0), p.text_muted, room);
+                let w = folders.size().x;
+                ui.painter().galley(pos2(x, cy - folders.size().y / 2.0), folders, p.text_muted);
+                ui.painter().galley(pos2(x + w, cy - sep.size().y / 2.0), sep, p.text_faint);
+                x += w + sep_w;
+            }
+            ui.painter().galley(pos2(x, cy - name.size().y / 2.0), name, p.text);
+            // Tests.
+            let tests_c = right - time_w - status_w - tests_w / 2.0;
+            if !r.tests.is_empty() {
+                let failed = r.tests_failed();
+                let passed = r.tests.iter().filter(|t| t.passed && !t.skipped).count();
+                let (text, color) = if failed > 0 {
+                    (format!("{} {failed}/{}", icons::X, passed + failed), p.err)
+                } else {
+                    (format!("{} {passed}", icons::CHECK), p.ok)
+                };
+                let g = ui.painter().layout_no_wrap(text, theme::medium(12.0), color);
+                ui.painter().galley(pos2(tests_c - g.size().x / 2.0, cy - g.size().y / 2.0), g, color);
+            } else {
+                ui.painter().text(
+                    pos2(tests_c, cy),
+                    Align2::CENTER_CENTER,
+                    "–",
+                    egui::FontId::proportional(12.0),
                     p.text_faint,
                 );
-                let badge = egui::WidgetText::from(widgets::method_badge(&r.method, dark)).into_galley(
-                    ui,
-                    Some(egui::TextWrapMode::Extend),
-                    50.0,
-                    egui::TextStyle::Body,
-                );
-                ui.painter().galley(pos2(rect.left() + 40.0, cy - badge.size().y / 2.0), badge, p.text);
-                // Path and name.
-                let name_x = rect.left() + 92.0;
-                let name_w = right - time_w - status_w - tests_w - name_x - 8.0;
-                let mut job = egui::text::LayoutJob::default();
-                for part in &r.path {
-                    job.append(part, 0.0, egui::TextFormat::simple(egui::FontId::proportional(13.0), p.text_muted));
-                    job.append(" / ", 0.0, egui::TextFormat::simple(egui::FontId::proportional(13.0), p.text_faint));
-                }
-                job.append(&r.name, 0.0, egui::TextFormat::simple(theme::medium(13.0), p.text));
-                job.wrap = egui::text::TextWrapping::truncate_at_width(name_w.max(40.0));
-                let g = ui.painter().layout_job(job);
-                ui.painter().galley(pos2(name_x, cy - g.size().y / 2.0), g, p.text);
-                // Tests.
-                let tests_c = right - time_w - status_w - tests_w / 2.0;
-                if !r.tests.is_empty() {
-                    let failed = r.tests_failed();
-                    let passed = r.tests.iter().filter(|t| t.passed && !t.skipped).count();
-                    let (text, color) = if failed > 0 {
-                        (format!("{} {failed}/{}", icons::X, passed + failed), p.err)
-                    } else {
-                        (format!("{} {passed}", icons::CHECK), p.ok)
-                    };
-                    let g = ui.painter().layout_no_wrap(text, theme::medium(12.0), color);
-                    ui.painter().galley(pos2(tests_c - g.size().x / 2.0, cy - g.size().y / 2.0), g, color);
-                } else {
-                    ui.painter().text(
-                        pos2(tests_c, cy),
-                        Align2::CENTER_CENTER,
-                        "–",
-                        egui::FontId::proportional(12.0),
-                        p.text_faint,
-                    );
-                }
-                // Status.
-                let status_x = right - time_w - status_w + 10.0;
-                let (label, color) = match (r.status, &r.error) {
-                    (_, Some(_)) => (tr("Error").to_string(), p.err),
-                    (Some(code), None) => (code.to_string(), theme::status_color(code, dark)),
-                    _ => (tr("Skipped").to_string(), p.text_muted),
-                };
-                let pill_w = ui.painter().layout_no_wrap(label.clone(), theme::medium(11.0), color).size().x + 14.0;
-                crate::request_tab::paint_pill(ui, pos2(status_x + pill_w, cy), &label, color);
-                // Time.
-                ui.painter().text(
-                    pos2(right - 12.0, cy),
-                    Align2::RIGHT_CENTER,
-                    fmt_ms(r.response_time_ms),
-                    theme::mono(12.0),
-                    p.text_muted,
-                );
-                widgets::a11y_button(&resp, &format!("{} {}", r.method, r.name));
-                if resp.clicked() {
-                    clicked = Some(i);
-                }
             }
-        });
+            // Status.
+            let status_x = right - time_w - status_w + 10.0;
+            let (label, color) = match (r.status, &r.error) {
+                (_, Some(_)) => (tr("Error").to_string(), p.err),
+                (Some(code), None) => (code.to_string(), theme::status_color(code, dark)),
+                _ => (tr("Skipped").to_string(), p.text_muted),
+            };
+            let pill_w = ui.painter().layout_no_wrap(label.clone(), theme::medium(11.0), color).size().x + 14.0;
+            crate::request_tab::paint_pill(ui, pos2(status_x + pill_w, cy), &label, color);
+            // Time.
+            ui.painter().text(
+                pos2(right - 12.0, cy),
+                Align2::RIGHT_CENTER,
+                fmt_ms(r.response_time_ms),
+                theme::mono(12.0),
+                p.text_muted,
+            );
+            widgets::a11y_button(&resp, &format!("{} {}", r.method, r.name));
+            if resp.clicked() {
+                clicked = Some(i);
+            }
+        }
+    });
     let bottom = scroll.inner_rect.bottom().max(head.bottom());
     let table = Rect::from_min_max(pos2(head.left(), top), pos2(head.right(), bottom));
     ui.painter().rect_stroke(table, CornerRadius::same(8), Stroke::new(1.0, p.border), StrokeKind::Inside);

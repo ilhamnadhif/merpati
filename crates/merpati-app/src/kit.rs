@@ -201,7 +201,8 @@ pub fn tab_strip<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[(T,
 
 /// [`tab_strip`] with a small green dot on the tabs in `dots` (a section
 /// that has something set, like a body or auth). When the tabs don't fit
-/// they scroll sideways instead of widening the view.
+/// they move closer together, then scroll sideways (instead of widening the
+/// view) with the edge that hides tabs faded.
 pub fn tab_strip_ex<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[(T, String)], dots: &[T]) -> bool {
     let p = theme::pal(ui);
     let size = body_size(ui);
@@ -223,10 +224,16 @@ pub fn tab_strip_ex<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[
             (*value, label.as_str(), selected, galley, count_galley)
         })
         .collect();
-    let width = |t: &(T, &str, bool, std::sync::Arc<egui::Galley>, Option<std::sync::Arc<egui::Galley>>)| {
-        t.3.size().x + t.4.as_ref().map_or(0.0, |g| g.size().x + 12.0) + 20.0
+    let text_w = |t: &(T, &str, bool, std::sync::Arc<egui::Galley>, Option<std::sync::Arc<egui::Galley>>)| {
+        t.3.size().x + t.4.as_ref().map_or(0.0, |g| g.size().x + 12.0)
     };
-    let total: f32 = tabs.iter().map(width).sum::<f32>() + 2.0 * tabs.len().saturating_sub(1) as f32;
+    let total = |pad: f32| -> f32 {
+        tabs.iter().map(|t| text_w(t) + 2.0 * pad).sum::<f32>() + 2.0 * tabs.len().saturating_sub(1) as f32
+    };
+    let pad = if total(10.0) <= ui.available_width() + 0.5 { 10.0 } else { 6.0 };
+    let width =
+        |t: &(T, &str, bool, std::sync::Arc<egui::Galley>, Option<std::sync::Arc<egui::Galley>>)| text_w(t) + 2.0 * pad;
+    let total = total(pad);
     let mut changed = false;
     let mut draw = |ui: &mut Ui| {
         ui.horizontal(|ui| {
@@ -245,9 +252,9 @@ pub fn tab_strip_ex<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[
                 let painter = ui.painter();
                 let text_color = if *selected || resp.hovered() { p.text } else { p.text_muted };
                 let text_w = galley.size().x;
-                let text_pos = egui::pos2(rect.left() + 10.0, rect.center().y - galley.size().y / 2.0);
+                let text_pos = egui::pos2(rect.left() + pad, rect.center().y - galley.size().y / 2.0);
                 painter.galley(text_pos, galley.clone(), text_color);
-                let mut end = rect.left() + 10.0 + text_w;
+                let mut end = rect.left() + pad + text_w;
                 if let Some(g) = count_galley {
                     let pill = Rect::from_min_size(
                         egui::pos2(end + 6.0, rect.center().y - 8.0),
@@ -266,8 +273,8 @@ pub fn tab_strip_ex<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[
                 }
                 if *selected {
                     let line = Rect::from_min_max(
-                        egui::pos2(rect.left() + 6.0, rect.bottom() - 2.0),
-                        egui::pos2(rect.right() - 6.0, rect.bottom()),
+                        egui::pos2(rect.left() + pad - 4.0, rect.bottom() - 2.0),
+                        egui::pos2(rect.right() - pad + 4.0, rect.bottom()),
                     );
                     painter.rect_filled(line, CornerRadius::same(1), p.accent);
                 }
@@ -289,10 +296,36 @@ pub fn tab_strip_ex<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[
         draw(ui)
     } else {
         let id = ui.next_auto_id().with("tab-strip");
-        egui::ScrollArea::horizontal().id_salt(id).auto_shrink([false, true]).show(ui, |ui| draw(ui)).inner
+        let out = egui::ScrollArea::horizontal().id_salt(id).auto_shrink([false, true]).show(ui, |ui| draw(ui));
+        let (view, offset) = (out.inner_rect, out.state.clamped_offset().x);
+        let hidden_right = out.content_size.x - view.width() - offset;
+        let fill = ui.visuals().panel_fill;
+        if offset > 0.5 {
+            fade(ui.painter(), Rect::from_min_size(view.left_top(), vec2(28.0, view.height() - 1.0)), fill, false);
+        }
+        if hidden_right > 0.5 {
+            let edge =
+                Rect::from_min_size(egui::pos2(view.right() - 28.0, view.top()), vec2(28.0, view.height() - 1.0));
+            fade(ui.painter(), edge, fill, true);
+        }
+        out.inner
     };
     ui.painter().hline(start_x..=right, bottom - 0.5, Stroke::new(1.0, p.border));
     changed
+}
+
+/// Covers `rect` with `color`, from clear to opaque towards the right
+/// (`to_right`) or the left: the edge of a strip that hides more.
+fn fade(painter: &egui::Painter, rect: Rect, color: Color32, to_right: bool) {
+    let (left, right) = if to_right { (Color32::TRANSPARENT, color) } else { (color, Color32::TRANSPARENT) };
+    let mut mesh = egui::Mesh::default();
+    mesh.colored_vertex(rect.left_top(), left);
+    mesh.colored_vertex(rect.right_top(), right);
+    mesh.colored_vertex(rect.right_bottom(), right);
+    mesh.colored_vertex(rect.left_bottom(), left);
+    mesh.add_triangle(0, 1, 2);
+    mesh.add_triangle(0, 2, 3);
+    painter.add(mesh);
 }
 
 /// A segmented control (`Pretty | Raw | Preview`). Returns true when the
@@ -495,9 +528,83 @@ pub fn search_field(
     resp
 }
 
+/// `ScrollArea::show_rows` for rows of exactly `row_h` laid out edge to edge.
+/// egui places the rows `row_h + item_spacing.y` apart, so the spacing is
+/// zeroed around the area too: otherwise the rows slip by that much each
+/// time one scrolls out of view and the bottom of the list is left empty.
+pub fn show_rows<R>(
+    area: egui::ScrollArea,
+    ui: &mut Ui,
+    row_h: f32,
+    total: usize,
+    add: impl FnOnce(&mut Ui, std::ops::Range<usize>) -> R,
+) -> egui::scroll_area::ScrollAreaOutput<R> {
+    ui.scope(|ui| {
+        ui.spacing_mut().item_spacing.y = 0.0;
+        area.show_rows(ui, row_h, total, add)
+    })
+    .inner
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Rows drawn by `show_rows` (top, bottom) and the list's visible rect.
+    fn drawn_rows(offset: Option<f32>) -> (Vec<(f32, f32)>, Rect) {
+        let ctx = egui::Context::default();
+        let mut rows = Vec::new();
+        let mut inner = Rect::NOTHING;
+        // The third frame knows the content size and has scrolled.
+        for _ in 0..3 {
+            let raw = egui::RawInput {
+                screen_rect: Some(Rect::from_min_size(egui::Pos2::ZERO, vec2(300.0, 400.0))),
+                ..Default::default()
+            };
+            let out = ctx.run_ui(raw, |ui| {
+                egui::CentralPanel::default_margins().show(ui, |ui| {
+                    ui.spacing_mut().item_spacing.y = 6.0;
+                    let mut area = egui::ScrollArea::vertical().auto_shrink([false; 2]);
+                    area = match offset {
+                        Some(y) => area.vertical_scroll_offset(y),
+                        None => area.stick_to_bottom(true),
+                    };
+                    rows.clear();
+                    inner = show_rows(area, ui, 28.0, 100, |ui, range| {
+                        // As the callers do.
+                        ui.spacing_mut().item_spacing.y = 0.0;
+                        for _ in range {
+                            let (rect, _) = ui.allocate_exact_size(vec2(100.0, 28.0), Sense::hover());
+                            rows.push((rect.top(), rect.bottom()));
+                        }
+                    })
+                    .inner_rect;
+                });
+            });
+            out.drop_without_applying_deltas();
+        }
+        (rows, inner)
+    }
+
+    /// The rows in view fill the list, down to the last one at its bottom.
+    #[test]
+    fn rows_fill_the_list_down_to_the_bottom() {
+        for offset in [Some(0.0), Some(500.0), Some(1234.0), None] {
+            let (rows, inner) = drawn_rows(offset);
+            let (top, bottom) = (rows.first().unwrap().0, rows.last().unwrap().1);
+            assert!(top <= inner.top() + 0.5, "{offset:?}: first row at {top}, list from {}", inner.top());
+            assert!(bottom >= inner.bottom() - 0.5, "{offset:?}: last row ends {bottom}, list to {}", inner.bottom());
+            assert!(rows.windows(2).all(|w| w[0].1 == w[1].0), "{offset:?}: gaps between rows");
+        }
+        // At the end of the list its last row ends exactly at the bottom.
+        let (rows, inner) = drawn_rows(None);
+        assert!(
+            (rows.last().unwrap().1 - inner.bottom()).abs() < 0.5,
+            "{} vs {}",
+            rows.last().unwrap().1,
+            inner.bottom()
+        );
+    }
 
     #[test]
     fn counts_are_split_from_labels() {

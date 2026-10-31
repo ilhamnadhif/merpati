@@ -571,7 +571,10 @@ impl MerpatiApp {
         }
         #[cfg(target_os = "macos")]
         {
-            app.menu = Some(crate::menu::AppMenu::install(&cc.egui_ctx));
+            // Tests run off the main thread, where AppKit has no menu bar.
+            if !cfg!(test) {
+                app.menu = Some(crate::menu::AppMenu::install(&cc.egui_ctx));
+            }
             // ⌘Q is the menu's Quit, which closes like the window's button.
             cc.egui_ctx.options_mut(|o| o.quit_shortcuts.clear());
         }
@@ -1772,134 +1775,146 @@ impl MerpatiApp {
         self.tab_in_view = in_view;
         ui.painter().rect_filled(bar, 0.0, p.chrome);
         ui.painter().hline(bar.x_range(), bar.bottom() - 0.5, egui::Stroke::new(1.0, p.border));
-        egui::ScrollArea::horizontal()
-            .id_salt("tabs")
-            .max_height(H)
-            .scroll_bar_visibility(egui::scroll_area::ScrollBarVisibility::AlwaysHidden)
-            .show(ui, |ui| {
-                ui.horizontal(|ui| {
-                    ui.spacing_mut().item_spacing.x = 0.0;
-                    ui.add_space(4.0);
-                    for (i, tab) in self.tabs.iter().enumerate() {
-                        let (title, badge, dirty) = crate::dialogs::tab_title(tab, &self.ws);
-                        let selected = i == self.active;
-                        let title_short = crate::dialogs::ellipsize(&title, 26);
-                        let lead = match &badge {
-                            Some(b) => (b.clone(), theme::semibold(10.5), theme::method_color(b, dark)),
-                            None => (crate::dialogs::tab_icon(tab).to_string(), theme::icon_font(14.0), p.text_muted),
-                        };
-                        let lead_g = ui.painter().layout_no_wrap(lead.0, lead.1, lead.2);
-                        let font = if selected { theme::medium(13.0) } else { egui::FontId::proportional(13.0) };
-                        let title_g = ui.painter().layout_no_wrap(title_short, font, egui::Color32::PLACEHOLDER);
-                        let w = 12.0 + lead_g.size().x + 6.0 + title_g.size().x + 8.0 + 18.0 + 8.0;
-                        let (rect, r) =
-                            ui.allocate_exact_size(egui::vec2(w.max(96.0), H), egui::Sense::click_and_drag());
-                        if selected && scroll_to == Some(tab.id) {
-                            r.scroll_to_me(None);
-                        }
-                        let hovered = ui.rect_contains_pointer(rect);
-                        let painter = ui.painter();
-                        if selected {
-                            let body = rect.shrink2(egui::vec2(0.0, 0.0)).with_max_y(rect.bottom() + 1.0);
-                            painter.rect_filled(body, egui::CornerRadius { nw: 8, ne: 8, sw: 0, se: 0 }, p.canvas);
-                            painter.rect_stroke(
-                                body,
-                                egui::CornerRadius { nw: 8, ne: 8, sw: 0, se: 0 },
-                                egui::Stroke::new(1.0, p.border),
-                                egui::StrokeKind::Inside,
-                            );
-                            // Hide the bar's bottom line under the selected tab.
-                            painter.hline(
-                                rect.x_range().shrink(1.0),
-                                rect.bottom() - 0.5,
-                                egui::Stroke::new(1.5, p.canvas),
-                            );
-                            painter.hline(
-                                rect.x_range().shrink(8.0),
-                                rect.top() + 1.0,
-                                egui::Stroke::new(2.0, p.accent),
-                            );
-                        } else if hovered {
-                            painter.rect_filled(
-                                rect.shrink2(egui::vec2(2.0, 5.0)),
-                                egui::CornerRadius::same(6),
-                                p.hover,
-                            );
-                        }
-                        let mut x = rect.left() + 12.0;
-                        painter.galley(
-                            egui::pos2(x, rect.center().y - lead_g.size().y / 2.0),
-                            lead_g.clone(),
-                            p.text_muted,
-                        );
-                        x += lead_g.size().x + 6.0;
-                        let text_color = if selected || hovered { p.text } else { p.text_muted };
-                        painter.galley(egui::pos2(x, rect.center().y - title_g.size().y / 2.0), title_g, text_color);
-                        // Close button (or the unsaved dot until hovered).
-                        let x_rect = egui::Rect::from_center_size(
-                            egui::pos2(rect.right() - 16.0, rect.center().y),
-                            egui::vec2(18.0, 18.0),
-                        );
-                        let x_resp =
-                            ui.interact(x_rect, ui.scope_id().with(("tab-close", tab.id)), egui::Sense::click());
-                        crate::widgets::a11y_name(&x_resp, &format!("{} {title}", tr("Close")));
-                        if dirty && !hovered {
-                            ui.painter().circle_filled(x_rect.center(), 3.5, p.accent);
-                        } else if hovered || selected {
-                            if x_resp.hovered() {
-                                ui.painter().rect_filled(x_rect, egui::CornerRadius::same(4), p.subtle);
+        // The tabs scroll; the new-tab button follows them and stays in view
+        // when they overflow.
+        ui.horizontal(|ui| {
+            ui.spacing_mut().item_spacing.x = 0.0;
+            egui::ScrollArea::horizontal()
+                .id_salt("tabs")
+                .max_height(H)
+                .max_width((bar.width() - 36.0).max(0.0))
+                .scroll_bar_visibility(egui::scroll_area::ScrollBarVisibility::AlwaysHidden)
+                .show(ui, |ui| {
+                    ui.horizontal(|ui| {
+                        ui.spacing_mut().item_spacing.x = 0.0;
+                        ui.add_space(4.0);
+                        for (i, tab) in self.tabs.iter().enumerate() {
+                            let (title, badge, dirty) = crate::dialogs::tab_title(tab, &self.ws);
+                            let selected = i == self.active;
+                            let title_short = crate::dialogs::ellipsize(&title, 26);
+                            let lead = match &badge {
+                                Some(b) => (b.clone(), theme::semibold(10.5), theme::method_color(b, dark)),
+                                None => {
+                                    (crate::dialogs::tab_icon(tab).to_string(), theme::icon_font(14.0), p.text_muted)
+                                }
+                            };
+                            let lead_g = ui.painter().layout_no_wrap(lead.0, lead.1, lead.2);
+                            let font = if selected { theme::medium(13.0) } else { egui::FontId::proportional(13.0) };
+                            let title_g = ui.painter().layout_no_wrap(title_short, font, egui::Color32::PLACEHOLDER);
+                            let w = 12.0 + lead_g.size().x + 6.0 + title_g.size().x + 8.0 + 18.0 + 8.0;
+                            let (rect, r) =
+                                ui.allocate_exact_size(egui::vec2(w.max(96.0), H), egui::Sense::click_and_drag());
+                            if selected && scroll_to == Some(tab.id) {
+                                r.scroll_to_me(None);
                             }
-                            ui.painter().text(
-                                x_rect.center(),
-                                egui::Align2::CENTER_CENTER,
-                                icons::X,
-                                theme::icon_font(12.0),
-                                if x_resp.hovered() { p.text } else { p.text_muted },
-                            );
-                        }
-                        if x_resp.clicked() {
-                            close = Some(i);
-                        }
-                        let name = if dirty { format!("{title} ({})", tr("unsaved")) } else { title.clone() };
-                        crate::widgets::a11y_tab(&r, &name, selected);
-                        if r.clicked() && !x_resp.hovered() {
-                            activate = Some(TabBarAct::Activate(i));
-                        }
-                        if r.middle_clicked() {
-                            close = Some(i);
-                        }
-                        if r.dragged()
-                            && let Some(pos) = ui.ctx().pointer_interact_pos()
-                        {
-                            if pos.x > r.rect.right() + 4.0 && i + 1 < self.tabs.len() {
-                                reorder = Some((i, i + 1));
-                            } else if pos.x < r.rect.left() - 4.0 && i > 0 {
-                                reorder = Some((i, i - 1));
+                            let hovered = ui.rect_contains_pointer(rect);
+                            let painter = ui.painter();
+                            if selected {
+                                let body = rect.shrink2(egui::vec2(0.0, 0.0)).with_max_y(rect.bottom() + 1.0);
+                                painter.rect_filled(body, egui::CornerRadius { nw: 8, ne: 8, sw: 0, se: 0 }, p.canvas);
+                                painter.rect_stroke(
+                                    body,
+                                    egui::CornerRadius { nw: 8, ne: 8, sw: 0, se: 0 },
+                                    egui::Stroke::new(1.0, p.border),
+                                    egui::StrokeKind::Inside,
+                                );
+                                // Hide the bar's bottom line under the selected tab.
+                                painter.hline(
+                                    rect.x_range().shrink(1.0),
+                                    rect.bottom() - 0.5,
+                                    egui::Stroke::new(1.5, p.canvas),
+                                );
+                                painter.hline(
+                                    rect.x_range().shrink(8.0),
+                                    rect.top() + 1.0,
+                                    egui::Stroke::new(2.0, p.accent),
+                                );
+                            } else if hovered {
+                                painter.rect_filled(
+                                    rect.shrink2(egui::vec2(2.0, 5.0)),
+                                    egui::CornerRadius::same(6),
+                                    p.hover,
+                                );
                             }
-                        }
-                        r.context_menu(|ui| {
-                            if ui.button(kit::with_icon(icons::X, tr("Close"))).clicked() {
+                            let mut x = rect.left() + 12.0;
+                            painter.galley(
+                                egui::pos2(x, rect.center().y - lead_g.size().y / 2.0),
+                                lead_g.clone(),
+                                p.text_muted,
+                            );
+                            x += lead_g.size().x + 6.0;
+                            let text_color = if selected || hovered { p.text } else { p.text_muted };
+                            painter.galley(
+                                egui::pos2(x, rect.center().y - title_g.size().y / 2.0),
+                                title_g,
+                                text_color,
+                            );
+                            // Close button (or the unsaved dot until hovered).
+                            let x_rect = egui::Rect::from_center_size(
+                                egui::pos2(rect.right() - 16.0, rect.center().y),
+                                egui::vec2(18.0, 18.0),
+                            );
+                            let x_resp =
+                                ui.interact(x_rect, ui.scope_id().with(("tab-close", tab.id)), egui::Sense::click());
+                            crate::widgets::a11y_name(&x_resp, &format!("{} {title}", tr("Close")));
+                            if dirty && !hovered {
+                                ui.painter().circle_filled(x_rect.center(), 3.5, p.accent);
+                            } else if hovered || selected {
+                                if x_resp.hovered() {
+                                    ui.painter().rect_filled(x_rect, egui::CornerRadius::same(4), p.subtle);
+                                }
+                                ui.painter().text(
+                                    x_rect.center(),
+                                    egui::Align2::CENTER_CENTER,
+                                    icons::X,
+                                    theme::icon_font(12.0),
+                                    if x_resp.hovered() { p.text } else { p.text_muted },
+                                );
+                            }
+                            if x_resp.clicked() {
                                 close = Some(i);
-                                ui.close();
                             }
-                            if ui.button(kit::with_icon(icons::X_CIRCLE, tr("Close other tabs"))).clicked() {
-                                activate = Some(TabBarAct::CloseOthers(i));
-                                ui.close();
+                            let name = if dirty { format!("{title} ({})", tr("unsaved")) } else { title.clone() };
+                            crate::widgets::a11y_tab(&r, &name, selected);
+                            if r.clicked() && !x_resp.hovered() {
+                                activate = Some(TabBarAct::Activate(i));
                             }
-                        });
-                    }
-                    ui.add_space(4.0);
-                    ui.allocate_ui_with_layout(
-                        egui::vec2(32.0, H),
-                        egui::Layout::centered_and_justified(egui::Direction::LeftToRight),
-                        |ui| {
-                            if kit::icon_button(ui, icons::PLUS, &format!("{} (⌘T)", tr("New Request"))).clicked() {
-                                activate = Some(TabBarAct::New);
+                            if r.middle_clicked() {
+                                close = Some(i);
                             }
-                        },
-                    );
+                            if r.dragged()
+                                && let Some(pos) = ui.ctx().pointer_interact_pos()
+                            {
+                                if pos.x > r.rect.right() + 4.0 && i + 1 < self.tabs.len() {
+                                    reorder = Some((i, i + 1));
+                                } else if pos.x < r.rect.left() - 4.0 && i > 0 {
+                                    reorder = Some((i, i - 1));
+                                }
+                            }
+                            r.context_menu(|ui| {
+                                if ui.button(kit::with_icon(icons::X, tr("Close"))).clicked() {
+                                    close = Some(i);
+                                    ui.close();
+                                }
+                                if ui.button(kit::with_icon(icons::X_CIRCLE, tr("Close other tabs"))).clicked() {
+                                    activate = Some(TabBarAct::CloseOthers(i));
+                                    ui.close();
+                                }
+                            });
+                        }
+                    });
                 });
-            });
+            ui.add_space(4.0);
+            ui.allocate_ui_with_layout(
+                egui::vec2(32.0, H),
+                egui::Layout::centered_and_justified(egui::Direction::LeftToRight),
+                |ui| {
+                    if kit::icon_button(ui, icons::PLUS, &format!("{} (⌘T)", tr("New Request"))).clicked() {
+                        activate = Some(TabBarAct::New);
+                    }
+                },
+            );
+        });
         self.apply_tab_bar(reorder, activate, close);
     }
 
@@ -2417,6 +2432,11 @@ impl MerpatiApp {
             #[cfg(target_os = "macos")]
             menu: None,
         }
+    }
+
+    /// Whether the automation script (if any) has run all its steps.
+    pub fn automation_finished(&self) -> bool {
+        self.automation.as_ref().is_none_or(crate::automation::Automation::finished)
     }
 
     /// Draws the active tab and the open dialog for one frame (1280×820,

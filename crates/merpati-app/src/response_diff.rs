@@ -588,12 +588,12 @@ fn diff_list(ui: &mut Ui, c: &mut Computed, prev: &Snapshot, cur: &Snapshot) {
             });
             crate::dialogs::hairline(ui);
             let mut open = None;
-            egui::ScrollArea::both().id_salt("resp-compare").auto_shrink([false; 2]).show_rows(
+            kit::show_rows(
+                egui::ScrollArea::both().id_salt("resp-compare").auto_shrink([false; 2]),
                 ui,
                 row_h,
                 rows.len(),
                 |ui, range| {
-                    ui.spacing_mut().item_spacing.y = 0.0;
                     let width = ui.available_width().max(content_w);
                     for row in &rows[range] {
                         let (rect, resp) = ui.allocate_exact_size(vec2(width, row_h), Sense::click());

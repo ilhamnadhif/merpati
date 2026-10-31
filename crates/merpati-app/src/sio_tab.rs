@@ -650,7 +650,7 @@ fn kind_label(kind: SocketIoArgKind) -> &'static str {
 }
 
 fn kind_combo(ui: &mut Ui, kind: &mut SocketIoArgKind) -> egui::Response {
-    egui::ComboBox::from_id_salt("kind")
+    let r = egui::ComboBox::from_id_salt("kind")
         .icon(crate::kit::combo_caret)
         .width(90.0)
         .selected_text(kind_label(*kind))
@@ -659,7 +659,9 @@ fn kind_combo(ui: &mut Ui, kind: &mut SocketIoArgKind) -> egui::Response {
                 ui.selectable_value(kind, k, kind_label(k));
             }
         })
-        .response
+        .response;
+    widgets::a11y_name(&r, tr("Type"));
+    r
 }
 
 fn choose_file(ui: &mut Ui, path: &mut String) {

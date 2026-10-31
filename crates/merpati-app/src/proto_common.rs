@@ -1279,7 +1279,8 @@ impl Log {
         }
         if let Some(t) = moved {
             let (offset, height) = self.view;
-            let top = t as f32 * ROW_H;
+            // Rows are `item_spacing.y` apart.
+            let top = t as f32 * (ROW_H + ui.spacing().item_spacing.y);
             if top < offset {
                 area = area.vertical_scroll_offset(top);
             } else if top + ROW_H > offset + height {

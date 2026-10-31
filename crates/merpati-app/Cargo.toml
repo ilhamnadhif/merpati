@@ -50,6 +50,12 @@ sha2.workspace = true
 reqwest.workspace = true
 image ={ version = "0.25", default-features = false, features = ["png", "jpeg", "gif", "webp", "bmp", "ico"] }
 
+[dev-dependencies]
+# Draws the real app off screen for visual checks (automation.rs, ignored test).
+egui_kittest = { version = "0.37", features = ["eframe", "wgpu"] }
+# What eframe adds outside tests (its `system_fonts` feature).
+egui_system_font_provider = "0.37"
+
 [target.'cfg(target_os = "macos")'.dependencies]
 muda.workspace = true
 arboard.workspace = true

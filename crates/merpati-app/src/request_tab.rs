@@ -431,7 +431,9 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut RequestTab
         fetching: app.pending_tokens.contains(&item.id),
         token,
         max_pretty: app.settings.max_pretty_bytes,
-        side_layout: app.settings.ui.layout == merpati_core::settings::ResponseLayout::Side,
+        // Side by side needs room for both; a narrower tab has the response below.
+        side_layout: app.settings.ui.layout == merpati_core::settings::ResponseLayout::Side
+            && ui.available_width() >= SIDE_MIN_WIDTH,
     };
     let mut actions = Actions::default();
 
@@ -447,7 +449,7 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut RequestTab
     let mut after = crate::response_actions::After::default();
     let panel_rect = if ectx.side_layout {
         let w = match tab.panel {
-            PanelMode::Normal => (avail.width() * tab.split).clamp(260.0, (avail.width() - 280.0).max(260.0)),
+            PanelMode::Normal => (avail.width() * tab.split).clamp(340.0, (avail.width() - 300.0).max(340.0)),
             PanelMode::Maximized => avail.width(),
             PanelMode::Minimized => MINIMIZED_RAIL,
         };
@@ -650,6 +652,9 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut RequestTab
 const MINIMIZED_BAR: f32 = 44.0;
 /// Width of the minimized response panel beside the request.
 const MINIMIZED_RAIL: f32 = 46.0;
+/// Narrowest request tab that shows the response beside the request (at
+/// least 300 points for the request and 340 for the response).
+const SIDE_MIN_WIDTH: f32 = 680.0;
 
 /// A draggable divider between the request editor and the response panel.
 /// Dragging a maximized or minimized panel brings back the split at the
@@ -2652,7 +2657,15 @@ fn response_panel(ui: &mut Ui, tab: &mut RequestTab, ectx: &EditCtx, actions: &m
             }
         }
         RespSection::Body => {
-            if let Some(resp) = &exec.response {
+            if let Some(resp) = exec.response.as_ref().filter(|r| r.body.is_empty()) {
+                kit::empty_state(
+                    ui,
+                    icons::FILE,
+                    tr("No body"),
+                    &trf("The server answered {} {} without a body.", &[&resp.status, &resp.status_text]),
+                    |_| {},
+                );
+            } else if let Some(resp) = &exec.response {
                 if let Some(a) = crate::body_view::show(ui, &mut result.body, resp, ectx.max_pretty) {
                     actions.value_action = Some(a.into());
                 }

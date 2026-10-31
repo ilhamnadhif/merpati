@@ -74,6 +74,16 @@ third screen needs it.
 - **Scrolling**: trackpad gestures stick to one axis (`scroll_lock.rs`), so text
   that scrolls both ways doesn't shake. A canvas that pans in 2D calls
   `scroll_lock::allow_free_scroll(ctx, rect)` every frame.
+- **Long lists** lay out only the rows in view with `kit::show_rows` (rows of
+  one fixed height, edge to edge). egui's `ScrollArea::show_rows` places rows
+  `row height + item_spacing.y` apart, and the helper zeroes that spacing; a
+  list drawn without it leaves the end of the list empty.
+- **Tab strips** (`kit::tab_strip`) move their tabs closer when space runs out,
+  then scroll, with a fade on the edge that hides tabs. The response sits
+  beside the request only when the tab is at least 680 points wide.
+- **Fonts**: the bundled fonts cover Latin, Greek and Cyrillic; other scripts
+  (Chinese, Japanese, Korean, Thai, Arabic, …) come from the system fonts
+  through eframe's `system_fonts` feature, so they never show as boxes.
 
 ## Rules
 
@@ -85,3 +95,12 @@ third screen needs it.
   `crates/merpati-app/i18n/id.tsv`.
 - Check both themes (`{"theme": "light"}` / `{"theme": "dark"}` automation
   steps) and a narrow window (`{"window": [900, 640]}`).
+- Screenshots without a window: the ignored test `automation::tests::offscreen`
+  runs a `MERPATI_AUTOMATION` script on the real app drawn on the GPU, with
+  settings from a scratch `MERPATI_CONFIG_DIR` (`MERPATI_SIZE=1280x820`,
+  `MERPATI_PPP=2`), and lists widgets that have no accessible name:
+
+  ```sh
+  MERPATI_CONFIG_DIR=/tmp/m/config MERPATI_SECRETS=memory MERPATI_AUTOMATION=steps.json \
+    cargo test -p merpati-app offscreen -- --ignored --nocapture
+  ```

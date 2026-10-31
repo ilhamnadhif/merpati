@@ -194,10 +194,16 @@ pub(crate) fn runner_section(ui: &mut Ui, id: &str, runner: &mut SessionRunner, 
             }
             ui.end_row();
             pc::form_label(ui, tr("Silence after the last message (ms, 0 = off)"));
-            ui.add(egui::DragValue::new(&mut runner.wait_ms).range(0..=3_600_000).speed(10));
+            crate::widgets::a11y_name(
+                &ui.add(egui::DragValue::new(&mut runner.wait_ms).range(0..=3_600_000).speed(10)),
+                tr("Silence after the last message (ms, 0 = off)"),
+            );
             ui.end_row();
             pc::form_label(ui, tr("Session timeout (ms, 0 = none)"));
-            ui.add(egui::DragValue::new(&mut runner.timeout_ms).range(0..=86_400_000).speed(100));
+            crate::widgets::a11y_name(
+                &ui.add(egui::DragValue::new(&mut runner.timeout_ms).range(0..=86_400_000).speed(100)),
+                tr("Session timeout (ms, 0 = none)"),
+            );
             ui.end_row();
             if id == "sio" {
                 pc::form_label(ui, tr("Answer server acknowledgements with"));

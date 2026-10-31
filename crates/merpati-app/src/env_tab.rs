@@ -535,18 +535,18 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab: &mut EnvTab) {
     });
     ui.add_space(12.0);
     ui.horizontal(|ui| {
-        ui.set_height(30.0);
+        ui.set_min_height(30.0);
         let w = ui.available_width().min(280.0);
         kit::search_field(ui, "env-filter", &mut tab.search, tr("Filter variables"), w);
         ui.add_space(6.0);
+        // Wraps rather than hiding the end: it says where the values go.
         ui.add(
             egui::Label::new(kit::hint(
                 ui,
                 tr("Initial values are saved in the workspace and can be committed to Git; current values and secrets stay on this machine."),
             ))
-            .truncate(),
-        )
-        .on_hover_text(tr("Initial values are saved in the workspace and can be committed to Git; current values and secrets stay on this machine."));
+            .wrap(),
+        );
     });
     ui.add_space(10.0);
     egui::ScrollArea::vertical().auto_shrink([false; 2]).show(ui, |ui| match &tab.env {

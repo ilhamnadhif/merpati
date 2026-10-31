@@ -2,6 +2,28 @@
 
 All notable changes to Merpati. The newest version comes first.
 
+## 0.2.1 — 2026-10-31
+
+### Fixed
+- The collection sidebar left the bottom of a long list empty, and rows that should have shown
+  there (such as the requests of an open folder) were missing. The same slip affected the
+  Collection Runner results, the JSON tree, the Compare view and the capture list.
+- Chinese, Japanese, Korean, Thai, Arabic and other scripts the bundled fonts lack showed as boxes;
+  they now come from the system fonts.
+- Side-by-side layout in a narrow window squeezed the response over the request; below 680 points
+  the response now sits under the request.
+- Section tabs (Params … Docs) that don't fit move closer together, then scroll with a fade on the
+  hidden side instead of being cut off.
+- The new-tab button stays in view when there are many tabs.
+- Runner results keep the request name visible when its folder names are long.
+- A run without tests says "25 requests sent, no tests ran." instead of "All 0 tests passed"; a
+  single iteration no longer reads "× 1 iterations".
+- A response without a body (204 No Content, HEAD) says so instead of showing an empty editor.
+- The note about where environment values are saved wraps instead of being cut off.
+- Screen readers: drop-downs, code editors, number fields and sliders have names (for example
+  "Provider", "Request timeout", "Port").
+- Keyboard selection in the message logs of the protocol tabs scrolls the right row into view.
+
 ## 0.2.0 — 2026-10-30
 
 ### Added

@@ -4,7 +4,7 @@ members = ["crates/*"]
 default-members = ["crates/merpati-app", "crates/merpati-cli"]
 
 [workspace.package]
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/ilhamnadhif/merpati"
@@ -61,7 +61,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 mime_guess = "2"
 boa_engine = { version = "0.22", default-features = false }
 boa_gc = "0.22"
-eframe = { version = "0.37", default-features = false, features = ["accesskit", "clipboard", "default_fonts", "wayland", "x11", "persistence"] }
+eframe = { version = "0.37", default-features = false, features = ["accesskit", "clipboard", "default_fonts", "system_fonts", "wayland", "x11", "persistence"] }
 egui = { version = "0.37", features = ["monochrome_emoji_fonts"] }
 egui_extras = { version = "0.37", features = ["image"] }
 rfd = "0.17"

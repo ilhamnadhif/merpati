@@ -8,7 +8,7 @@ use merpati_mock::{FailureKind, FailureSimulation, MockConfig, MockLogEntry, Moc
 use crate::app::{MerpatiApp, Msg};
 use crate::i18n::{tr, trf};
 use crate::proto_common::{self as pc, Conn, ReqRow};
-use crate::{icons, kit, theme};
+use crate::{icons, kit, theme, widgets};
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum FailKind {
@@ -197,11 +197,14 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut MockTab) {
                 vec![
                     Box::new(|ui: &mut Ui| {
                         muted(ui, tr("Port"));
-                        ui.add(egui::DragValue::new(&mut tab.port).range(0..=65535));
+                        widgets::a11y_name(&ui.add(egui::DragValue::new(&mut tab.port).range(0..=65535)), tr("Port"));
                     }),
                     Box::new(|ui: &mut Ui| {
                         muted(ui, tr("Delay (ms)"));
-                        ui.add(egui::DragValue::new(&mut tab.delay_ms).range(0..=60_000));
+                        widgets::a11y_name(
+                            &ui.add(egui::DragValue::new(&mut tab.delay_ms).range(0..=60_000)),
+                            tr("Delay (ms)"),
+                        );
                     }),
                     Box::new(|ui: &mut Ui| {
                         ui.checkbox(&mut tab.use_env, tr("Resolve variables with the active environment"));
@@ -223,7 +226,7 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut MockTab) {
                             (Some(p), _) => p.to_string(),
                             (None, _) => tr("Custom").to_string(),
                         };
-                        egui::ComboBox::from_id_salt(("mock-net", tab_id))
+                        let r = egui::ComboBox::from_id_salt(("mock-net", tab_id))
                             .icon(crate::kit::combo_caret)
                             .width(130.0)
                             .selected_text(current)
@@ -238,14 +241,21 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut MockTab) {
                                     }
                                 }
                             });
+                        widgets::a11y_name(&r.response, tr("Network"));
                     }),
                     Box::new(|ui: &mut Ui| {
                         muted(ui, tr("Latency (ms)"));
-                        ui.add(egui::DragValue::new(&mut tab.network.latency_ms).range(0..=60_000));
+                        widgets::a11y_name(
+                            &ui.add(egui::DragValue::new(&mut tab.network.latency_ms).range(0..=60_000)),
+                            tr("Latency (ms)"),
+                        );
                     }),
                     Box::new(|ui: &mut Ui| {
                         muted(ui, tr("Jitter (ms)"));
-                        ui.add(egui::DragValue::new(&mut tab.network.jitter_ms).range(0..=10_000));
+                        widgets::a11y_name(
+                            &ui.add(egui::DragValue::new(&mut tab.network.jitter_ms).range(0..=10_000)),
+                            tr("Jitter (ms)"),
+                        );
                     }),
                     Box::new(|ui: &mut Ui| {
                         let bps = &mut tab.network.bandwidth_bytes_per_sec;
@@ -273,6 +283,7 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab_id: u64, tab: &mut MockTab) {
                     Box::new(|ui: &mut Ui| {
                         let mut pct = (tab.fail_rate * 100.0).round() as u32;
                         let r = ui.add(egui::DragValue::new(&mut pct).range(0..=100).suffix(" %"));
+                        widgets::a11y_name(&r, tr("Failures"));
                         if r.on_hover_text(tr("Share of requests that fail")).changed() {
                             tab.fail_rate = pct as f32 / 100.0;
                         }

@@ -162,13 +162,13 @@ pub fn show(app: &mut MerpatiApp, ui: &mut Ui, tab: &mut ContainerTab) {
                             tr("Also the name of the collection file.")
                         },
                         |ui| {
-                            changed |= ui
-                                .add(
-                                    egui::TextEdit::singleline(name)
-                                        .desired_width(ui.available_width().min(420.0))
-                                        .margin(egui::Margin::symmetric(8, 5)),
-                                )
-                                .changed();
+                            let r = ui.add(
+                                egui::TextEdit::singleline(name)
+                                    .desired_width(ui.available_width().min(420.0))
+                                    .margin(egui::Margin::symmetric(8, 5)),
+                            );
+                            crate::widgets::a11y_name(&r, tr("Name"));
+                            changed |= r.changed();
                         },
                     );
                 });

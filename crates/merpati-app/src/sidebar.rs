@@ -25,6 +25,8 @@ pub struct SidebarState {
     /// Flows in `flows/` (id, name, path); reloaded when `flows_dirty`.
     pub flows: Option<Vec<(Id, String, std::path::PathBuf)>>,
     pub flows_dirty: bool,
+    /// Scrolls the tree to this offset in the next frame (automation).
+    pub scroll_to: Option<f32>,
 }
 
 impl SidebarState {
@@ -193,64 +195,65 @@ fn collections(app: &mut MerpatiApp, ui: &mut Ui) {
     let rows = flatten(data, state, &filter);
     const ROW: f32 = 28.0;
     let p = crate::theme::pal(ui);
-    egui::ScrollArea::vertical().id_salt("tree").auto_shrink([false; 2]).show_rows(
-        ui,
-        ROW,
-        rows.len(),
-        |ui, range| {
-            ui.spacing_mut().item_spacing.y = 0.0;
-            for row in &rows[range] {
-                let bg = ui.painter().add(egui::Shape::Noop);
-                let line = ui.horizontal(|ui| {
-                    ui.set_height(ROW);
-                    ui.spacing_mut().item_spacing.x = 4.0;
-                    ui.add_space(4.0 + row.depth as f32 * 14.0);
-                    match row.kind {
-                        RowKind::Collection => {
-                            let parent = fork_parents.get(row.collection.id.as_str()).map(String::as_str);
-                            collection_row(ui, state, row.collection, parent, row.open, &mut acts)
-                        }
-                        RowKind::Folder(f) => folder_row(ui, state, row.collection, f, row.open, &mut acts),
-                        RowKind::Request(r) => request_row(
-                            ui,
-                            state,
-                            row.collection,
-                            r,
-                            row.parent,
-                            row.index,
-                            active.as_ref(),
-                            dark,
-                            &mut acts,
-                        ),
-                        RowKind::Empty => {
-                            ui.add_space(18.0);
-                            ui.label(widgets::muted(ui, tr("Empty collection")));
-                            if kit::ghost(ui, Some(icons::PLUS), tr("Add request")).clicked() {
-                                acts.push(Act::NewRequest(row.collection.id.clone(), None));
-                            }
+    let mut area = egui::ScrollArea::vertical().id_salt("tree").auto_shrink([false; 2]);
+    if let Some(y) = state.scroll_to.take() {
+        area = area.vertical_scroll_offset(y);
+    }
+    kit::show_rows(area, ui, ROW, rows.len(), |ui, range| {
+        for row in &rows[range] {
+            let bg = ui.painter().add(egui::Shape::Noop);
+            let line = ui.horizontal(|ui| {
+                ui.set_height(ROW);
+                ui.spacing_mut().item_spacing.x = 4.0;
+                ui.add_space(4.0 + row.depth as f32 * 14.0);
+                match row.kind {
+                    RowKind::Collection => {
+                        let parent = fork_parents.get(row.collection.id.as_str()).map(String::as_str);
+                        collection_row(ui, state, row.collection, parent, row.open, &mut acts)
+                    }
+                    RowKind::Folder(f) => folder_row(ui, state, row.collection, f, row.open, &mut acts),
+                    RowKind::Request(r) => request_row(
+                        ui,
+                        state,
+                        row.collection,
+                        r,
+                        row.parent,
+                        row.index,
+                        active.as_ref(),
+                        dark,
+                        &mut acts,
+                    ),
+                    RowKind::Empty => {
+                        ui.add_space(18.0);
+                        ui.label(widgets::muted(ui, tr("Empty collection")));
+                        if kit::ghost(ui, Some(icons::PLUS), tr("Add request")).clicked() {
+                            acts.push(Act::NewRequest(row.collection.id.clone(), None));
                         }
                     }
-                });
-                // Row background (hover, open request) and indent guides.
-                let full = egui::Rect::from_x_y_ranges(ui.max_rect().x_range(), line.response.rect.y_range());
-                let is_active = matches!((row.kind, &active), (RowKind::Request(r), Some(a)) if a.item == r.id && a.collection == row.collection.id);
-                let fill = if is_active {
-                    Some(p.accent_soft)
-                } else if ui.rect_contains_pointer(full) {
-                    Some(p.hover)
-                } else {
-                    None
-                };
-                if let Some(fill) = fill {
-                    ui.painter().set(bg, egui::Shape::rect_filled(full.shrink2(egui::vec2(0.0, 1.0)), egui::CornerRadius::same(6), fill));
                 }
-                for d in 1..=row.depth {
-                    let x = full.left() + 4.0 + (d as f32 - 1.0) * 14.0 + 9.0;
-                    ui.painter().vline(x, full.y_range(), egui::Stroke::new(1.0, p.border));
-                }
+            });
+            // Row background (hover, open request) and indent guides.
+            let full = egui::Rect::from_x_y_ranges(ui.max_rect().x_range(), line.response.rect.y_range());
+            let is_active = matches!((row.kind, &active), (RowKind::Request(r), Some(a)) if a.item == r.id && a.collection == row.collection.id);
+            let fill = if is_active {
+                Some(p.accent_soft)
+            } else if ui.rect_contains_pointer(full) {
+                Some(p.hover)
+            } else {
+                None
+            };
+            if let Some(fill) = fill {
+                ui.painter().set(
+                    bg,
+                    egui::Shape::rect_filled(full.shrink2(egui::vec2(0.0, 1.0)), egui::CornerRadius::same(6), fill),
+                );
             }
-        },
-    );
+            for d in 1..=row.depth {
+                let x = full.left() + 4.0 + (d as f32 - 1.0) * 14.0 + 9.0;
+                ui.painter().vline(x, full.y_range(), egui::Stroke::new(1.0, p.border));
+            }
+        }
+    });
     apply(app, acts);
 }
 
